@@ -1,0 +1,57 @@
+server:
+  port: 9966
+  servlet:
+    context-path: /api
+spring:
+  application:
+    name: rocket-pt
+  profiles:
+    active: dev
+  data:
+    web:
+      pageable:
+        one-indexed-parameters: true
+
+  mail:
+    host: smtp.qq.com
+    username: ss@qq.com
+    password: yxwrnwnxvtssdagd
+    default-encoding: UTF-8
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls.enable: true
+          starttls.required: true
+
+
+
+#mybatis
+mybatis-plus:
+  mapper-locations: classpath*:/mybatis/*.xml
+  global-config:
+    #数据库相关配置
+    db-config:
+      #主键类型  AUTO:"数据库ID自增", INPUT:"用户输入ID", ID_WORKER:"全局唯一ID (数字类型唯一ID)", UUID:"全局唯一ID UUID";
+      id-type: AUTO
+      logic-delete-value: 1
+      logic-not-delete-value: 0
+    banner: false
+  #原生配置
+  configuration:
+    map-underscore-to-camel-case: true
+    cache-enabled: true
+    local-cache-scope: statement
+    call-setters-on-nulls: true
+    jdbc-type-for-null: 'null'
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+
+
+pagehelper:
+  helper-dialect: mysql
+  reasonable: true
+  params: count=countSql
+  offset-as-page-num: true
+  row-bounds-with-count: true
+  support-methods-arguments: true
+
