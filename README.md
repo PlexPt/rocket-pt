@@ -28,6 +28,9 @@
 
 
 ### 部署
+正在编写
+
+### 参与开发
 
 The following guides illustrate how to use some features concretely:
 
@@ -42,6 +45,15 @@ The following guides illustrate how to use some features concretely:
 * [Validation](https://spring.io/guides/gs/validating-form-input/)
 
 
-### 参与开发
 
-### 从nexusPHP迁移
+### 从NexusPHP迁移
+
+待编写
+
+
+### 特别鸣谢
+
+- [nexusphp](https://github.com/xiaomlove/nexusphp) （新版）
+- [NexusPHP](https://github.com/zjutjh/NexusPHP)  （原版）
+- [virus](https://github.com/gaoluhua99/virus)
+- [admin3](https://github.com/cjbi/admin3)
