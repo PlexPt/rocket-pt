@@ -22,19 +22,19 @@ public class TorrentsEntity {
     @TableId
     private Integer id;
     /**
-     *
+     * 种子hash
      */
     private byte[] infoHash;
     /**
-     *
+     * 标题
      */
     private String name;
     /**
-     *
+     * 上传文件名
      */
     private String filename;
     /**
-     *
+     * 下载文件名
      */
     private String saveAs;
     /**
@@ -42,11 +42,11 @@ public class TorrentsEntity {
      */
     private String cover;
     /**
-     *
+     * 简介
      */
     private String descr;
     /**
-     *
+     * 副标题
      */
     private String smallDescr;
     /**
@@ -54,7 +54,7 @@ public class TorrentsEntity {
      */
     private String oriDescr;
     /**
-     *
+     * 分类
      */
     private Integer category;
     /**
@@ -86,7 +86,7 @@ public class TorrentsEntity {
      */
     private Integer audiocodec;
     /**
-     *
+     * 体积
      */
     private Long size;
     /**
@@ -94,9 +94,9 @@ public class TorrentsEntity {
      */
     private Date added;
     /**
-     *
+     * Enum
      */
-    private Enum type;
+    private String type;
     /**
      *
      */
@@ -130,13 +130,13 @@ public class TorrentsEntity {
      */
     private Date lastAction;
     /**
-     *
+     * Enum
      */
-    private Enum visible;
+    private String visible;
     /**
-     *
+     * Enum
      */
-    private Enum banned;
+    private String banned;
     /**
      *
      */
@@ -155,9 +155,9 @@ public class TorrentsEntity {
      */
     private Date promotionUntil;
     /**
-     *
+     * Enum
      */
-    private Enum anonymous;
+    private String anonymous;
     /**
      *
      */
@@ -175,9 +175,9 @@ public class TorrentsEntity {
      */
     private Integer cacheStamp;
     /**
-     *
+     * Enum
      */
-    private Enum picktype;
+    private String picktype;
     /**
      *
      */

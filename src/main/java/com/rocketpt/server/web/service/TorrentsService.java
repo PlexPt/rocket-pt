@@ -2,11 +2,14 @@ package com.rocketpt.server.web.service;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.rocketpt.server.common.base.Res;
+import com.rocketpt.server.common.base.ResPage;
 import com.rocketpt.server.web.dao.TorrentsDao;
 import com.rocketpt.server.web.entity.TorrentsEntity;
 import com.rocketpt.server.web.entity.param.TorrentParam;
 
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 /**
  * @author plexpt
@@ -18,8 +21,9 @@ public class TorrentsService extends ServiceImpl<TorrentsDao, TorrentsEntity> {
 
 
     public Res queryPage(TorrentParam params) {
+        List<TorrentsEntity> list = list();
 
-        return Res.ok();
+        return Res.ok(list, new ResPage(list.size(), 1, 50));
     }
 }
 

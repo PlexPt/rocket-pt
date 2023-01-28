@@ -24,7 +24,7 @@ import lombok.RequiredArgsConstructor;
  */
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/torrents")
+@RequestMapping("/torrent")
 public class TorrentsController {
 
     private final TorrentsService torrentsService;

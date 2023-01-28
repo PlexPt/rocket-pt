@@ -23,7 +23,19 @@ spring:
           auth: true
           starttls.enable: true
           starttls.required: true
-
+  datasource:
+    hikari:
+      connection-timeout: 60000
+      validation-timeout: 3000
+      idle-timeout: 60000
+      login-timeout: 5
+      #最小允许值为30000ms（30秒）。 默认值：1800000（30分钟）
+      max-lifetime: 60000
+      #允许池达到的最大大小，包括空闲和使用中的连接。
+      #此值将确定到数据库后端的最大实际连接数。合理的值最好由您的执行环境确定。 默认值：10
+      maximum-pool-size: 500
+      minimum-idle: 10
+      read-only: false
 
 
 #mybatis

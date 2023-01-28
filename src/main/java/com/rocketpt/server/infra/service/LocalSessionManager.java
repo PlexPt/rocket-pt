@@ -4,13 +4,13 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.rocketpt.server.common.JsonUtils;
+import com.rocketpt.server.sys.dto.UserinfoDTO;
 import com.rocketpt.server.sys.entity.Session;
 import com.rocketpt.server.sys.entity.User;
 import com.rocketpt.server.sys.entity.UserCredential;
 import com.rocketpt.server.sys.repository.SessionRepository;
 import com.rocketpt.server.sys.repository.UserCredentialRepository;
 import com.rocketpt.server.sys.repository.UserRepository;
-import com.rocketpt.server.sys.dto.UserinfoDTO;
 
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -67,7 +67,7 @@ public class LocalSessionManager implements SessionManager {
             } catch (Exception e) {
                 log.error("{}", e.getMessage(), e);
             }
-        }, 5, 30, TimeUnit.SECONDS);
+        }, 5, 60, TimeUnit.SECONDS);
     }
 
     @Override
