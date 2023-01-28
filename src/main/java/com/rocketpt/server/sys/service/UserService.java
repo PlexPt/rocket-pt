@@ -1,16 +1,18 @@
 package com.rocketpt.server.sys.service;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.rocketpt.server.common.DomainEventPublisher;
 import com.rocketpt.server.common.JsonUtils;
 import com.rocketpt.server.common.exception.RocketPTException;
+import com.rocketpt.server.sys.dto.PageDTO;
 import com.rocketpt.server.sys.entity.Organization;
 import com.rocketpt.server.sys.entity.User;
 import com.rocketpt.server.sys.event.UserCreated;
 import com.rocketpt.server.sys.event.UserDeleted;
 import com.rocketpt.server.sys.event.UserUpdated;
 import com.rocketpt.server.sys.repository.UserRepository;
-import com.rocketpt.server.sys.dto.PageDTO;
 
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -66,10 +68,12 @@ public class UserService extends ServiceImpl<UserRepository, User> {
 
     public PageDTO<User> findOrgUsers(Pageable pageable, String username, User.State state,
                                       Organization organization) {
-        List<User> page = userRepository.findOrgUsers(pageable, username, state, organization.getId(),
+        PageHelper.startPage(pageable.getPageNumber(), pageable.getPageSize());
+        List<User> users = userRepository.findOrgUsers(pageable, username, state,
+                organization.getId(),
                 organization.makeSelfAsParentIds());
-        //todo page
-        return new PageDTO<>(page, 100);
+        long total = new PageInfo(users).getTotal();
+        return new PageDTO<>(users, total);
     }
 
     public boolean existsUsers(Organization organization) {
@@ -109,10 +113,11 @@ public class UserService extends ServiceImpl<UserRepository, User> {
     }
 
     public PageDTO<User> findUsers(Pageable pageable, User user) {
+        PageHelper.startPage(pageable.getPageNumber(), pageable.getPageSize());
         Map<String, Object> map = JsonUtils.parseToMap(JsonUtils.stringify(user));
         List<User> users = listByMap(map);
-        //todo page
-        return new PageDTO<>(users, 10);
+        long total = new PageInfo(users).getTotal();
+        return new PageDTO<>(users, total);
     }
 
     @Transactional(rollbackFor = Exception.class)

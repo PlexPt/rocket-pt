@@ -2,9 +2,13 @@ package com.rocketpt.server.sys.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.rocketpt.server.common.CommonResultStatus;
 import com.rocketpt.server.common.DomainEventPublisher;
 import com.rocketpt.server.common.exception.RocketPTException;
+import com.rocketpt.server.sys.dto.PageDTO;
+import com.rocketpt.server.sys.dto.RoleDTO;
 import com.rocketpt.server.sys.entity.EntityBase;
 import com.rocketpt.server.sys.entity.Resource;
 import com.rocketpt.server.sys.entity.Role;
@@ -15,8 +19,6 @@ import com.rocketpt.server.sys.event.RoleCreated;
 import com.rocketpt.server.sys.event.RoleDeleted;
 import com.rocketpt.server.sys.event.RoleUpdated;
 import com.rocketpt.server.sys.repository.RoleRepository;
-import com.rocketpt.server.sys.dto.PageDTO;
-import com.rocketpt.server.sys.dto.RoleDTO;
 
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -124,8 +126,9 @@ public class RoleService extends ServiceImpl<RoleRepository, Role> {
     }
 
     public PageDTO<User> findRoleUsers(Long roleId, Pageable pageable) {
+        PageHelper.startPage(pageable.getPageNumber(), pageable.getPageSize());
         List<User> users = roleRepository.findRoleUsers(roleId, pageable);
-        //todo page
-        return new PageDTO<>(users, 10);
+        long total = new PageInfo(users).getTotal();
+        return new PageDTO<>(users, total);
     }
 }
