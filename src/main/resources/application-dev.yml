@@ -3,7 +3,7 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://txcd.plexpt.com:3306/rocket?characterEncoding=utf8
     username: rocket
-    password: cWnZxdJk56d52kSe
+    password: xxxxx
 #  sql:
 #    init:
 #      data-locations: classpath:data.sql
