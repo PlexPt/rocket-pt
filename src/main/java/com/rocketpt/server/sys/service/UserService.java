@@ -6,6 +6,7 @@ import com.github.pagehelper.PageInfo;
 import com.rocketpt.server.common.DomainEventPublisher;
 import com.rocketpt.server.common.JsonUtils;
 import com.rocketpt.server.common.exception.RocketPTException;
+import com.rocketpt.server.controller.param.RegisterParam;
 import com.rocketpt.server.sys.dto.PageDTO;
 import com.rocketpt.server.sys.entity.Organization;
 import com.rocketpt.server.sys.entity.User;
@@ -125,5 +126,11 @@ public class UserService extends ServiceImpl<UserRepository, User> {
         User user = findUserById(userId);
         removeById(user);
         DomainEventPublisher.instance().publish(new UserDeleted(user));
+    }
+
+    public boolean register(RegisterParam param) {
+
+
+        return true;
     }
 }
