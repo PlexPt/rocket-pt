@@ -11,9 +11,9 @@
 
 总之，Rocket PT 项目是一个卓越的选择，无论是在性能、用户体验还是社区互动方面都具有出色表现。
 
-## Rocket PT交流群:168814655
+#### Rocket PT交流群:168814655
 
-### 技术框架
+## 技术框架
 
 后端语言：Java 17
 
@@ -27,32 +27,26 @@
 
 部署工具：Docker
 
+## 特色
 
-### 部署
+1. 采用前后端分离的架构。性能更好，更容易搭配CDN，代码逻辑更清晰，避免屎上雕花。
+2. 
+
+
+## 部署
 正在编写
 
-### 参与开发
+## 参与开发
+[提需求建议，提Bug] (https://github.com/PlexPt/rocket-pt/issues/new/choose)
 
-The following guides illustrate how to use some features concretely:
+##### 开发进度见 [TODO](./TODO.md)
 
-* [Securing a Web Application](https://spring.io/guides/gs/securing-web/)
-* [Spring Boot and OAuth2](https://spring.io/guides/tutorials/spring-boot-oauth2/)
-* [Authenticating a User with LDAP](https://spring.io/guides/gs/authenticating-ldap/)
-* [MyBatis Quick Start](https://github.com/mybatis/spring-boot-starter/wiki/Quick-Start)
-* [Building a RESTful Web Service](https://spring.io/guides/gs/rest-service/)
-* [Serving Web Content with Spring MVC](https://spring.io/guides/gs/serving-web-content/)
-* [Building REST services with Spring](https://spring.io/guides/tutorials/rest/)
-* [Caching Data with Spring](https://spring.io/guides/gs/caching/)
-* [Validation](https://spring.io/guides/gs/validating-form-input/)
-
-
-
-### 从NexusPHP迁移
+## 从NexusPHP迁移
 
 待编写
 
 
-### 特别鸣谢
+## 特别鸣谢
 
 - [nexusphp](https://github.com/xiaomlove/nexusphp) （新版）
 - [NexusPHP](https://github.com/zjutjh/NexusPHP)  （原版）
