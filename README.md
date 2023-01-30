@@ -1,4 +1,12 @@
-# Rocket PT
+<div align="center">
+  <img alt="V3 Admin Vite Logo" width="120" height="120" src="./pic/logo.png">
+  <h1>Rocket PT</h1>
+  <h2>交流群:168814655</h2>
+  <h3><span>后端 | <a href="https://github.com/PlexPt/rocket-ui">前端</a></span></h3>
+
+</div>
+
+
 基于 Java 的私有 BitTorrent 站点系统，可以提供高质量的种子资源和简单易用的界面。
 
 这个项目采用了最新的 Java 技术和框架，如 Spring Boot ，来提供高效、稳定和可扩展的性能。同时，这个项目还采用了数据库管理系统，如 MySQL，来存储所有的种子资源。
@@ -11,8 +19,6 @@
 
 总之，Rocket PT 项目是一个卓越的选择，无论是在性能、用户体验还是社区互动方面都具有出色表现。
 
-#### Rocket PT交流群:168814655
-#### [前端项目地址](https://github.com/PlexPt/rocket-ui)
 
 ## 技术框架
 
