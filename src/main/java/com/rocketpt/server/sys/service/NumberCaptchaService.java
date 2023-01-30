@@ -67,7 +67,7 @@ public class NumberCaptchaService implements CaptchaService {
         String cap = cache.getIfPresent(id);
         if (cap != null) {
             if (StringUtils.equalsIgnoreCase(captcha, cap)) {
-                cache.put(id, null);
+                cache.invalidate(id);
                 return true;
             }
         }

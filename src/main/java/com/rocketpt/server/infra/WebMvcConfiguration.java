@@ -35,6 +35,7 @@ public class WebMvcConfiguration implements WebMvcConfigurer {
                 "/assets/**",
                 "/favicon.ico",
                 "/avatar.jpg",
+                "/code.jpg",
                 "/index.html",
                 "/"
         );

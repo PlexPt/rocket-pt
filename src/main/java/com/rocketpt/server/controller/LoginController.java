@@ -39,14 +39,14 @@ public class LoginController {
     /**
      * 验证码
      */
-    @GetMapping("captcha.jpg")
+    @GetMapping("code.jpg")
     public void captcha(HttpServletResponse response, String uuid) throws IOException {
         response.setHeader("Cache-Control", "no-store, no-cache");
         response.setContentType("image/jpeg");
 
-        captchaService.create(uuid);
+        String code = captchaService.create(uuid);
         //获取图片验证码
-        BufferedImage image = captchaService.getCaptcha(uuid);
+        BufferedImage image = captchaService.getCaptcha(code);
 
         ServletOutputStream out = response.getOutputStream();
         ImageIO.write(image, "jpg", out);
