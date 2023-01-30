@@ -1,5 +1,5 @@
 <div align="center">
-  <img alt="V3 Admin Vite Logo" width="120" height="120" src="./pic/logo.png">
+  <img alt="Logo" width="120" height="120" src="./pic/logo.png">
   <h1>Rocket PT</h1>
   <h2>交流群:168814655</h2>
   <h3><span>后端 | <a href="https://github.com/PlexPt/rocket-ui">前端</a></span></h3>

@@ -1,5 +1,6 @@
 package com.rocketpt.server.common.exception;
 
+import com.rocketpt.server.common.CommonResultStatus;
 import com.rocketpt.server.common.ResultStatus;
 
 /**
@@ -16,6 +17,11 @@ public class RocketPTException extends RuntimeException {
     public RocketPTException(ResultStatus status, String message) {
         super(message);
         this.status = status;
+    }
+
+    public RocketPTException(String message) {
+        super(message);
+        this.status = CommonResultStatus.FAIL;
     }
 
     public ResultStatus getStatus() {

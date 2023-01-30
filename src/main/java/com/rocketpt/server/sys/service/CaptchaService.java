@@ -1,11 +1,20 @@
 package com.rocketpt.server.sys.service;
 
 
+import java.awt.image.BufferedImage;
+
 public interface CaptchaService {
     /**
      * 生成验证码
      */
-    String create(String id);
+    String create(String uuid);
+
+    /**
+     * 生成图片
+     * @param num
+     * @return
+     */
+    BufferedImage getCaptcha(String num);
 
     /**
      * 存储验证码
