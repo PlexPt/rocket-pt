@@ -5,8 +5,8 @@ import com.rocketpt.server.common.Constants;
 import com.rocketpt.server.common.DomainEventPublisher;
 import com.rocketpt.server.common.SessionItemHolder;
 import com.rocketpt.server.common.exception.UserException;
-import com.rocketpt.server.sys.entity.User;
-import com.rocketpt.server.sys.entity.UserCredential;
+import com.rocketpt.server.dto.entity.User;
+import com.rocketpt.server.dto.entity.UserCredential;
 import com.rocketpt.server.sys.event.UserLoggedIn;
 import com.rocketpt.server.sys.event.UserLoggedOut;
 import com.rocketpt.server.sys.repository.UserCredentialRepository;
@@ -21,7 +21,7 @@ import java.util.UUID;
 
 import lombok.RequiredArgsConstructor;
 
-import static com.rocketpt.server.sys.entity.UserCredential.IdentityType.PASSWORD;
+import static com.rocketpt.server.dto.entity.UserCredential.IdentityType.PASSWORD;
 
 /**
  * @author plexpt

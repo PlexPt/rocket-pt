@@ -167,6 +167,7 @@
     </dependencies>
 
     <build>
+        <finalName>rocketpt.jar</finalName>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>

@@ -1,4 +1,4 @@
-package com.rocketpt.server.common;
+package com.rocketpt.server.util;
 
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;

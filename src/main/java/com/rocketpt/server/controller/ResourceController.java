@@ -3,7 +3,7 @@ package com.rocketpt.server.controller;
 import com.rocketpt.server.common.Constants;
 import com.rocketpt.server.common.SessionItemHolder;
 import com.rocketpt.server.common.authz.RequiresPermissions;
-import com.rocketpt.server.sys.entity.Resource;
+import com.rocketpt.server.dto.entity.Resource;
 import com.rocketpt.server.sys.service.ResourceService;
 import com.rocketpt.server.sys.dto.MenuResourceDTO;
 import com.rocketpt.server.sys.dto.ResourceTreeDTO;

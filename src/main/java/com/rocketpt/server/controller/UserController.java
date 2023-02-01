@@ -1,7 +1,7 @@
 package com.rocketpt.server.controller;
 
 import com.rocketpt.server.common.authz.RequiresPermissions;
-import com.rocketpt.server.sys.entity.User;
+import com.rocketpt.server.dto.entity.User;
 import com.rocketpt.server.sys.service.OrganizationService;
 import com.rocketpt.server.sys.service.UserService;
 import com.rocketpt.server.sys.dto.PageDTO;

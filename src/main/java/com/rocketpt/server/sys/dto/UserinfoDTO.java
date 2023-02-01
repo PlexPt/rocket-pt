@@ -3,7 +3,7 @@ package com.rocketpt.server.sys.dto;
 import java.io.Serializable;
 import java.util.Set;
 
-import com.rocketpt.server.sys.entity.UserCredential;
+import com.rocketpt.server.dto.entity.UserCredential;
 
 /**
  * @author plexpt

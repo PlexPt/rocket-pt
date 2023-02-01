@@ -1,6 +1,6 @@
 package com.rocketpt.server.sys.dto;
 
-import com.rocketpt.server.sys.entity.Organization;
+import com.rocketpt.server.dto.entity.Organization;
 
 import java.util.List;
 

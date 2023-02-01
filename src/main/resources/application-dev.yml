@@ -9,3 +9,9 @@ spring:
 #      data-locations: classpath:data.sql
 #      mode: always
 #      continue-on-error: true
+
+
+  mail:
+    host: smtp.qq.com
+    username: ss@qq.com
+    password: yxwrnwnxvtssdagd

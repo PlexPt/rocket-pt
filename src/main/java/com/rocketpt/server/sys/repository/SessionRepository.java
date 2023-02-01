@@ -1,7 +1,7 @@
 package com.rocketpt.server.sys.repository;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.rocketpt.server.sys.entity.Session;
+import com.rocketpt.server.dto.entity.Session;
 
 import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Mapper;

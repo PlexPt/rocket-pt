@@ -2,7 +2,9 @@ package com.rocketpt.server.infra;
 
 import com.rocketpt.server.common.Constants;
 
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
 
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
@@ -18,6 +20,7 @@ import io.swagger.v3.oas.models.media.StringSchema;
  * @author plexpt
  */
 @Configuration
+//@ConditionalOnProperty(havingValue = "")
 @OpenAPIDefinition(info = @Info(title = "Rocket PT",
         description = "A Flexible and Efficient private tracker",
         version = "v1"))

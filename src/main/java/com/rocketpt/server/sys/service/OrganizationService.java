@@ -3,7 +3,7 @@ package com.rocketpt.server.sys.service;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.rocketpt.server.common.CommonResultStatus;
 import com.rocketpt.server.common.exception.UserException;
-import com.rocketpt.server.sys.entity.Organization;
+import com.rocketpt.server.dto.entity.Organization;
 import com.rocketpt.server.sys.repository.OrganizationRepository;
 import com.rocketpt.server.sys.dto.OrgTreeDTO;
 

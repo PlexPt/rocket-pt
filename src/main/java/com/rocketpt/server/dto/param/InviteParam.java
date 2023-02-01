@@ -1,4 +1,4 @@
-package com.rocketpt.server.controller.param;
+package com.rocketpt.server.dto.param;
 
 
 import lombok.Data;

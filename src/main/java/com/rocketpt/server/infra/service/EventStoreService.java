@@ -2,8 +2,8 @@ package com.rocketpt.server.infra.service;
 
 import com.rocketpt.server.common.DomainEvent;
 import com.rocketpt.server.common.EventStore;
-import com.rocketpt.server.common.JsonUtils;
-import com.rocketpt.server.sys.entity.StoredEvent;
+import com.rocketpt.server.util.JsonUtils;
+import com.rocketpt.server.dto.entity.StoredEvent;
 import com.rocketpt.server.sys.repository.StoredEventRepository;
 
 import org.springframework.stereotype.Service;

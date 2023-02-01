@@ -1,6 +1,6 @@
 package com.rocketpt.server.common.authz;
 
-import com.rocketpt.server.common.CollectionUtils;
+import com.rocketpt.server.util.CollectionUtils;
 
 import org.springframework.util.StringUtils;
 

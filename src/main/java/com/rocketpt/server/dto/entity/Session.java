@@ -1,9 +1,9 @@
-package com.rocketpt.server.sys.entity;
+package com.rocketpt.server.dto.entity;
 
 import com.baomidou.mybatisplus.annotation.FieldStrategy;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.rocketpt.server.common.JsonUtils;
+import com.rocketpt.server.util.JsonUtils;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;

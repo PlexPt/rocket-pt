@@ -1,9 +1,9 @@
 package com.rocketpt.server.controller;
 
 import com.rocketpt.server.common.authz.RequiresPermissions;
-import com.rocketpt.server.sys.entity.Resource;
-import com.rocketpt.server.sys.entity.Role;
-import com.rocketpt.server.sys.entity.User;
+import com.rocketpt.server.dto.entity.Resource;
+import com.rocketpt.server.dto.entity.Role;
+import com.rocketpt.server.dto.entity.User;
 import com.rocketpt.server.sys.service.ResourceService;
 import com.rocketpt.server.sys.service.RoleService;
 import com.rocketpt.server.sys.service.UserService;

@@ -1,4 +1,4 @@
-package com.rocketpt.server.common;
+package com.rocketpt.server.util;
 
 import java.math.BigInteger;
 import java.security.MessageDigest;

@@ -3,8 +3,8 @@ package com.rocketpt.server.controller;
 import com.rocketpt.server.common.CommonResultStatus;
 import com.rocketpt.server.common.authz.RequiresPermissions;
 import com.rocketpt.server.common.exception.UserException;
-import com.rocketpt.server.sys.entity.Organization;
-import com.rocketpt.server.sys.entity.User;
+import com.rocketpt.server.dto.entity.Organization;
+import com.rocketpt.server.dto.entity.User;
 import com.rocketpt.server.sys.service.OrganizationService;
 import com.rocketpt.server.sys.service.UserService;
 import com.rocketpt.server.sys.dto.OrgTreeDTO;
@@ -30,7 +30,7 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
-import static com.rocketpt.server.sys.entity.Organization.Type;
+import static com.rocketpt.server.dto.entity.Organization.Type;
 
 /**
  * @author plexpt

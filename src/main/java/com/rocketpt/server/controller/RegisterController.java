@@ -1,7 +1,7 @@
 package com.rocketpt.server.controller;
 
 import com.rocketpt.server.common.base.Res;
-import com.rocketpt.server.controller.param.RegisterParam;
+import com.rocketpt.server.dto.param.RegisterParam;
 import com.rocketpt.server.sys.service.UserService;
 
 import org.springframework.validation.annotation.Validated;

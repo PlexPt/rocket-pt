@@ -1,4 +1,4 @@
-package com.rocketpt.server.sys.entity;
+package com.rocketpt.server.dto.entity;
 
 import com.baomidou.mybatisplus.annotation.EnumValue;
 import com.baomidou.mybatisplus.annotation.FieldStrategy;
@@ -60,7 +60,8 @@ public class User extends EntityBase {
     @RequiredArgsConstructor
     public enum Gender {
         MALE(0),
-        FEMALE(1);
+        FEMALE(1),
+        OTHER(2);
 
         @EnumValue
         private final int code;
@@ -69,7 +70,10 @@ public class User extends EntityBase {
     @RequiredArgsConstructor
     public enum State {
         NORMAL(0),
-        LOCKED(1);
+        LOCKED(1),
+        INACTIVATED(2)
+
+        ;
         @EnumValue
         private final int code;
     }

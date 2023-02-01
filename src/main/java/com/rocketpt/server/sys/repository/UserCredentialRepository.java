@@ -1,7 +1,7 @@
 package com.rocketpt.server.sys.repository;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.rocketpt.server.sys.entity.UserCredential;
+import com.rocketpt.server.dto.entity.UserCredential;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;

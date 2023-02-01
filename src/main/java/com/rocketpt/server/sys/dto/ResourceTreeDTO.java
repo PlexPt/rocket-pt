@@ -2,7 +2,7 @@ package com.rocketpt.server.sys.dto;
 
 import java.util.List;
 
-import com.rocketpt.server.sys.entity.Resource.Type;
+import com.rocketpt.server.dto.entity.Resource.Type;
 
 /**
  * @author plexpt

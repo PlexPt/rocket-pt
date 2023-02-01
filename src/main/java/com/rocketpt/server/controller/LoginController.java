@@ -2,7 +2,7 @@ package com.rocketpt.server.controller;
 
 import com.rocketpt.server.common.Constants;
 import com.rocketpt.server.common.exception.RocketPTException;
-import com.rocketpt.server.controller.param.LoginParam;
+import com.rocketpt.server.dto.param.LoginParam;
 import com.rocketpt.server.sys.dto.UserinfoDTO;
 import com.rocketpt.server.sys.service.CaptchaService;
 import com.rocketpt.server.sys.service.SessionService;

@@ -1,11 +1,11 @@
-package com.rocketpt.server.sys.entity;
+package com.rocketpt.server.dto.entity;
 
 import com.baomidou.mybatisplus.annotation.EnumValue;
 import com.baomidou.mybatisplus.annotation.FieldStrategy;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.rocketpt.server.common.CommonResultStatus;
-import com.rocketpt.server.common.SecurityUtil;
+import com.rocketpt.server.util.SecurityUtil;
 import com.rocketpt.server.common.exception.RocketPTException;
 
 import java.security.NoSuchAlgorithmException;
