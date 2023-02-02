@@ -43,9 +43,15 @@
 正在编写
 
 ## 参与开发
-[提需求建议，提Bug] (https://github.com/PlexPt/rocket-pt/issues/new/choose)
+[提需求建议，提Bug](https://github.com/PlexPt/rocket-pt/issues/new/choose)
 
 ##### 开发进度见 [TODO](./TODO.md)
+#### 参与步骤
+
+1. 在TODO列表或Issue列表找到要开发的功能
+2. fork本仓库 然后clone到本地开发
+3. 开一个issus，或者标记已有的issue，开始编写
+4. 写完发pr
 
 ## 从NexusPHP迁移
 
