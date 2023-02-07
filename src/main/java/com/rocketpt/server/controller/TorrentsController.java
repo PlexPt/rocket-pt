@@ -4,13 +4,10 @@ import com.rocketpt.server.common.base.Res;
 import com.rocketpt.server.web.entity.TorrentsEntity;
 import com.rocketpt.server.web.entity.param.TorrentParam;
 import com.rocketpt.server.web.service.TorrentsService;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Objects;
 
@@ -90,6 +87,19 @@ public class TorrentsController {
         torrentsService.removeByIds(Arrays.asList(ids));
 
         return Res.ok();
+    }
+
+    /**
+     * 上传
+     */
+    @PostMapping("/upload")
+    public Res upload(@RequestParam("file") MultipartFile multipartFile) {
+        try {
+            byte[] bytes = multipartFile.getBytes();
+            return torrentsService.upload(bytes);
+        } catch (IOException e) {
+            return Res.failure();
+        }
     }
 
 }

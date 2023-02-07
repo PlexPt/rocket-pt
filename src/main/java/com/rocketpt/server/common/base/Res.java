@@ -32,7 +32,7 @@ public class Res {
     public Res(Status status) {
         this.code = status.getCode();
         this.msg = status.getMsg();
-        this.data = new Object();
+        this.data = null;
     }
 
     public Res(Status status, Object data) {
@@ -51,13 +51,13 @@ public class Res {
     public Res(Status status, String msg) {
         this.code = status.getCode();
         this.msg = msg;
-        this.data = new Object();
+        this.data = null;
     }
 
     public Res(Status status, int msgCode) {
         this.code = status.getCode();
         this.msg = I18nMessage.getMessage(String.valueOf(msgCode));
-        this.data = new Object();
+        this.data = null;
     }
 
     public Res(Status status, String msg, Object data) {

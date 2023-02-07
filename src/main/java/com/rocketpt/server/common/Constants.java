@@ -20,4 +20,10 @@ public interface Constants {
 
         String[] ORDER_TYPE = new String[]{"desc", "asc", "DESC", "ASC"};
     }
+
+    interface Source {
+        String PREFIX = "[RKT] ";
+
+        String NAME = "rocket pt";
+    }
 }
