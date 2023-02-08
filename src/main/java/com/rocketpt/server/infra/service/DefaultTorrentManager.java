@@ -1,12 +1,15 @@
 package com.rocketpt.server.infra.service;
 
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.dampcake.bencode.Bencode;
 import com.dampcake.bencode.Type;
 import com.rocketpt.server.common.CommonResultStatus;
 import com.rocketpt.server.common.Constants;
+import com.rocketpt.server.common.SessionItemHolder;
 import com.rocketpt.server.common.exception.RocketPTException;
 import com.rocketpt.server.dto.TorrentDto;
 import com.rocketpt.server.dto.entity.TorrentFile;
+import com.rocketpt.server.sys.dto.UserinfoDTO;
 import com.rocketpt.server.sys.repository.TorrentFileRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,6 +20,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -85,5 +89,18 @@ public class DefaultTorrentManager implements TorrentManager {
         torrentFile.setFile(bytes);
         torrentFile.setIdentityType(identityType);
         torrentFileRepository.insert(torrentFile);
+    }
+
+    @Override
+    public byte[] fetch(Integer torrentId) {
+        Optional<TorrentFile> fileOptional = Optional.of(torrentFileRepository.selectOne(
+                Wrappers.<TorrentFile>lambdaQuery()
+                        .eq(TorrentFile::getTorrentId, torrentId)
+        ));
+        if (fileOptional.isEmpty()) throw new RocketPTException(CommonResultStatus.PARAM_ERROR, "无此种子文件。");
+        Map<String, Object> decodedMap = bencode.decode(fileOptional.get().getFile(), Type.DICTIONARY);
+        UserinfoDTO dto = (UserinfoDTO) SessionItemHolder.getItem(Constants.SESSION_CURRENT_USER);
+        decodedMap.put("announce", Constants.Announce.PROTOCOL + "://" + Constants.Announce.HOSTNAME + ":" + Constants.Announce.PORT + "/announce?key=" + dto.userId());
+        return bencode.encode(decodedMap);
     }
 }

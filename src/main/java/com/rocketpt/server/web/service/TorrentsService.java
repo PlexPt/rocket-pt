@@ -1,5 +1,6 @@
 package com.rocketpt.server.web.service;
 
+import cn.hutool.core.bean.BeanUtil;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.rocketpt.server.common.CommonResultStatus;
@@ -44,7 +45,7 @@ public class TorrentsService extends ServiceImpl<TorrentsDao, TorrentsEntity> {
 
     @SneakyThrows
     @Transactional(rollbackFor = SQLException.class)
-    public Res upload(byte[] bytes) {
+    public Res upload(byte[] bytes, TorrentsEntity torrentsEntity) {
         byte[] transformedBytes = torrentManager.transform(bytes);
         byte[] infoHash = torrentManager.infoHash(transformedBytes);
         if (count(Wrappers.<TorrentsEntity>lambdaQuery().eq(TorrentsEntity::getInfoHash, infoHash)) != 0)
@@ -53,6 +54,7 @@ public class TorrentsService extends ServiceImpl<TorrentsDao, TorrentsEntity> {
         Map<String, Object> parsedMap = dto.getDict();
         Map<String, Object> infoParsedMap = (Map<String, Object>) parsedMap.get("info");
         TorrentsEntity entity = new TorrentsEntity();
+        BeanUtil.copyProperties(torrentsEntity, entity, "id","infoHash","added","visible","approvalStatus");
         entity.setInfoHash(infoHash);
         String name = (String) infoParsedMap.get("name");
         entity.setName(name);

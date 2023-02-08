@@ -1,17 +1,23 @@
 package com.rocketpt.server.controller;
 
+import cn.hutool.http.ContentType;
+import com.rocketpt.server.common.CommonResultStatus;
 import com.rocketpt.server.common.base.Res;
+import com.rocketpt.server.common.exception.RocketPTException;
+import com.rocketpt.server.infra.service.TorrentManager;
 import com.rocketpt.server.web.entity.TorrentsEntity;
 import com.rocketpt.server.web.entity.param.TorrentParam;
 import com.rocketpt.server.web.service.TorrentsService;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Objects;
-
-import lombok.RequiredArgsConstructor;
+import java.util.Optional;
 
 
 /**
@@ -25,6 +31,7 @@ import lombok.RequiredArgsConstructor;
 public class TorrentsController {
 
     private final TorrentsService torrentsService;
+    private final TorrentManager torrentManager;
 
     /**
      * 列表
@@ -93,13 +100,23 @@ public class TorrentsController {
      * 上传
      */
     @PostMapping("/upload")
-    public Res upload(@RequestParam("file") MultipartFile multipartFile) {
+    public Res upload(@RequestPart("file") MultipartFile multipartFile, @RequestPart("entity") TorrentsEntity torrentsEntity) {
         try {
+            if (multipartFile.isEmpty()) throw new RocketPTException(CommonResultStatus.PARAM_ERROR, "种子文件为空。");
             byte[] bytes = multipartFile.getBytes();
-            return torrentsService.upload(bytes);
+            return torrentsService.upload(bytes, torrentsEntity);
         } catch (IOException e) {
             return Res.failure();
         }
+    }
+
+    @GetMapping("/download")
+    public void download(@RequestParam("id") Integer id, HttpServletRequest request, HttpServletResponse response) throws IOException {
+        Optional<TorrentsEntity> entityOptional = Optional.of(torrentsService.getById(id));
+        if (entityOptional.isEmpty()) throw new RocketPTException(CommonResultStatus.PARAM_ERROR, "无此种子文件。");
+        byte[] fetch = torrentManager.fetch(id);
+        response.setContentType(ContentType.OCTET_STREAM.getValue());
+        response.getOutputStream().write(fetch);
     }
 
 }
