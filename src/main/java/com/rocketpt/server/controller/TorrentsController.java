@@ -8,13 +8,14 @@ import com.rocketpt.server.infra.service.TorrentManager;
 import com.rocketpt.server.web.entity.TorrentsEntity;
 import com.rocketpt.server.web.entity.param.TorrentParam;
 import com.rocketpt.server.web.service.TorrentsService;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.Optional;
@@ -111,11 +112,16 @@ public class TorrentsController {
     }
 
     @GetMapping("/download")
-    public void download(@RequestParam("id") Integer id, HttpServletRequest request, HttpServletResponse response) throws IOException {
+    public void download(@RequestParam("id") Integer id, HttpServletResponse response) throws IOException {
         Optional<TorrentsEntity> entityOptional = Optional.of(torrentsService.getById(id));
         if (entityOptional.isEmpty()) throw new RocketPTException(CommonResultStatus.PARAM_ERROR, "无此种子文件。");
         byte[] fetch = torrentManager.fetch(id);
+        String filename = entityOptional.get().getFilename();
+        filename = URLEncoder.encode(filename, StandardCharsets.UTF_8);
         response.setContentType(ContentType.OCTET_STREAM.getValue());
+        response.setCharacterEncoding(StandardCharsets.UTF_8.name());
+        response.setContentLength(fetch.length);
+        response.setHeader("Content-Disposition", "attachment;filename=" + filename);
         response.getOutputStream().write(fetch);
     }
 

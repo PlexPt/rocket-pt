@@ -98,9 +98,9 @@ public class DefaultTorrentManager implements TorrentManager {
                         .eq(TorrentFile::getTorrentId, torrentId)
         ));
         if (fileOptional.isEmpty()) throw new RocketPTException(CommonResultStatus.PARAM_ERROR, "无此种子文件。");
-        Map<String, Object> decodedMap = bencode.decode(fileOptional.get().getFile(), Type.DICTIONARY);
+        Map<String, Object> decodedMap = infoBencode.decode(fileOptional.get().getFile(), Type.DICTIONARY);
         UserinfoDTO dto = (UserinfoDTO) SessionItemHolder.getItem(Constants.SESSION_CURRENT_USER);
         decodedMap.put("announce", Constants.Announce.PROTOCOL + "://" + Constants.Announce.HOSTNAME + ":" + Constants.Announce.PORT + "/announce?key=" + dto.userId());
-        return bencode.encode(decodedMap);
+        return infoBencode.encode(decodedMap);
     }
 }
