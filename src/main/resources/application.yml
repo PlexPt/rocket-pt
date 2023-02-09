@@ -67,3 +67,6 @@ pagehelper:
   row-bounds-with-count: true
   support-methods-arguments: true
 
+logging:
+  file:
+    path: logs

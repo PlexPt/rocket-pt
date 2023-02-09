@@ -1,4 +1,4 @@
-package com.rocketpt.server.web.entity;
+package com.rocketpt.server.dto.entity;
 
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;

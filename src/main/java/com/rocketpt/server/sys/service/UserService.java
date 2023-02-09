@@ -4,17 +4,19 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.rocketpt.server.common.DomainEventPublisher;
-import com.rocketpt.server.util.JsonUtils;
 import com.rocketpt.server.common.exception.RocketPTException;
-import com.rocketpt.server.dto.param.RegisterParam;
-import com.rocketpt.server.sys.dto.PageDTO;
 import com.rocketpt.server.dto.entity.Organization;
 import com.rocketpt.server.dto.entity.User;
-import com.rocketpt.server.sys.event.UserCreated;
-import com.rocketpt.server.sys.event.UserDeleted;
-import com.rocketpt.server.sys.event.UserUpdated;
+import com.rocketpt.server.dto.event.UserCreated;
+import com.rocketpt.server.dto.event.UserDeleted;
+import com.rocketpt.server.dto.event.UserUpdated;
+import com.rocketpt.server.dto.param.RegisterParam;
+import com.rocketpt.server.dto.sys.PageDTO;
 import com.rocketpt.server.sys.repository.UserRepository;
+import com.rocketpt.server.util.IPUtils;
+import com.rocketpt.server.util.JsonUtils;
 
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,6 +26,8 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import javax.security.auth.login.LoginException;
 
 import lombok.RequiredArgsConstructor;
 
@@ -37,6 +41,8 @@ import static com.rocketpt.server.common.CommonResultStatus.RECORD_NOT_EXIST;
 public class UserService extends ServiceImpl<UserRepository, User> {
 
     private final UserRepository userRepository;
+
+    private final UserCredentialService userCredentialService;
 
     @Transactional(rollbackFor = Exception.class)
     public User createUser(String username, String fullName, String avatar, User.Gender gender,
@@ -128,9 +134,26 @@ public class UserService extends ServiceImpl<UserRepository, User> {
         DomainEventPublisher.instance().publish(new UserDeleted(user));
     }
 
-    public boolean register(RegisterParam param) {
+    public Long register(RegisterParam param) {
+        User user = new User();
+        user.setUsername(param.getUsername());
+        user.setEmail(param.getEmail());
+        user.setRegIp(IPUtils.getIpAddr());
+        user.setRegType(param.getType());
+        user.setFullName(param.getNickname());
+        user.setGender(User.Gender.valueof(param.getSex()));
+
+        try {
+            save(user);
+            userCredentialService.register(param.getUsername(), user.getId(), param.getPassword());
+
+        } catch (DuplicateKeyException e) {
+            throw new RocketPTException("你已经注册过啦，不能重复注册");
+        }
 
 
-        return true;
+        return user.getId();
     }
+
+
 }

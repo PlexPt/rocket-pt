@@ -2,14 +2,17 @@ package com.rocketpt.server.util;
 
 import java.math.BigInteger;
 import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
+
+import lombok.SneakyThrows;
 
 /**
  * @author plexpt
  */
 public class SecurityUtil {
 
-    public static String md5(String username, String password) throws NoSuchAlgorithmException {
+
+    @SneakyThrows
+    public static String md5(String username, String password) {
         MessageDigest md = MessageDigest.getInstance("MD5");
         md.update(username.getBytes());
         md.update(password.getBytes());

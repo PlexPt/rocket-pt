@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+<!--    <property resource="logback.properties"/>-->
+    <shutdownHook class="ch.qos.logback.core.hook.DelayingShutdownHook"/>
+
+    <springProperty scope="context" name="project" source="aliyun.log.project"/>
+    <springProperty scope="context" name="logstore" source="aliyun.log.log-store"/>
+    <springProperty scope="context" name="endpoint" source="aliyun.log.endpoint"/>
+    <springProperty scope="context" name="accessKeyId" source="aliyun.log.access-key-id" />
+    <springProperty scope="context" name="accessKey" source="aliyun.log.access-key-secret"/>
+
+
+    <springProperty scope="context" name="log_home" source="logging.path"/>
+
+    <include resource="org/springframework/boot/logging/logback/base.xml"/>
+    <logger name="org.springframework.web" level="WARN"/>
+    <logger name="org.springboot" level="WARN"/>
+
+<!--    <appender name="aliyun" class="com.rocketpt.server.common.utils.AliyunLogbackAppender">-->
+<!--        <project>${project}</project>-->
+<!--        <logstore>${logstore}</logstore>-->
+<!--        <accessKeyId>${accessKeyId}</accessKeyId>-->
+<!--        <accessKey>${accessKey}</accessKey>-->
+<!--        <endpoint>${endpoint}</endpoint>-->
+<!--        <timeFormat>yyyy-MM-dd HH:mm:ss</timeFormat>-->
+<!--        <timeZone>UTC</timeZone>-->
+<!--    </appender>-->
+
+    <appender name="file" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${log_home}/app.%d{yyyy-MM-dd}.log</fileNamePattern>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- 开发、测试环境 -->
+    <springProfile name="dev,test">
+        <logger name="org.springframework.web" level="INFO"/>
+        <logger name="org.springboot" level="INFO"/>
+        <logger name="com.rocketpt" level="INFO"/>
+
+    </springProfile>
+
+    <!-- 生产环境 -->
+    <springProfile name="prod">
+        <logger name="org.springframework.web" level="WARN"/>
+        <logger name="org.springboot" level="WARN"/>
+        <logger name="com.rocketpt" level="INFO"/>
+        <root level="info">
+            <appender-ref ref="file"/>
+        </root>
+    </springProfile>
+
+
+
+<!--    <appender name="CONSOLE-LOG" class="ch.qos.logback.core.ConsoleAppender">-->
+<!--        <layout class="ch.qos.logback.classic.PatternLayout">-->
+<!--            <pattern>[%d{yyyy-MM-dd' 'HH:mm:ss.sss}] [%C] [%t] [%L] [%-5p] %m%n</pattern>-->
+<!--        </layout>-->
+<!--    </appender>-->
+<!--    &lt;!&ndash;获取比info级别高(包括info级别)但除error级别的日志&ndash;&gt;-->
+<!--    <appender name="INFO-LOG" class="ch.qos.logback.core.rolling.RollingFileAppender">-->
+<!--        <filter class="ch.qos.logback.classic.filter.LevelFilter">-->
+<!--            <level>ERROR</level>-->
+<!--            <onMatch>DENY</onMatch>-->
+<!--            <onMismatch>ACCEPT</onMismatch>-->
+<!--        </filter>-->
+<!--        <encoder>-->
+<!--            <pattern>[%d{yyyy-MM-dd' 'HH:mm:ss.sss}] [%C] [%t] [%L] [%-5p] %m%n</pattern>-->
+<!--        </encoder>-->
+
+<!--        &lt;!&ndash;滚动策略&ndash;&gt;-->
+<!--        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">-->
+<!--            &lt;!&ndash;路径&ndash;&gt;-->
+<!--            <fileNamePattern>${LOG_INFO_HOME}//%d.log</fileNamePattern>-->
+<!--            <maxHistory>30</maxHistory>-->
+<!--        </rollingPolicy>-->
+<!--    </appender>-->
+<!--    <appender name="ERROR-LOG" class="ch.qos.logback.core.rolling.RollingFileAppender">-->
+<!--        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">-->
+<!--            <level>ERROR</level>-->
+<!--        </filter>-->
+<!--        <encoder>-->
+<!--            <pattern>[%d{yyyy-MM-dd' 'HH:mm:ss.sss}] [%C] [%t] [%L] [%-5p] %m%n</pattern>-->
+<!--        </encoder>-->
+<!--        &lt;!&ndash;滚动策略&ndash;&gt;-->
+<!--        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">-->
+<!--            &lt;!&ndash;路径&ndash;&gt;-->
+<!--            <fileNamePattern>${LOG_ERROR_HOME}//%d.log</fileNamePattern>-->
+<!--            <maxHistory>30</maxHistory>-->
+<!--        </rollingPolicy>-->
+<!--    </appender>-->
+
+<!--    &lt;!&ndash; 异步输出 &ndash;&gt;-->
+<!--    <appender name="ASYNC-INFO" class="ch.qos.logback.classic.AsyncAppender">-->
+<!--        &lt;!&ndash; 不丢失日志.默认的,如果队列的80%已满,则会丢弃TRACT、DEBUG、INFO级别的日志 &ndash;&gt;-->
+<!--        <discardingThreshold>0</discardingThreshold>-->
+<!--        &lt;!&ndash; 更改默认的队列的深度,该值会影响性能.默认值为256 &ndash;&gt;-->
+<!--        <queueSize>256</queueSize>-->
+<!--        &lt;!&ndash; 添加附加的appender,最多只能添加一个 &ndash;&gt;-->
+<!--        <appender-ref ref="INFO-LOG"/>-->
+<!--    </appender>-->
+
+<!--    <appender name="ASYNC-ERROR" class="ch.qos.logback.classic.AsyncAppender">-->
+<!--        &lt;!&ndash; 不丢失日志.默认的,如果队列的80%已满,则会丢弃TRACT、DEBUG、INFO级别的日志 &ndash;&gt;-->
+<!--        <discardingThreshold>0</discardingThreshold>-->
+<!--        &lt;!&ndash; 更改默认的队列的深度,该值会影响性能.默认值为256 &ndash;&gt;-->
+<!--        <queueSize>256</queueSize>-->
+<!--        &lt;!&ndash; 添加附加的appender,最多只能添加一个 &ndash;&gt;-->
+<!--        <appender-ref ref="ERROR-LOG"/>-->
+<!--    </appender>-->
+
+<!--    <root level="info">-->
+<!--        <appender-ref ref="CONSOLE-LOG"/>-->
+<!--        <appender-ref ref="INFO-LOG"/>-->
+<!--        <appender-ref ref="ERROR-LOG"/>-->
+<!--    </root>-->
+</configuration>

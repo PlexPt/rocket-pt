@@ -3,7 +3,7 @@ package com.rocketpt.server.controller;
 import com.rocketpt.server.common.Constants;
 import com.rocketpt.server.common.exception.RocketPTException;
 import com.rocketpt.server.dto.param.LoginParam;
-import com.rocketpt.server.sys.dto.UserinfoDTO;
+import com.rocketpt.server.dto.sys.UserinfoDTO;
 import com.rocketpt.server.sys.service.CaptchaService;
 import com.rocketpt.server.sys.service.SessionService;
 
@@ -20,6 +20,7 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.ServletOutputStream;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -29,6 +30,7 @@ import lombok.RequiredArgsConstructor;
  * @author plexpt
  */
 @RestController
+@Tag(name = "登录相关", description = Constants.FinishStatus.FINISHED)
 @RequiredArgsConstructor
 public class LoginController {
 

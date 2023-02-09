@@ -5,7 +5,7 @@ import com.rocketpt.server.common.CommonResultStatus;
 import com.rocketpt.server.common.exception.UserException;
 import com.rocketpt.server.dto.entity.Organization;
 import com.rocketpt.server.sys.repository.OrganizationRepository;
-import com.rocketpt.server.sys.dto.OrgTreeDTO;
+import com.rocketpt.server.dto.sys.OrgTreeDTO;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

@@ -1,7 +1,7 @@
-package com.rocketpt.server.web.dao;
+package com.rocketpt.server.dao;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.rocketpt.server.web.entity.TorrentsEntity;
+import com.rocketpt.server.dto.entity.TorrentsEntity;
 
 import org.apache.ibatis.annotations.Mapper;
 

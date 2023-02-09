@@ -1,10 +1,11 @@
 package com.rocketpt.server.controller;
 
+import com.rocketpt.server.common.Constants;
 import com.rocketpt.server.common.authz.RequiresPermissions;
 import com.rocketpt.server.dto.entity.User;
+import com.rocketpt.server.dto.sys.PageDTO;
 import com.rocketpt.server.sys.service.OrganizationService;
 import com.rocketpt.server.sys.service.UserService;
-import com.rocketpt.server.sys.dto.PageDTO;
 
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -19,25 +20,25 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import lombok.RequiredArgsConstructor;
 
 /**
  * @author plexpt
  */
 @SecurityRequirement(name = "bearerAuth")
 @RestController
+@Tag(name = "用户相关", description = Constants.FinishStatus.FINISHED)
+@RequiredArgsConstructor
 @RequestMapping("/users")
 public class UserController {
 
     private final OrganizationService organizationService;
     private final UserService userService;
 
-    public UserController(OrganizationService organizationService, UserService userService) {
-        this.organizationService = organizationService;
-        this.userService = userService;
-    }
 
     @RequiresPermissions("user:view")
     @GetMapping

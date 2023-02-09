@@ -1,9 +1,10 @@
 package com.rocketpt.server.controller;
 
+import com.rocketpt.server.common.Constants;
 import com.rocketpt.server.common.base.Res;
-import com.rocketpt.server.web.entity.TorrentsEntity;
-import com.rocketpt.server.web.entity.param.TorrentParam;
-import com.rocketpt.server.web.service.TorrentsService;
+import com.rocketpt.server.dto.entity.TorrentsEntity;
+import com.rocketpt.server.dto.param.TorrentParam;
+import com.rocketpt.server.service.TorrentsService;
 
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.Arrays;
 import java.util.Objects;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 
 
@@ -23,6 +25,7 @@ import lombok.RequiredArgsConstructor;
  * @date 2023-01-28 00:01:53
  */
 @RestController
+@Tag(name = "torrent种子相关", description = Constants.FinishStatus.FINISHED)
 @RequiredArgsConstructor
 @RequestMapping("/torrent")
 public class TorrentsController {

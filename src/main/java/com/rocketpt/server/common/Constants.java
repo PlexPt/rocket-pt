@@ -20,4 +20,23 @@ public interface Constants {
 
         String[] ORDER_TYPE = new String[]{"desc", "asc", "DESC", "ASC"};
     }
+
+    interface FinishStatus {
+
+        /**
+         * 已完成并测试
+         */
+        String FINISHED = " (已完成并测试通过)";
+
+        /**
+         * 未完成未测试
+         */
+        String UNFINISHED = " (未完成未测试)";
+
+        /**
+         * 已完成但未测试
+         */
+        String FINISHED_NOT_TEST = " (已完成但未测试)";
+
+    }
 }

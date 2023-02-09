@@ -5,9 +5,9 @@ import com.rocketpt.server.common.SessionItemHolder;
 import com.rocketpt.server.common.authz.RequiresPermissions;
 import com.rocketpt.server.dto.entity.Resource;
 import com.rocketpt.server.sys.service.ResourceService;
-import com.rocketpt.server.sys.dto.MenuResourceDTO;
-import com.rocketpt.server.sys.dto.ResourceTreeDTO;
-import com.rocketpt.server.sys.dto.UserinfoDTO;
+import com.rocketpt.server.dto.sys.MenuResourceDTO;
+import com.rocketpt.server.dto.sys.ResourceTreeDTO;
+import com.rocketpt.server.dto.sys.UserinfoDTO;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,22 +23,23 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import lombok.RequiredArgsConstructor;
 
 /**
  * @author plexpt
  */
 @SecurityRequirement(name = "bearerAuth")
 @RestController
+@RequiredArgsConstructor
+@Tag(name = "系统菜单资源相关", description = Constants.FinishStatus.FINISHED)
 @RequestMapping("/resources")
 public class ResourceController {
 
     private final ResourceService resourceService;
 
-    public ResourceController(ResourceService resourceService) {
-        this.resourceService = resourceService;
-    }
 
     @GetMapping("/menu")
     public ResponseEntity<List<MenuResourceDTO>> findMenus() {
