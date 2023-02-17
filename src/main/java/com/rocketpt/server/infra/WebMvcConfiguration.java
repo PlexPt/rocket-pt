@@ -29,6 +29,8 @@ public class WebMvcConfiguration implements WebMvcConfigurer {
         loginInterceptor.addPathPatterns("/**");
         loginInterceptor.excludePathPatterns(
                 "/login",
+                "/register",
+                "/validate/**",
                 "/swagger-ui.html",
                 "/swagger-ui/**",
                 "/v3/api-docs/**",

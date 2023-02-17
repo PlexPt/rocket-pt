@@ -124,7 +124,7 @@ public class LocalSessionManager implements SessionManager {
             UserinfoDTO userinfo = new UserinfoDTO(session.getToken(), user.getId(),
                     user.getUsername(), user.getFullName(), user.getAvatar(),
                     new UserinfoDTO.Credential(credential.getIdentifier(),
-                            credential.getIdentityType()), permissions);
+                            credential.getIdentityType(), credential.getPasskey()), permissions);
             session.setData(JsonUtils.stringify(userinfo));
             sessionRepository.updateById(session);
         });

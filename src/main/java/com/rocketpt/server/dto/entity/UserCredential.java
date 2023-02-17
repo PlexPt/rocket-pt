@@ -10,6 +10,7 @@ import com.rocketpt.server.common.exception.RocketPTException;
 
 import java.security.NoSuchAlgorithmException;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
@@ -20,9 +21,16 @@ import lombok.RequiredArgsConstructor;
  * @author plexpt
  */
 @Data
-@NoArgsConstructor
+@AllArgsConstructor
 @TableName("user_credential")
 public class UserCredential extends EntityBase {
+
+    private Long userId;
+    /**
+     * 密码凭证（站内的保存密码，站外的不保存或保存token）
+     */
+    @TableField(insertStrategy = FieldStrategy.NOT_EMPTY, updateStrategy = FieldStrategy.NOT_EMPTY)
+    private String credential;
 
     /**
      * 标识（手机号 邮箱 用户名或第三方应用的唯一标识）
@@ -30,22 +38,20 @@ public class UserCredential extends EntityBase {
     @TableField(insertStrategy = FieldStrategy.NOT_EMPTY, updateStrategy = FieldStrategy.NOT_EMPTY)
     private String identifier;
 
-    private String userId;
-    /**
-     * 密码凭证（站内的保存密码，站外的不保存或保存token）
-     */
-    @TableField(insertStrategy = FieldStrategy.NOT_EMPTY, updateStrategy = FieldStrategy.NOT_EMPTY)
-    private String credential;
     /**
      * 登录类型（手机号 邮箱 用户名）或第三方应用名称（微信 微博等）
      */
     private IdentityType identityType;
 
-    public UserCredential(String identifier, String credential, IdentityType identityType) {
-        this.identifier = identifier;
-        this.credential = credential;
-        this.identityType = identityType;
-    }
+    /**
+     * passkey
+     * */
+    private String passkey;
+
+    /**
+     * 二步验证 totp
+     * */
+    private String totp;
 
     public boolean doCredentialMatch(String credential) {
         try {

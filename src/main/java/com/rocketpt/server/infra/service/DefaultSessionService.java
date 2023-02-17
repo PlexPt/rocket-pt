@@ -51,7 +51,7 @@ public class DefaultSessionService implements SessionService {
             UserinfoDTO userinfo = new UserinfoDTO(token, user.getId(), user.getUsername(),
                     user.getFullName(), user.getAvatar(),
                     new UserinfoDTO.Credential(credential.getIdentifier(),
-                            credential.getIdentityType()), permissions);
+                            credential.getIdentityType(), credential.getPasskey()), permissions);
             sessionManager.store(token, credential, userinfo);
             SessionItemHolder.setItem(Constants.SESSION_CURRENT_USER, userinfo);
             DomainEventPublisher.instance().publish(new UserLoggedIn(userinfo));

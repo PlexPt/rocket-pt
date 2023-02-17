@@ -1,31 +1,36 @@
 package com.rocketpt.server.sys.service;
 
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.rocketpt.server.common.CommonResultStatus;
 import com.rocketpt.server.common.DomainEventPublisher;
-import com.rocketpt.server.util.JsonUtils;
+import com.rocketpt.server.common.base.I18nMessage;
 import com.rocketpt.server.common.exception.RocketPTException;
-import com.rocketpt.server.dto.param.RegisterParam;
-import com.rocketpt.server.sys.dto.PageDTO;
 import com.rocketpt.server.dto.entity.Organization;
 import com.rocketpt.server.dto.entity.User;
+import com.rocketpt.server.dto.entity.UserCredential;
+import com.rocketpt.server.dto.param.RegisterParam;
+import com.rocketpt.server.infra.service.CheckCodeManager;
+import com.rocketpt.server.infra.service.PasskeyManager;
+import com.rocketpt.server.sys.dto.PageDTO;
 import com.rocketpt.server.sys.event.UserCreated;
 import com.rocketpt.server.sys.event.UserDeleted;
 import com.rocketpt.server.sys.event.UserUpdated;
 import com.rocketpt.server.sys.repository.UserRepository;
-
+import com.rocketpt.server.util.JsonUtils;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import lombok.RequiredArgsConstructor;
 
 import static com.rocketpt.server.common.CommonResultStatus.RECORD_NOT_EXIST;
 
@@ -37,15 +42,21 @@ import static com.rocketpt.server.common.CommonResultStatus.RECORD_NOT_EXIST;
 public class UserService extends ServiceImpl<UserRepository, User> {
 
     private final UserRepository userRepository;
+    private final InvitationService invitationService;
+    private final UserCredentialService userCredentialService;
+    private final CheckCodeManager checkCodeManager;
+    private final PasskeyManager passkeyManager;
+    private final CaptchaService captchaService;
 
     @Transactional(rollbackFor = Exception.class)
     public User createUser(String username, String fullName, String avatar, User.Gender gender,
-                           User.State state, Long organization) {
+                           String email, User.State state, Long organization) {
         User user = new User();
         user.setUsername(username);
         user.setFullName(fullName);
         user.setAvatar(avatar);
         user.setGender(gender);
+        user.setEmail(email);
         user.setState(state);
         user.setCreatedTime(LocalDateTime.now());
         user.setOrganizationId(organization);
@@ -121,6 +132,12 @@ public class UserService extends ServiceImpl<UserRepository, User> {
         return new PageDTO<>(users, total);
     }
 
+    public boolean isExists(String email) {
+        return count(Wrappers.<User>lambdaQuery()
+                .eq(User::getEmail, email)
+        ) != 0;
+    }
+
     @Transactional(rollbackFor = Exception.class)
     public void delete(Long userId) {
         User user = findUserById(userId);
@@ -128,9 +145,30 @@ public class UserService extends ServiceImpl<UserRepository, User> {
         DomainEventPublisher.instance().publish(new UserDeleted(user));
     }
 
-    public boolean register(RegisterParam param) {
-
-
-        return true;
+    @Transactional(rollbackFor = SQLException.class)
+    public void register(RegisterParam param) {
+        if (!captchaService.verifyCaptcha(param.getUuid(), param.getCode()))
+            throw new RocketPTException("验证码不正确");
+        if (!invitationService.check(param.getEmail(), param.getInvitationCode()))
+            throw new RocketPTException(CommonResultStatus.PARAM_ERROR, I18nMessage.getMessage("invitation_not_exists"));
+        if (isExists(param.getEmail()))
+            throw new RocketPTException(CommonResultStatus.PARAM_ERROR, I18nMessage.getMessage("email_exists"));
+        User user = createUser(
+                param.getUsername(), param.getNickname(), null, null,
+                param.getEmail(), User.State.INACTIVATED, 3L
+        );
+        String checkCode = checkCodeManager.generate(user.getId(), user.getEmail());
+        user.setCheckCode(checkCode);
+        updateById(user);
+        UserCredential userCredential = new UserCredential(
+                user.getId(),
+                userCredentialService.generate(param.getUsername(), param.getPassword()),
+                param.getUsername(),
+                UserCredential.IdentityType.PASSWORD,
+                passkeyManager.generate(user.getId()),
+                null
+        );
+        userCredentialService.save(userCredential);
+        invitationService.consume(param.getEmail(), param.getInvitationCode(), user);
     }
 }

@@ -6,6 +6,7 @@ import com.dampcake.bencode.Type;
 import com.rocketpt.server.common.CommonResultStatus;
 import com.rocketpt.server.common.Constants;
 import com.rocketpt.server.common.SessionItemHolder;
+import com.rocketpt.server.common.base.I18nMessage;
 import com.rocketpt.server.common.exception.RocketPTException;
 import com.rocketpt.server.dto.TorrentDto;
 import com.rocketpt.server.dto.entity.TorrentFile;
@@ -33,7 +34,6 @@ public class DefaultTorrentManager implements TorrentManager {
 
     private final Bencode bencode = new Bencode(StandardCharsets.UTF_8);
     private final Bencode infoBencode = new Bencode(StandardCharsets.ISO_8859_1);
-
     private final TorrentFileRepository torrentFileRepository;
 
     @Override
@@ -41,7 +41,7 @@ public class DefaultTorrentManager implements TorrentManager {
         Map<String, Object> decodeDict = bencode.decode(bytes, Type.DICTIONARY);
         if (decodeDict.containsKey("piece layers") || decodeDict.containsKey("files tree") ||
                 decodeDict.containsKey("meta version") && (int) decodeDict.get("meta version") == 2) {
-            throw new RocketPTException(CommonResultStatus.PARAM_ERROR, "Bittorrent Protocol v2协议版本的种子文件暂不支持。");
+            throw new RocketPTException(CommonResultStatus.PARAM_ERROR, I18nMessage.getMessage("protocol_v2_not_support"));
         }
         Map<String, Object> infoDict = (Map<String, Object>) decodeDict.get("info");
         Long size;
@@ -93,14 +93,14 @@ public class DefaultTorrentManager implements TorrentManager {
 
     @Override
     public byte[] fetch(Integer torrentId) {
-        Optional<TorrentFile> fileOptional = Optional.of(torrentFileRepository.selectOne(
+        Optional<TorrentFile> fileOptional = Optional.ofNullable(torrentFileRepository.selectOne(
                 Wrappers.<TorrentFile>lambdaQuery()
                         .eq(TorrentFile::getTorrentId, torrentId)
         ));
-        if (fileOptional.isEmpty()) throw new RocketPTException(CommonResultStatus.PARAM_ERROR, "无此种子文件。");
+        if (fileOptional.isEmpty()) throw new RocketPTException(CommonResultStatus.PARAM_ERROR, I18nMessage.getMessage("torrent_not_exists"));
         Map<String, Object> decodedMap = infoBencode.decode(fileOptional.get().getFile(), Type.DICTIONARY);
         UserinfoDTO dto = (UserinfoDTO) SessionItemHolder.getItem(Constants.SESSION_CURRENT_USER);
-        decodedMap.put("announce", Constants.Announce.PROTOCOL + "://" + Constants.Announce.HOSTNAME + ":" + Constants.Announce.PORT + "/announce?key=" + dto.userId());
+        decodedMap.put("announce", Constants.Announce.PROTOCOL + "://" + Constants.Announce.HOSTNAME + ":" + Constants.Announce.PORT + "/" + dto.credential().passkey());
         return infoBencode.encode(decodedMap);
     }
 }

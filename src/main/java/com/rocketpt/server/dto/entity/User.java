@@ -34,9 +34,14 @@ public class User extends EntityBase {
     @TableField(insertStrategy = FieldStrategy.NOT_EMPTY, updateStrategy = FieldStrategy.NOT_EMPTY)
     private State state;
 
+    @TableField(insertStrategy = FieldStrategy.NOT_EMPTY, updateStrategy = FieldStrategy.NOT_EMPTY)
+    private String email;
+
     private LocalDateTime createdTime;
 
     private Long organizationId;
+
+    private String checkCode;
 
     //    @PrePersist
     protected void onCreate() {

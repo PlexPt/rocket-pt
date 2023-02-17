@@ -7,7 +7,6 @@ import com.rocketpt.server.common.CommonResultStatus;
 import com.rocketpt.server.common.Constants;
 import com.rocketpt.server.common.SessionItemHolder;
 import com.rocketpt.server.common.base.Res;
-import com.rocketpt.server.common.base.ResPage;
 import com.rocketpt.server.common.exception.RocketPTException;
 import com.rocketpt.server.dto.TorrentDto;
 import com.rocketpt.server.dto.entity.TorrentFile;
@@ -15,7 +14,6 @@ import com.rocketpt.server.infra.service.TorrentManager;
 import com.rocketpt.server.sys.dto.UserinfoDTO;
 import com.rocketpt.server.web.dao.TorrentsDao;
 import com.rocketpt.server.web.entity.TorrentsEntity;
-import com.rocketpt.server.web.entity.param.TorrentParam;
 import jakarta.annotation.Resource;
 import lombok.SneakyThrows;
 import org.springframework.stereotype.Service;
@@ -23,7 +21,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.SQLException;
 import java.util.Date;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -36,12 +33,6 @@ public class TorrentsService extends ServiceImpl<TorrentsDao, TorrentsEntity> {
 
     @Resource
     private TorrentManager torrentManager;
-
-    public Res queryPage(TorrentParam params) {
-        List<TorrentsEntity> list = list();
-
-        return Res.ok(list, new ResPage(list.size(), 1, 50));
-    }
 
     @SneakyThrows
     @Transactional(rollbackFor = SQLException.class)

@@ -48,8 +48,10 @@ public class UserController {
     @RequiresPermissions("user:create")
     @PostMapping
     public ResponseEntity<User> createUser(@RequestBody @Valid CreateUserRequest request) {
-        return new ResponseEntity<>(userService.createUser(request.username(), request.fullName()
-                , request.avatar(), request.gender(), User.State.NORMAL, request.organizationId()),
+        return new ResponseEntity<>(
+                userService.createUser(
+                        request.username(), request.fullName(), request.avatar(), request.gender(),
+                        request.email, User.State.NORMAL, request.organizationId()),
                 HttpStatus.CREATED);
     }
 
@@ -81,7 +83,7 @@ public class UserController {
     }
 
     record CreateUserRequest(@NotBlank String username, @NotBlank String fullName,
-                             @NotNull User.Gender gender,
+                             @NotNull User.Gender gender, String email,
                              @NotBlank String avatar, Long organizationId) {
     }
 
