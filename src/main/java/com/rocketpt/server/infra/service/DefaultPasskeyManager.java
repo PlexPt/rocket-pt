@@ -4,7 +4,7 @@ import com.rocketpt.server.common.CommonResultStatus;
 import com.rocketpt.server.common.Constants;
 import com.rocketpt.server.common.SessionItemHolder;
 import com.rocketpt.server.common.exception.RocketPTException;
-import com.rocketpt.server.sys.dto.UserinfoDTO;
+import com.rocketpt.server.dto.sys.UserinfoDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;

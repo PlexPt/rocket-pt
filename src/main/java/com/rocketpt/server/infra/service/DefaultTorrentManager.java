@@ -10,7 +10,7 @@ import com.rocketpt.server.common.base.I18nMessage;
 import com.rocketpt.server.common.exception.RocketPTException;
 import com.rocketpt.server.dto.TorrentDto;
 import com.rocketpt.server.dto.entity.TorrentFile;
-import com.rocketpt.server.sys.dto.UserinfoDTO;
+import com.rocketpt.server.dto.sys.UserinfoDTO;
 import com.rocketpt.server.sys.repository.TorrentFileRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

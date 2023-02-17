@@ -7,12 +7,12 @@ import com.rocketpt.server.common.SessionItemHolder;
 import com.rocketpt.server.common.exception.UserException;
 import com.rocketpt.server.dto.entity.User;
 import com.rocketpt.server.dto.entity.UserCredential;
-import com.rocketpt.server.sys.event.UserLoggedIn;
-import com.rocketpt.server.sys.event.UserLoggedOut;
+import com.rocketpt.server.dto.event.UserLoggedIn;
+import com.rocketpt.server.dto.event.UserLoggedOut;
 import com.rocketpt.server.sys.repository.UserCredentialRepository;
 import com.rocketpt.server.sys.repository.UserRepository;
 import com.rocketpt.server.sys.service.SessionService;
-import com.rocketpt.server.sys.dto.UserinfoDTO;
+import com.rocketpt.server.dto.sys.UserinfoDTO;
 
 import org.springframework.stereotype.Service;
 

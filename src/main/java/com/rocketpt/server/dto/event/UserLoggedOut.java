@@ -1,7 +1,7 @@
-package com.rocketpt.server.sys.event;
+package com.rocketpt.server.dto.event;
 
 import com.rocketpt.server.common.DomainEvent;
-import com.rocketpt.server.sys.dto.UserinfoDTO;
+import com.rocketpt.server.dto.sys.UserinfoDTO;
 
 /**
  * @author plexpt

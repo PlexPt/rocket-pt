@@ -1,4 +1,4 @@
-package com.rocketpt.server.web.service;
+package com.rocketpt.server.service;
 
 import cn.hutool.core.bean.BeanUtil;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
@@ -8,12 +8,12 @@ import com.rocketpt.server.common.Constants;
 import com.rocketpt.server.common.SessionItemHolder;
 import com.rocketpt.server.common.base.Res;
 import com.rocketpt.server.common.exception.RocketPTException;
+import com.rocketpt.server.dao.TorrentsDao;
 import com.rocketpt.server.dto.TorrentDto;
 import com.rocketpt.server.dto.entity.TorrentFile;
+import com.rocketpt.server.dto.entity.TorrentsEntity;
+import com.rocketpt.server.dto.sys.UserinfoDTO;
 import com.rocketpt.server.infra.service.TorrentManager;
-import com.rocketpt.server.sys.dto.UserinfoDTO;
-import com.rocketpt.server.web.dao.TorrentsDao;
-import com.rocketpt.server.web.entity.TorrentsEntity;
 import jakarta.annotation.Resource;
 import lombok.SneakyThrows;
 import org.springframework.stereotype.Service;
@@ -52,7 +52,7 @@ public class TorrentsService extends ServiceImpl<TorrentsDao, TorrentsEntity> {
         entity.setFilename(Constants.Source.PREFIX + name + ".torrent");
         entity.setSize(dto.getTorrentSize());
         entity.setNumfiles(dto.getTorrentCount().intValue());
-        entity.setType(dto.getTorrentCount() > 1 ? "multi" : "single");
+        entity.setType(dto.getTorrentCount() > 1 ? TorrentsEntity.Type.multi : TorrentsEntity.Type.single);
         UserinfoDTO userinfoDTO = (UserinfoDTO) SessionItemHolder.getItem(Constants.SESSION_CURRENT_USER);
         entity.setOwner(userinfoDTO.userId().intValue());
         entity.setAdded(new Date());

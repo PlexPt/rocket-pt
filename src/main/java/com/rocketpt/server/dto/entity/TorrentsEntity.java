@@ -1,64 +1,66 @@
-package com.rocketpt.server.web.entity;
+package com.rocketpt.server.dto.entity;
 
+import com.baomidou.mybatisplus.annotation.EnumValue;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 
 import java.util.Date;
 
 import lombok.Data;
+import lombok.RequiredArgsConstructor;
 
 /**
  * @author plexpt
  * @email plexpt@gmail.com
- * @date 2023-01-28 00:01:53
+ * @date 2023-02-09 14:43:20
  */
 @Data
 @TableName("torrents")
 public class TorrentsEntity {
 
     /**
-     * id
+     *
      */
     @TableId
     private Integer id;
     /**
-     * 种子hash
+     * 种子哈希
      */
     private byte[] infoHash;
     /**
-     * 标题
+     * 名称
      */
     private String name;
     /**
-     * 上传文件名
+     * 文件名
      */
     private String filename;
     /**
-     * 下载文件名
+     * 存储名称
      */
     private String saveAs;
     /**
-     *
+     * 封面
      */
     private String cover;
     /**
-     * 简介
+     * 描述
      */
     private String descr;
     /**
-     * 副标题
+     * 简介副标题
      */
     private String smallDescr;
     /**
-     *
+     * 原始描述
      */
     private String oriDescr;
     /**
-     * 分类
+     * 类别
      */
     private Integer category;
     /**
-     *
+     * 来源
      */
     private Integer source;
     /**
@@ -86,76 +88,75 @@ public class TorrentsEntity {
      */
     private Integer audiocodec;
     /**
-     * 体积
+     * 大小
      */
     private Long size;
     /**
-     *
+     * 添加日期
      */
     private Date added;
     /**
-     * Enum
+     * 类型
      */
-    private String type;
+    private Type type;
     /**
-     *
+     * 文件数量
      */
     private Integer numfiles;
     /**
-     *
+     * 评论数
      */
     private Integer comments;
     /**
-     *
+     * 浏览次数
      */
     private Integer views;
     /**
-     *
+     * 点击次数
      */
     private Integer hits;
     /**
-     *
+     * 完成次数
      */
     private Integer timesCompleted;
     /**
-     *
+     * 下载数
      */
     private Integer leechers;
     /**
-     *
+     * 做种数
      */
     private Integer seeders;
     /**
-     *
+     * 最后操作日期
      */
     private Date lastAction;
     /**
-     * Enum
+     * 可见性
      */
     private String visible;
     /**
-     * Enum
+     *
      */
     private String banned;
     /**
-     *
+     * 拥有者
      */
     private Integer owner;
-
     /**
      *
      */
     private Integer spState;
     /**
-     *
+     * 促销时间类型
      */
     private Integer promotionTimeType;
     /**
-     *
+     * 促销截止日期
      */
     private Date promotionUntil;
     /**
-     * Enum
+     * 匿名
      */
     private String anonymous;
     /**
@@ -163,11 +164,11 @@ public class TorrentsEntity {
      */
     private Integer url;
     /**
-     *
+     * 位置状态
      */
     private String posState;
     /**
-     *
+     * 位置状态截止日期
      */
     private Date posStateUntil;
     /**
@@ -175,19 +176,19 @@ public class TorrentsEntity {
      */
     private Integer cacheStamp;
     /**
-     * Enum
+     * 推荐类型
      */
     private String picktype;
     /**
-     *
+     * 推荐日期
      */
     private Date picktime;
     /**
-     *
+     * 最后做种日期
      */
     private Date lastReseed;
     /**
-     *
+     * ptgen生成内容
      */
     private String ptGen;
     /**
@@ -199,8 +200,17 @@ public class TorrentsEntity {
      */
     private Integer hr;
     /**
-     *
+     * 审批状态
      */
     private Integer approvalStatus;
+
+    @RequiredArgsConstructor
+    public enum Type {
+        single(1),
+        multi(2);
+
+        @EnumValue
+        private final int code;
+    }
 
 }

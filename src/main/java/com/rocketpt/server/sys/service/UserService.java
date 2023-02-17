@@ -11,14 +11,15 @@ import com.rocketpt.server.common.exception.RocketPTException;
 import com.rocketpt.server.dto.entity.Organization;
 import com.rocketpt.server.dto.entity.User;
 import com.rocketpt.server.dto.entity.UserCredential;
+import com.rocketpt.server.dto.event.UserCreated;
+import com.rocketpt.server.dto.event.UserDeleted;
+import com.rocketpt.server.dto.event.UserUpdated;
 import com.rocketpt.server.dto.param.RegisterParam;
+import com.rocketpt.server.dto.sys.PageDTO;
 import com.rocketpt.server.infra.service.CheckCodeManager;
 import com.rocketpt.server.infra.service.PasskeyManager;
-import com.rocketpt.server.sys.dto.PageDTO;
-import com.rocketpt.server.sys.event.UserCreated;
-import com.rocketpt.server.sys.event.UserDeleted;
-import com.rocketpt.server.sys.event.UserUpdated;
 import com.rocketpt.server.sys.repository.UserRepository;
+import com.rocketpt.server.util.IPUtils;
 import com.rocketpt.server.util.JsonUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -154,11 +155,13 @@ public class UserService extends ServiceImpl<UserRepository, User> {
         if (isExists(param.getEmail()))
             throw new RocketPTException(CommonResultStatus.PARAM_ERROR, I18nMessage.getMessage("email_exists"));
         User user = createUser(
-                param.getUsername(), param.getNickname(), null, null,
+                param.getUsername(), param.getNickname(), null, User.Gender.valueof(param.getSex()),
                 param.getEmail(), User.State.INACTIVATED, 3L
         );
         String checkCode = checkCodeManager.generate(user.getId(), user.getEmail());
         user.setCheckCode(checkCode);
+        user.setRegIp(IPUtils.getIpAddr());
+        user.setRegType(param.getType());
         updateById(user);
         UserCredential userCredential = new UserCredential(
                 user.getId(),
@@ -171,4 +174,6 @@ public class UserService extends ServiceImpl<UserRepository, User> {
         userCredentialService.save(userCredential);
         invitationService.consume(param.getEmail(), param.getInvitationCode(), user);
     }
+
+
 }

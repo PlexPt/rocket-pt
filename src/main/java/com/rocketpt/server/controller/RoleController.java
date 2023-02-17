@@ -1,5 +1,6 @@
 package com.rocketpt.server.controller;
 
+import com.rocketpt.server.common.Constants;
 import com.rocketpt.server.common.authz.RequiresPermissions;
 import com.rocketpt.server.dto.entity.Resource;
 import com.rocketpt.server.dto.entity.Role;
@@ -7,8 +8,8 @@ import com.rocketpt.server.dto.entity.User;
 import com.rocketpt.server.sys.service.ResourceService;
 import com.rocketpt.server.sys.service.RoleService;
 import com.rocketpt.server.sys.service.UserService;
-import com.rocketpt.server.sys.dto.PageDTO;
-import com.rocketpt.server.sys.dto.RoleDTO;
+import com.rocketpt.server.dto.sys.PageDTO;
+import com.rocketpt.server.dto.sys.RoleDTO;
 
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -25,13 +26,17 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 import java.util.Set;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
+import lombok.RequiredArgsConstructor;
 
 /**
  * @author plexpt
  */
 @RestController
+@RequiredArgsConstructor
+@Tag(name = "系统角色相关", description = Constants.FinishStatus.FINISHED)
 @RequestMapping("/roles")
 public class RoleController {
 
@@ -39,12 +44,7 @@ public class RoleController {
     private final RoleService roleService;
     private final ResourceService resourceService;
 
-    public RoleController(UserService userService, RoleService roleService,
-                          ResourceService resourceService) {
-        this.userService = userService;
-        this.roleService = roleService;
-        this.resourceService = resourceService;
-    }
+
 
     @RequiresPermissions("role:view")
     @GetMapping

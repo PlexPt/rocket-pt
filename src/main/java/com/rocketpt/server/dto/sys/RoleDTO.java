@@ -1,4 +1,4 @@
-package com.rocketpt.server.sys.dto;
+package com.rocketpt.server.dto.sys;
 
 import java.util.List;
 

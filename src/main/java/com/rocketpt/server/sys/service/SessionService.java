@@ -2,7 +2,7 @@ package com.rocketpt.server.sys.service;
 
 import org.springframework.stereotype.Service;
 
-import com.rocketpt.server.sys.dto.UserinfoDTO;
+import com.rocketpt.server.dto.sys.UserinfoDTO;
 
 /**
  * @author plexpt

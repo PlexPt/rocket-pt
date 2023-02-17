@@ -58,7 +58,7 @@ public class NumberCaptchaService implements CaptchaService {
 
     @Override
     public boolean removeCaptcha(String id) {
-        cache.put(id, null);
+        cache.invalidate(id);
         return false;
     }
 

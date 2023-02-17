@@ -4,7 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.rocketpt.server.util.JsonUtils;
-import com.rocketpt.server.sys.dto.UserinfoDTO;
+import com.rocketpt.server.dto.sys.UserinfoDTO;
 import com.rocketpt.server.dto.entity.Session;
 import com.rocketpt.server.dto.entity.User;
 import com.rocketpt.server.dto.entity.UserCredential;

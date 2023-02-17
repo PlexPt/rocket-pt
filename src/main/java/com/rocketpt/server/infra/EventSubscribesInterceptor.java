@@ -3,10 +3,10 @@ package com.rocketpt.server.infra;
 import com.rocketpt.server.common.DomainEvent;
 import com.rocketpt.server.common.DomainEventPublisher;
 import com.rocketpt.server.common.EventStore;
-import com.rocketpt.server.sys.event.ResourceDeleted;
-import com.rocketpt.server.sys.event.ResourceUpdated;
-import com.rocketpt.server.sys.event.RoleDeleted;
-import com.rocketpt.server.sys.event.RoleUpdated;
+import com.rocketpt.server.dto.event.ResourceDeleted;
+import com.rocketpt.server.dto.event.ResourceUpdated;
+import com.rocketpt.server.dto.event.RoleDeleted;
+import com.rocketpt.server.dto.event.RoleUpdated;
 import com.rocketpt.server.sys.service.SessionService;
 
 import org.springframework.web.servlet.HandlerInterceptor;

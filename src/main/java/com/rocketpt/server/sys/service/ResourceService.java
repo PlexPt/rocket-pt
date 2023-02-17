@@ -8,12 +8,12 @@ import com.rocketpt.server.common.authz.PermissionHelper;
 import com.rocketpt.server.common.exception.UserException;
 import com.rocketpt.server.dto.entity.Resource;
 import com.rocketpt.server.dto.entity.Resource.Type;
-import com.rocketpt.server.sys.event.ResourceCreated;
-import com.rocketpt.server.sys.event.ResourceDeleted;
-import com.rocketpt.server.sys.event.ResourceUpdated;
+import com.rocketpt.server.dto.event.ResourceCreated;
+import com.rocketpt.server.dto.event.ResourceDeleted;
+import com.rocketpt.server.dto.event.ResourceUpdated;
 import com.rocketpt.server.sys.repository.ResourceRepository;
-import com.rocketpt.server.sys.dto.MenuResourceDTO;
-import com.rocketpt.server.sys.dto.ResourceTreeDTO;
+import com.rocketpt.server.dto.sys.MenuResourceDTO;
+import com.rocketpt.server.dto.sys.ResourceTreeDTO;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

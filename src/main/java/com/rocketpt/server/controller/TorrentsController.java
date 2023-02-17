@@ -2,13 +2,15 @@ package com.rocketpt.server.controller;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.rocketpt.server.common.CommonResultStatus;
+import com.rocketpt.server.common.Constants;
 import com.rocketpt.server.common.base.CustomPage;
 import com.rocketpt.server.common.base.I18nMessage;
 import com.rocketpt.server.common.base.Res;
 import com.rocketpt.server.common.exception.RocketPTException;
+import com.rocketpt.server.dto.entity.TorrentsEntity;
 import com.rocketpt.server.infra.service.TorrentManager;
-import com.rocketpt.server.web.entity.TorrentsEntity;
-import com.rocketpt.server.web.service.TorrentsService;
+import com.rocketpt.server.service.TorrentsService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
@@ -30,6 +32,7 @@ import java.util.Optional;
  * @date 2023-01-28 00:01:53
  */
 @RestController
+@Tag(name = "torrent种子相关", description = Constants.FinishStatus.FINISHED)
 @RequiredArgsConstructor
 @RequestMapping("/torrent")
 @Validated
@@ -54,7 +57,6 @@ public class TorrentsController {
     @PostMapping("/info/{id}")
     public Res info(@PathVariable("id") Integer id) {
         TorrentsEntity torrents = torrentsService.getById(id);
-
         return Res.ok(torrents);
     }
 
@@ -108,7 +110,8 @@ public class TorrentsController {
     @PostMapping("/upload")
     public Res upload(@RequestPart("file") MultipartFile multipartFile, @RequestPart("entity") TorrentsEntity torrentsEntity) {
         try {
-            if (multipartFile.isEmpty()) throw new RocketPTException(CommonResultStatus.PARAM_ERROR, I18nMessage.getMessage("torrent_empty"));
+            if (multipartFile.isEmpty())
+                throw new RocketPTException(CommonResultStatus.PARAM_ERROR, I18nMessage.getMessage("torrent_empty"));
             byte[] bytes = multipartFile.getBytes();
             return torrentsService.upload(bytes, torrentsEntity);
         } catch (IOException e) {
@@ -119,7 +122,8 @@ public class TorrentsController {
     @GetMapping("/download")
     public void download(@RequestParam("id") @Positive Integer id, HttpServletResponse response) throws IOException {
         Optional<TorrentsEntity> entityOptional = Optional.ofNullable(torrentsService.getById(id));
-        if (entityOptional.isEmpty()) throw new RocketPTException(CommonResultStatus.PARAM_ERROR, I18nMessage.getMessage("torrent_not_exists"));
+        if (entityOptional.isEmpty())
+            throw new RocketPTException(CommonResultStatus.PARAM_ERROR, I18nMessage.getMessage("torrent_not_exists"));
         byte[] fetch = torrentManager.fetch(id);
         String filename = entityOptional.get().getFilename();
         filename = URLEncoder.encode(filename, StandardCharsets.UTF_8).replaceAll("\\+", "%20");

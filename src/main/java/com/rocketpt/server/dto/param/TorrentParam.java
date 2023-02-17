@@ -1,4 +1,4 @@
-package com.rocketpt.server.web.entity.param;
+package com.rocketpt.server.dto.param;
 
 import com.rocketpt.server.common.base.OrderPageParam;
 

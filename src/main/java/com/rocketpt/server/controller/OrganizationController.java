@@ -1,14 +1,15 @@
 package com.rocketpt.server.controller;
 
 import com.rocketpt.server.common.CommonResultStatus;
+import com.rocketpt.server.common.Constants;
 import com.rocketpt.server.common.authz.RequiresPermissions;
 import com.rocketpt.server.common.exception.UserException;
 import com.rocketpt.server.dto.entity.Organization;
 import com.rocketpt.server.dto.entity.User;
+import com.rocketpt.server.dto.sys.OrgTreeDTO;
+import com.rocketpt.server.dto.sys.PageDTO;
 import com.rocketpt.server.sys.service.OrganizationService;
 import com.rocketpt.server.sys.service.UserService;
-import com.rocketpt.server.sys.dto.OrgTreeDTO;
-import com.rocketpt.server.sys.dto.PageDTO;
 
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -26,9 +27,11 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import lombok.RequiredArgsConstructor;
 
 import static com.rocketpt.server.dto.entity.Organization.Type;
 
@@ -37,17 +40,13 @@ import static com.rocketpt.server.dto.entity.Organization.Type;
  */
 @SecurityRequirement(name = "bearerAuth")
 @RestController
+@Tag(name = "系统组织相关", description = Constants.FinishStatus.FINISHED)
 @RequestMapping("/organizations")
+@RequiredArgsConstructor
 public class OrganizationController {
 
     private final UserService userService;
     private final OrganizationService organizationService;
-
-    public OrganizationController(UserService userService,
-                                  OrganizationService organizationService) {
-        this.userService = userService;
-        this.organizationService = organizationService;
-    }
 
     @RequiresPermissions("user:view")
     @GetMapping("/tree")

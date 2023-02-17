@@ -7,7 +7,7 @@ import com.rocketpt.server.common.authz.PermissionHelper;
 import com.rocketpt.server.common.authz.RequiresPermissions;
 import com.rocketpt.server.common.exception.RocketPTException;
 import com.rocketpt.server.sys.service.SessionService;
-import com.rocketpt.server.sys.dto.UserinfoDTO;
+import com.rocketpt.server.dto.sys.UserinfoDTO;
 
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;

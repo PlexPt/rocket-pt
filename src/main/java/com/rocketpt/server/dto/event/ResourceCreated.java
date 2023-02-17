@@ -1,4 +1,4 @@
-package com.rocketpt.server.sys.event;
+package com.rocketpt.server.dto.event;
 
 import com.rocketpt.server.common.DomainEvent;
 import com.rocketpt.server.dto.entity.Resource;
@@ -6,5 +6,5 @@ import com.rocketpt.server.dto.entity.Resource;
 /**
  * @author plexpt
  */
-public record ResourceUpdated(Resource resource) implements DomainEvent {
+public record ResourceCreated(Resource resource) implements DomainEvent {
 }

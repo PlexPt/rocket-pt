@@ -1,25 +1,24 @@
 package com.rocketpt.server.dto.entity;
 
-import com.baomidou.mybatisplus.annotation.EnumValue;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.rocketpt.server.common.exception.RocketPTException;
 
-import java.time.LocalDateTime;
 import java.util.Date;
 
 import lombok.Data;
-import lombok.RequiredArgsConstructor;
-
 
 /**
- * 用户
- *
  * @author plexpt
+ * @email plexpt@gmail.com
+ * @date 2023-02-09 12:01:16
  */
 @Data
 @TableName("user")
-public class User extends EntityBase {
+public class UserEntity {
 
+
+    @TableId
+    private Long id;
     /**
      * 头像
      */
@@ -27,7 +26,7 @@ public class User extends EntityBase {
     /**
      * 创建时间
      */
-    private LocalDateTime createdTime;
+    private Date createdTime;
     /**
      * 全名
      */
@@ -35,12 +34,11 @@ public class User extends EntityBase {
     /**
      * 性别 0男 1女 2其他
      */
-    private Gender gender;
+    private Integer gender;
     /**
      * 状态 0正常 1 已锁定 2未激活
      */
-    private State state;
-
+    private Integer state;
     /**
      * 账户名
      */
@@ -165,57 +163,5 @@ public class User extends EntityBase {
      * 经验值
      */
     private Long exp;
-
-    private String checkCode;
-
-    //    @PrePersist
-    protected void onCreate() {
-        this.createdTime = LocalDateTime.now();
-    }
-
-    /**
-     * 注册类型
-     * <p>
-     * 0.系统手动添加
-     * 1.开放注册
-     * 2.受邀注册
-     * 3.自助答题注册
-     */
-    private Integer regType;
-
-
-    @RequiredArgsConstructor
-    public enum Gender {
-        MALE(0),
-        FEMALE(1),
-        OTHER(2);
-
-        @EnumValue
-        private final int code;
-
-        public static Gender valueof(int value) {
-            for (Gender gender : Gender.values()) {
-                if (gender.code == value) {
-                    return gender;
-                }
-            }
-
-            throw new RocketPTException("性别错误");
-        }
-    }
-
-    @RequiredArgsConstructor
-    public enum State {
-        NORMAL(0),
-        LOCKED(1),
-        INACTIVATED(2);
-        @EnumValue
-        private final int code;
-    }
-
-    public boolean userLocked() {
-        return this.state == State.LOCKED;
-    }
-
 
 }
