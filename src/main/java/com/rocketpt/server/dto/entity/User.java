@@ -168,11 +168,6 @@ public class User extends EntityBase {
 
     private String checkCode;
 
-    //    @PrePersist
-    protected void onCreate() {
-        this.createdTime = LocalDateTime.now();
-    }
-
     /**
      * 注册类型
      * <p>
