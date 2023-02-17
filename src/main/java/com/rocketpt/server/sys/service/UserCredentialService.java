@@ -1,34 +1,41 @@
 package com.rocketpt.server.sys.service;
 
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.rocketpt.server.common.CommonResultStatus;
+import com.rocketpt.server.common.exception.RocketPTException;
 import com.rocketpt.server.dto.entity.UserCredential;
+import com.rocketpt.server.infra.service.PasskeyManager;
 import com.rocketpt.server.sys.repository.UserCredentialRepository;
 import com.rocketpt.server.util.SecurityUtil;
-
+import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import org.springframework.stereotype.Service;
 
-import cn.hutool.core.lang.UUID;
+import java.util.Optional;
 
-/**
- * @author pt
- */
 @Service
+@RequiredArgsConstructor
 public class UserCredentialService extends ServiceImpl<UserCredentialRepository, UserCredential> {
 
+    private final PasskeyManager passkeyManager;
 
-    public void register(String userName, Long userId, String password) {
-
-
-        UserCredential userCredential = new UserCredential();
-        userCredential.setUserId(userId);
-        userCredential.setIdentifier(userName);
-        userCredential.setIdentityType(UserCredential.IdentityType.PASSWORD);
-        userCredential.setCredential(SecurityUtil.md5(userName, password));
-        userCredential.setPasskey(UUID.fastUUID().toString(true));
-
-        save(userCredential);
-
+    @SneakyThrows
+    String generate(String username, String password) {
+        return SecurityUtil.md5(username, password);
     }
 
-
+    void refreshPasskey(long userId) {
+        String key = passkeyManager.generate(userId);
+        Optional<UserCredential> optional = Optional.ofNullable(
+                getOne(
+                        Wrappers.<UserCredential>lambdaQuery()
+                                .eq(UserCredential::getUserId, userId)
+                )
+        );
+        if (optional.isEmpty()) throw new RocketPTException(CommonResultStatus.PARAM_ERROR);
+        UserCredential credential = optional.get();
+        credential.setPasskey(key);
+        updateById(credential);
+    }
 }

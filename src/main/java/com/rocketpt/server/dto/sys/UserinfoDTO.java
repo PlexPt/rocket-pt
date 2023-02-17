@@ -16,7 +16,7 @@ public record UserinfoDTO(String token,
                           Credential credential,
                           Set<String> permissions) implements Serializable {
 
-    public record Credential(String identifier, UserCredential.IdentityType type) {
+    public record Credential(String identifier, UserCredential.IdentityType type, String passkey) {
     }
 
 }

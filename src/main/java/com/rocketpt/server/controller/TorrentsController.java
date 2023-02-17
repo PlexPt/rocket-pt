@@ -1,22 +1,29 @@
 package com.rocketpt.server.controller;
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.rocketpt.server.common.CommonResultStatus;
 import com.rocketpt.server.common.Constants;
+import com.rocketpt.server.common.base.CustomPage;
+import com.rocketpt.server.common.base.I18nMessage;
 import com.rocketpt.server.common.base.Res;
+import com.rocketpt.server.common.exception.RocketPTException;
 import com.rocketpt.server.dto.entity.TorrentsEntity;
-import com.rocketpt.server.dto.param.TorrentParam;
+import com.rocketpt.server.infra.service.TorrentManager;
 import com.rocketpt.server.service.TorrentsService;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.constraints.Positive;
+import lombok.RequiredArgsConstructor;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
+import java.io.IOException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Objects;
-
-import io.swagger.v3.oas.annotations.tags.Tag;
-import lombok.RequiredArgsConstructor;
+import java.util.Optional;
 
 
 /**
@@ -28,18 +35,21 @@ import lombok.RequiredArgsConstructor;
 @Tag(name = "torrent种子相关", description = Constants.FinishStatus.FINISHED)
 @RequiredArgsConstructor
 @RequestMapping("/torrent")
+@Validated
 public class TorrentsController {
 
     private final TorrentsService torrentsService;
+    private final TorrentManager torrentManager;
 
     /**
      * 列表
      */
     @PostMapping("/list")
-    public Res list(@RequestBody TorrentParam params) {
-        return torrentsService.queryPage(params);
+    public Res list(@RequestBody CustomPage page) {
+        Page<TorrentsEntity> entityPage = new Page<>(page.getCurrent(), page.getSize());
+        entityPage.addOrder(page.getOrders());
+        return Res.ok(torrentsService.page(entityPage));
     }
-
 
     /**
      * 信息
@@ -47,7 +57,6 @@ public class TorrentsController {
     @PostMapping("/info/{id}")
     public Res info(@PathVariable("id") Integer id) {
         TorrentsEntity torrents = torrentsService.getById(id);
-
         return Res.ok(torrents);
     }
 
@@ -93,6 +102,38 @@ public class TorrentsController {
         torrentsService.removeByIds(Arrays.asList(ids));
 
         return Res.ok();
+    }
+
+    /**
+     * 上传
+     */
+    @PostMapping("/upload")
+    public Res upload(@RequestPart("file") MultipartFile multipartFile, @RequestPart("entity") TorrentsEntity torrentsEntity) {
+        try {
+            if (multipartFile.isEmpty())
+                throw new RocketPTException(CommonResultStatus.PARAM_ERROR, I18nMessage.getMessage("torrent_empty"));
+            byte[] bytes = multipartFile.getBytes();
+            return torrentsService.upload(bytes, torrentsEntity);
+        } catch (IOException e) {
+            return Res.failure();
+        }
+    }
+
+    @GetMapping("/download")
+    public void download(@RequestParam("id") @Positive Integer id, HttpServletResponse response) throws IOException {
+        Optional<TorrentsEntity> entityOptional = Optional.ofNullable(torrentsService.getById(id));
+        if (entityOptional.isEmpty())
+            throw new RocketPTException(CommonResultStatus.PARAM_ERROR, I18nMessage.getMessage("torrent_not_exists"));
+        byte[] fetch = torrentManager.fetch(id);
+        String filename = entityOptional.get().getFilename();
+        filename = URLEncoder.encode(filename, StandardCharsets.UTF_8).replaceAll("\\+", "%20");
+        response.setCharacterEncoding(StandardCharsets.UTF_8.name());
+        response.setContentLength(fetch.length);
+        response.setContentType("application/x-bittorrent");
+        response.setHeader("Content-Disposition", "attachment;filename=" + filename);
+        if (response.isCommitted()) return;
+        response.getOutputStream().write(fetch);
+        response.getOutputStream().flush();
     }
 
 }

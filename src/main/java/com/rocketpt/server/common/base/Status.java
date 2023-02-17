@@ -15,7 +15,7 @@ public enum Status {
     /**
      * 请求执行成功
      */
-    SUCCESS(200, "操作成功"),
+    SUCCESS(0, "操作成功"),
 
     /**
      * 请求验证失败

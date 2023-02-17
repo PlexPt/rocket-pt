@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 
 import java.util.Date;
+import java.util.Map;
 
 import lombok.Data;
 
@@ -36,4 +37,5 @@ public class TorrentDto {
     private Long torrentSize;
     private Long torrentCount;
     private Boolean isDelete;
+    private Map<String, Object> dict;
 }
