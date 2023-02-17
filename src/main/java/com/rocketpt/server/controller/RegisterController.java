@@ -32,7 +32,7 @@ public class RegisterController {
     @PostMapping
     public Res register(@RequestBody @Validated RegisterParam param) {
 
-        if (!captchaService.verifyCaptcha(param.getUsername(), param.getCode())) {
+        if (!captchaService.verifyCaptcha(param.getUuid(), param.getCode())) {
             throw new RocketPTException("验证码不正确");
         }
 

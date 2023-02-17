@@ -29,6 +29,7 @@ public class RegisterParam {
     /**
      * 用户名
      */
+    @Schema(name = "用户名")
     @NotBlank(message = "用户名 不能为空")
     private String username;
 
@@ -57,7 +58,6 @@ public class RegisterParam {
     /**
      * 邀请码
      */
-    @NotBlank(message = "邀请码 不能为空")
     private String invitationCode;
     /**
      * 国家地区

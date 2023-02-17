@@ -1,6 +1,7 @@
 package com.rocketpt.server.service;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.rocketpt.server.common.base.PageUtil;
 import com.rocketpt.server.common.base.Res;
 import com.rocketpt.server.common.base.ResPage;
 import com.rocketpt.server.dao.TorrentsDao;
@@ -21,8 +22,9 @@ public class TorrentsService extends ServiceImpl<TorrentsDao, TorrentsEntity> {
 
 
     public Res queryPage(TorrentParam params) {
-        List<TorrentsEntity> list = list();
+        PageUtil.startPage(params);
 
+        List<TorrentsEntity> list = list();
         return Res.ok(list, new ResPage(list.size(), 1, 50));
     }
 }
