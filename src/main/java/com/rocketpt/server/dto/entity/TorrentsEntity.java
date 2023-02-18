@@ -1,11 +1,13 @@
 package com.rocketpt.server.dto.entity;
 
+import com.baomidou.mybatisplus.annotation.EnumValue;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 
 import java.util.Date;
 
 import lombok.Data;
+import lombok.RequiredArgsConstructor;
 
 /**
  * @author plexpt
@@ -96,7 +98,7 @@ public class TorrentsEntity {
     /**
      * 类型
      */
-    private Enum type;
+    private Type type;
     /**
      * 文件数量
      */
@@ -201,5 +203,14 @@ public class TorrentsEntity {
      * 审批状态
      */
     private Integer approvalStatus;
+
+    @RequiredArgsConstructor
+    public enum Type {
+        single(1),
+        multi(2);
+
+        @EnumValue
+        private final int code;
+    }
 
 }

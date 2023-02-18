@@ -1,9 +1,7 @@
 package com.rocketpt.server.common.base;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -16,74 +14,49 @@ import lombok.ToString;
 @Setter
 @ToString
 @NoArgsConstructor
-public class Res {
+public class Res<T> {
 
     private int code;
 
     private String msg;
 
     @JsonProperty
-    private Object data;
-
-    @JsonInclude(value = JsonInclude.Include.NON_NULL)
-    private ResPage page;
-
+    private T data;
 
     public Res(Status status) {
         this.code = status.getCode();
         this.msg = status.getMsg();
-        this.data = new Object();
+        this.data = null;
     }
 
-    public Res(Status status, Object data) {
+    public Res(Status status, T data) {
         this.code = status.getCode();
         this.msg = status.getMsg();
         this.data = data;
-    }
-
-    public Res(Status status, Object data, ResPage page) {
-        this.code = status.getCode();
-        this.msg = status.getMsg();
-        this.data = data;
-        this.page = page;
     }
 
     public Res(Status status, String msg) {
         this.code = status.getCode();
         this.msg = msg;
-        this.data = new Object();
+        this.data = null;
     }
 
     public Res(Status status, int msgCode) {
         this.code = status.getCode();
         this.msg = I18nMessage.getMessage(String.valueOf(msgCode));
-        this.data = new Object();
+        this.data = null;
     }
 
-    public Res(Status status, String msg, Object data) {
+    public Res(Status status, String msg, T data) {
         this.code = status.getCode();
         this.msg = msg;
         this.data = data;
     }
 
-    public Res(Status status, int msgCode, Object data) {
+    public Res(Status status, int msgCode, T data) {
         this.code = status.getCode();
         this.msg = I18nMessage.getMessage(String.valueOf(msgCode));
         this.data = data;
-    }
-
-    public Res(Status status, String msg, Object data, ResPage page) {
-        this.code = status.getCode();
-        this.msg = msg;
-        this.data = data;
-        this.page = page;
-    }
-
-    public Res(Status status, int msgCode, Object data, ResPage page) {
-        this.code = status.getCode();
-        this.msg = I18nMessage.getMessage(String.valueOf(msgCode));
-        this.data = data;
-        this.page = page;
     }
 
     @JsonIgnore
@@ -96,83 +69,67 @@ public class Res {
         return this.code != Status.SUCCESS.getCode();
     }
 
-    public static Res success() {
-        return new Res(Status.SUCCESS);
+    public static <T> Res<T> success() {
+        return new Res<T>(Status.SUCCESS);
     }
 
-    public static Res ok() {
-        return new Res(Status.SUCCESS);
+    public static <T> Res<T> ok() {
+        return new Res<T>(Status.SUCCESS);
     }
 
-    public static Res ok(  Object data) {
-        return new Res(Status.SUCCESS, data);
+    public static <T> Res<T> ok(T data) {
+        return new Res<T>(Status.SUCCESS, data);
     }
 
-    public static Res ok(Object data, ResPage page) {
-        return new Res(Status.SUCCESS, data, page);
+    public static <T> Res<T> illegal() {
+        return new Res<T>(Status.BAD_REQUEST);
     }
 
-    public static Res illegal() {
-        return new Res(Status.BAD_REQUEST);
+    public static <T> Res<T> unauthorized() {
+        return new Res<T>(Status.UNAUTHORIZED);
     }
 
-    public static Res unauthorized() {
-        return new Res(Status.UNAUTHORIZED);
+    public static <T> Res<T> forbidden() {
+        return new Res<T>(Status.FORBIDDEN);
     }
 
-    public static Res forbidden() {
-        return new Res(Status.FORBIDDEN);
+    public static <T> Res<T> notFound() {
+        return new Res<T>(Status.NOT_FOUND);
     }
 
-    public static Res notFound() {
-        return new Res(Status.NOT_FOUND);
+    public static <T> Res<T> failure() {
+        return new Res<T>(Status.FAILURE);
     }
 
-    public static Res failure() {
-        return new Res(Status.FAILURE);
+    public static <T> Res<T> failure(String msg) {
+        return new Res<T>(Status.FAILURE, msg);
     }
 
-    public static Res failure(String msg) {
-        return new Res(Status.FAILURE, msg);
+    public static <T> Res<T> error(String msg) {
+        return new Res<T>(Status.FAILURE, msg);
     }
 
-    public static Res error(String msg) {
-        return new Res(Status.FAILURE, msg);
+    public static <T> Res<T> conflict() {
+        return new Res<T>(Status.CONFLICT);
     }
 
-    public static Res conflict() {
-        return new Res(Status.CONFLICT);
+    public static <T> Res<T> build(Status status, T data) {
+        return new Res<T>(status, data);
     }
 
-    public static Res build(Status status, Object data) {
-        return new Res(status, data);
+    public static <T> Res<T> build(Status status, String msg) {
+        return new Res<T>(status, msg);
     }
 
-    public static Res build(Status status, Object data, ResPage page) {
-        return new Res(status, data, page);
+    public static <T> Res<T> build(Status status, int msgCode) {
+        return new Res<T>(status, msgCode);
     }
 
-    public static Res build(Status status, String msg) {
-        return new Res(status, msg);
+    public static <T> Res<T> build(Status status, String msg, T data) {
+        return new Res<T>(status, msg, data);
     }
 
-    public static Res build(Status status, int msgCode) {
-        return new Res(status, msgCode);
-    }
-
-    public static Res build(Status status, String msg, Object data) {
-        return new Res(status, msg, data);
-    }
-
-    public static Res build(Status status, int msgCode, Object data) {
-        return new Res(status, msgCode, data);
-    }
-
-    public static Res build(Status status, String msg, Object data, ResPage page) {
-        return new Res(status, msg, data, page);
-    }
-
-    public static Res build(Status status, int msgCode, Object data, ResPage page) {
-        return new Res(status, msgCode, data, page);
+    public static <T> Res<T> build(Status status, int msgCode, T data) {
+        return new Res<T>(status, msgCode, data);
     }
 }

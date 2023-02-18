@@ -26,6 +26,7 @@ public class RegisterParam {
     @Schema(name = "注册类型")
     @NotNull(message = "注册类型 不能为空")
     private Integer type;
+
     /**
      * 用户名
      */
@@ -45,6 +46,7 @@ public class RegisterParam {
 
     @NotBlank(message = "password 不能为空")
     private String password;
+
     /**
      * 验证码uuid
      */
@@ -53,21 +55,26 @@ public class RegisterParam {
     /**
      * 验证码
      */
+    @NotNull
     @NotBlank(message = "验证码 不能为空")
     private String code;
+
     /**
      * 邀请码
      */
     private String invitationCode;
+
     /**
      * 国家地区
      */
     private String country;
+
     /**
      * 性别
      * 0 男
      * 1 女
      * 2 其他
      */
+
     private Integer sex;
 }

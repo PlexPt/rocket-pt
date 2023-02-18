@@ -40,6 +40,7 @@ public class User extends EntityBase {
      * 状态 0正常 1 已锁定 2未激活
      */
     private State state;
+
     /**
      * 账户名
      */
@@ -165,6 +166,7 @@ public class User extends EntityBase {
      */
     private Long exp;
 
+    private String checkCode;
 
     /**
      * 注册类型

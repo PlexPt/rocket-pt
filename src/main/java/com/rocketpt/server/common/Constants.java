@@ -6,8 +6,6 @@ package com.rocketpt.server.common;
 public interface Constants {
 
     String TOKEN_HEADER_NAME = "Authorization";
-
-
     String SESSION_CURRENT_USER = "currentUser";
 
     /**
@@ -37,6 +35,22 @@ public interface Constants {
          * 已完成但未测试
          */
         String FINISHED_NOT_TEST = " (已完成但未测试)";
+
+    }
+
+    interface Source {
+        String PREFIX = "[RKT] ";
+
+        String NAME = "rocket pt";
+    }
+
+    interface Announce {
+
+        String PROTOCOL = "udp";
+
+        String HOSTNAME = "rocket.pt.local";
+
+        Integer PORT = 9113;
 
     }
 }

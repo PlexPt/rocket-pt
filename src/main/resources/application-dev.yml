@@ -1,7 +1,7 @@
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://txcd.plexpt.com:3306/rocket?characterEncoding=utf8
+    url: jdbc:mysql://txcd.plexpt.com:3306/rocket?characterEncoding=utf8&zeroDateTimeBehavior=convertToNull
     username: rocket
     password: xp8bEGccaAG6a8pd
 #  sql:
