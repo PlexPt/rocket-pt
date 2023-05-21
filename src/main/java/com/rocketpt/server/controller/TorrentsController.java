@@ -5,7 +5,7 @@ import com.rocketpt.server.common.CommonResultStatus;
 import com.rocketpt.server.common.Constants;
 import com.rocketpt.server.common.base.CustomPage;
 import com.rocketpt.server.common.base.I18nMessage;
-import com.rocketpt.server.common.base.Res;
+import com.rocketpt.server.common.base.Result;
 import com.rocketpt.server.common.exception.RocketPTException;
 import com.rocketpt.server.dto.entity.TorrentsEntity;
 import com.rocketpt.server.infra.service.TorrentManager;
@@ -45,77 +45,77 @@ public class TorrentsController {
      * 列表
      */
     @PostMapping("/list")
-    public Res list(@RequestBody CustomPage page) {
+    public Result list(@RequestBody CustomPage page) {
         Page<TorrentsEntity> entityPage = new Page<>(page.getCurrent(), page.getSize());
         entityPage.addOrder(page.getOrders());
-        return Res.ok(torrentsService.page(entityPage));
+        return Result.ok(torrentsService.page(entityPage));
     }
 
     /**
      * 信息
      */
     @PostMapping("/info/{id}")
-    public Res info(@PathVariable("id") Integer id) {
+    public Result info(@PathVariable("id") Integer id) {
         TorrentsEntity torrents = torrentsService.getById(id);
-        return Res.ok(torrents);
+        return Result.ok(torrents);
     }
 
     /**
      * 保存
      */
     @PostMapping("/save")
-    public Res save(@RequestBody TorrentsEntity entity) {
+    public Result save(@RequestBody TorrentsEntity entity) {
         torrentsService.save(entity);
 
-        return Res.ok();
+        return Result.ok();
     }
 
     /**
      * 保存/修改
      */
     @PostMapping("/saveOrUpdate")
-    public Res saveOrUpdate(@RequestBody TorrentsEntity entity) {
+    public Result saveOrUpdate(@RequestBody TorrentsEntity entity) {
         if (Objects.isNull(entity.getId())) {
             torrentsService.save(entity);
         } else {
             torrentsService.updateById(entity);
         }
 
-        return Res.success();
+        return Result.success();
     }
 
     /**
      * 修改
      */
     @PostMapping("/update")
-    public Res update(@RequestBody TorrentsEntity torrents) {
+    public Result update(@RequestBody TorrentsEntity torrents) {
         torrentsService.updateById(torrents);
 
-        return Res.ok();
+        return Result.ok();
     }
 
     /**
      * 删除
      */
     @PostMapping("/delete")
-    public Res delete(@RequestBody Integer[] ids) {
+    public Result delete(@RequestBody Integer[] ids) {
         torrentsService.removeByIds(Arrays.asList(ids));
 
-        return Res.ok();
+        return Result.ok();
     }
 
     /**
      * 上传
      */
     @PostMapping("/upload")
-    public Res upload(@RequestPart("file") MultipartFile multipartFile, @RequestPart("entity") TorrentsEntity torrentsEntity) {
+    public Result upload(@RequestPart("file") MultipartFile multipartFile, @RequestPart("entity") TorrentsEntity torrentsEntity) {
         try {
             if (multipartFile.isEmpty())
                 throw new RocketPTException(CommonResultStatus.PARAM_ERROR, I18nMessage.getMessage("torrent_empty"));
             byte[] bytes = multipartFile.getBytes();
             return torrentsService.upload(bytes, torrentsEntity);
         } catch (IOException e) {
-            return Res.failure();
+            return Result.failure();
         }
     }
 

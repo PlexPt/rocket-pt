@@ -6,7 +6,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.rocketpt.server.common.CommonResultStatus;
 import com.rocketpt.server.common.Constants;
 import com.rocketpt.server.common.SessionItemHolder;
-import com.rocketpt.server.common.base.Res;
+import com.rocketpt.server.common.base.Result;
 import com.rocketpt.server.common.exception.RocketPTException;
 import com.rocketpt.server.dao.TorrentsDao;
 import com.rocketpt.server.dto.TorrentDto;
@@ -36,7 +36,7 @@ public class TorrentsService extends ServiceImpl<TorrentsDao, TorrentsEntity> {
 
     @SneakyThrows
     @Transactional(rollbackFor = SQLException.class)
-    public Res upload(byte[] bytes, TorrentsEntity torrentsEntity) {
+    public Result upload(byte[] bytes, TorrentsEntity torrentsEntity) {
         byte[] transformedBytes = torrentManager.transform(bytes);
         byte[] infoHash = torrentManager.infoHash(transformedBytes);
         if (count(Wrappers.<TorrentsEntity>lambdaQuery().eq(TorrentsEntity::getInfoHash, infoHash)) != 0)
@@ -59,7 +59,7 @@ public class TorrentsService extends ServiceImpl<TorrentsDao, TorrentsEntity> {
         save(entity);
         torrentManager.preserve(entity.getId(), transformedBytes, TorrentFile.IdentityType.V1);
         //todo get torrent protocol version
-        return Res.ok();
+        return Result.ok();
     }
 }
 

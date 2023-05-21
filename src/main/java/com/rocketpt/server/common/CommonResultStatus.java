@@ -4,6 +4,7 @@ package com.rocketpt.server.common;
  * @author plexpt
  */
 public enum CommonResultStatus implements ResultStatus {
+
     OK(1000, "成功"),
 
     FAIL(1001, "失败"),

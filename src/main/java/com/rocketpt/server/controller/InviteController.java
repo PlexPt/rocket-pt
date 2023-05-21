@@ -1,7 +1,7 @@
 package com.rocketpt.server.controller;
 
 import com.rocketpt.server.common.Constants;
-import com.rocketpt.server.common.base.Res;
+import com.rocketpt.server.common.base.Result;
 import com.rocketpt.server.dto.param.InviteParam;
 import com.rocketpt.server.sys.service.UserService;
 
@@ -26,10 +26,10 @@ public class InviteController {
 
     private final UserService userService;
 
-    @PostMapping("send")
-    public Res register(@RequestBody @Validated InviteParam param) {
+    @PostMapping("/send")
+    public Result register(@RequestBody @Validated InviteParam param) {
 
-        return Res.ok();
+        return Result.ok();
 
     }
 
