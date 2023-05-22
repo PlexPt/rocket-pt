@@ -2,19 +2,20 @@ package com.rocketpt.server.common.base;
 
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 
 import java.util.Objects;
 
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 
 @Slf4j
 @UtilityClass
 public class I18nMessage {
 
     static {
-        ReloadableResourceBundleMessageSource messageSource = new ReloadableResourceBundleMessageSource();
+        ReloadableResourceBundleMessageSource messageSource =
+                new ReloadableResourceBundleMessageSource();
         messageSource.setCacheSeconds(5);
         messageSource.setBasenames("classpath:i18n/message");
         I18nMessage.init(messageSource);

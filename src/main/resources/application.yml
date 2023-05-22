@@ -7,11 +7,15 @@ spring:
     name: rocket-pt
   profiles:
     active: dev
+  main:
+    allow-circular-references: true
   data:
     web:
       pageable:
         one-indexed-parameters: true
-
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: GMT+8
   mail:
     host: smtp.qq.com
     username: ss@qq.com
@@ -89,3 +93,6 @@ knife4j:
   enable: true
   setting:
     language: zh_cn
+    enable-swagger-models: true
+    enable-document-manage: true
+    swagger-model-name: 实体类列表

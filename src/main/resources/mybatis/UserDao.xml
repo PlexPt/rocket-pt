@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.rocketpt.server.sys.repository.UserRepository">
+<mapper namespace="com.rocketpt.server.dao.UserDao">
 
 
     <select id="listUserPermissions" resultType="java.lang.String">
@@ -12,4 +12,14 @@
                      FROM role_resource
                      WHERE role_id IN (SELECT role_id FROM user_role WHERE user_id = #{userId}))
     </select>
+
+    <!-- 查询用户的所有权限 -->
+    <select id="queryAllPerms" resultType="string">
+        select m.permission
+        from t_user_role ur
+                 LEFT JOIN t_role_menu rm on ur.role_id = rm.role_id
+                 LEFT JOIN t_menu m on rm.menu_id = m.id
+        where ur.user_id = #{userId}
+    </select>
+
 </mapper>

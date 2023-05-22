@@ -5,19 +5,19 @@ package com.rocketpt.server.common;
  */
 public enum CommonResultStatus implements ResultStatus {
 
-    OK(1000, "成功"),
+    OK(0, "成功"),
 
-    FAIL(1001, "失败"),
+    FAIL(500, "失败"),
 
-    PARAM_ERROR(1002, "参数非法"),
+    PARAM_ERROR(400, "参数非法"),
 
-    RECORD_NOT_EXIST(1003, "记录不存在"),
+    RECORD_NOT_EXIST(404, "记录不存在"),
 
-    UNAUTHORIZED(1004, "未授权"),
+    UNAUTHORIZED(401, "未授权"),
 
-    FORBIDDEN(1005, "无权限"),
+    FORBIDDEN(403, "无权限"),
 
-    SERVER_ERROR(-1, "服务器内部错误");
+    SERVER_ERROR(500, "服务器内部错误");
 
     private final int code;
     private final String message;

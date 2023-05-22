@@ -1,4 +1,3 @@
-
 package com.rocketpt.server.common.base;
 
 import com.rocketpt.server.common.CommonResultStatus;

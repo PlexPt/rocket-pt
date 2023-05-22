@@ -1,9 +1,9 @@
 package com.rocketpt.server.dto.sys;
 
+import com.rocketpt.server.dto.entity.UserCredential;
+
 import java.io.Serializable;
 import java.util.Set;
-
-import com.rocketpt.server.dto.entity.UserCredential;
 
 /**
  * @author plexpt

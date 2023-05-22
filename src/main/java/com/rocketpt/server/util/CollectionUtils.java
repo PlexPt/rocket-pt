@@ -32,12 +32,14 @@ public class CollectionUtils {
     }
 
     /**
-     * Returns {@code true} if the specified {@code Collection} is {@code null} or {@link Collection#isEmpty empty},
+     * Returns {@code true} if the specified {@code Collection} is {@code null} or
+     * {@link Collection#isEmpty empty},
      * {@code false} otherwise.
      *
      * @param c the collection to check
-     * @return {@code true} if the specified {@code Collection} is {@code null} or {@link Collection#isEmpty empty},
-     *         {@code false} otherwise.
+     * @return {@code true} if the specified {@code Collection} is {@code null} or
+     * {@link Collection#isEmpty empty},
+     * {@code false} otherwise.
      * @since 1.0
      */
     public static boolean isEmpty(Collection c) {
@@ -45,12 +47,14 @@ public class CollectionUtils {
     }
 
     /**
-     * Returns {@code true} if the specified {@code Map} is {@code null} or {@link Map#isEmpty empty},
+     * Returns {@code true} if the specified {@code Map} is {@code null} or {@link Map#isEmpty
+     * empty},
      * {@code false} otherwise.
      *
      * @param m the {@code Map} to check
-     * @return {@code true} if the specified {@code Map} is {@code null} or {@link Map#isEmpty empty},
-     *         {@code false} otherwise.
+     * @return {@code true} if the specified {@code Map} is {@code null} or {@link Map#isEmpty
+     * empty},
+     * {@code false} otherwise.
      * @since 1.0
      */
     public static boolean isEmpty(Map m) {
@@ -84,7 +88,8 @@ public class CollectionUtils {
             return Collections.emptyList();
         }
 
-        // Integer overflow does not occur when a large array is passed in because the list array already exists
+        // Integer overflow does not occur when a large array is passed in because the list array
+        // already exists
         return Arrays.asList(elements);
     }
 

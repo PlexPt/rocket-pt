@@ -1,7 +1,5 @@
 package com.rocketpt.server.service;
 
-import java.io.File;
-
 /**
  * 种子存储服务
  *

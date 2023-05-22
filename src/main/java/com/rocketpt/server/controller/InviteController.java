@@ -3,7 +3,7 @@ package com.rocketpt.server.controller;
 import com.rocketpt.server.common.Constants;
 import com.rocketpt.server.common.base.Result;
 import com.rocketpt.server.dto.param.InviteParam;
-import com.rocketpt.server.sys.service.UserService;
+import com.rocketpt.server.service.sys.UserService;
 
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;

@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.annotation.FieldStrategy;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.rocketpt.server.util.SecurityUtil;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
@@ -40,12 +41,12 @@ public class UserCredential extends EntityBase {
 
     /**
      * passkey
-     * */
+     */
     private String passkey;
 
     /**
      * 二步验证 totp
-     * */
+     */
     private String totp;
 
     public boolean doCredentialMatch(String credential) {

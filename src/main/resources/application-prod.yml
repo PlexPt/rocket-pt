@@ -15,3 +15,10 @@ spring:
     host: smtp.qq.com
     username: ss@qq.com
     password: yxwrnwnxvtssdagd
+
+
+knife4j:
+  # 开启增强配置
+  enable: true
+  # 开启生产环境屏蔽 配置此属性后,所有资源都会屏蔽输出
+  production: true

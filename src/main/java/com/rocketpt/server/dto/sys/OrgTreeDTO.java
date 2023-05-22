@@ -1,6 +1,6 @@
 package com.rocketpt.server.dto.sys;
 
-import com.rocketpt.server.dto.entity.Organization;
+import com.rocketpt.server.dto.entity.OrganizationEntity;
 
 import java.util.List;
 
@@ -15,14 +15,14 @@ import lombok.Setter;
 public class OrgTreeDTO {
     private final Long id;
     private final String name;
-    private final Organization.Type type;
+    private final OrganizationEntity.Type type;
     private final List<OrgTreeDTO> children;
 
-    public OrgTreeDTO(Organization organization) {
-        this.id = organization.getId();
-        this.name = organization.getName();
-        this.type = organization.getType();
-        this.children = organization.getChildren().stream().map(OrgTreeDTO::new).toList();
+    public OrgTreeDTO(OrganizationEntity organizationEntity) {
+        this.id = organizationEntity.getId();
+        this.name = organizationEntity.getName();
+        this.type = organizationEntity.getType();
+        this.children = organizationEntity.getChildren().stream().map(OrgTreeDTO::new).toList();
     }
 
     public boolean getIsLeaf() {

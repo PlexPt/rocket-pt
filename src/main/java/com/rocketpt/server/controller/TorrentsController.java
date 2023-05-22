@@ -8,14 +8,18 @@ import com.rocketpt.server.common.base.I18nMessage;
 import com.rocketpt.server.common.base.Result;
 import com.rocketpt.server.common.exception.RocketPTException;
 import com.rocketpt.server.dto.entity.TorrentsEntity;
-import com.rocketpt.server.infra.service.TorrentManager;
+import com.rocketpt.server.service.infra.TorrentManager;
 import com.rocketpt.server.service.TorrentsService;
-import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.servlet.http.HttpServletResponse;
-import jakarta.validation.constraints.Positive;
-import lombok.RequiredArgsConstructor;
+
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -24,6 +28,11 @@ import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.Optional;
+
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.constraints.Positive;
+import lombok.RequiredArgsConstructor;
 
 
 /**
@@ -108,10 +117,13 @@ public class TorrentsController {
      * 上传
      */
     @PostMapping("/upload")
-    public Result upload(@RequestPart("file") MultipartFile multipartFile, @RequestPart("entity") TorrentsEntity torrentsEntity) {
+    public Result upload(@RequestPart("file") MultipartFile multipartFile,
+                         @RequestPart("entity") TorrentsEntity torrentsEntity) {
         try {
-            if (multipartFile.isEmpty())
-                throw new RocketPTException(CommonResultStatus.PARAM_ERROR, I18nMessage.getMessage("torrent_empty"));
+            if (multipartFile.isEmpty()) {
+                throw new RocketPTException(CommonResultStatus.PARAM_ERROR,
+                        I18nMessage.getMessage("torrent_empty"));
+            }
             byte[] bytes = multipartFile.getBytes();
             return torrentsService.upload(bytes, torrentsEntity);
         } catch (IOException e) {
@@ -122,8 +134,10 @@ public class TorrentsController {
     @GetMapping("/download")
     public void download(@RequestParam("id") @Positive Integer id, HttpServletResponse response) throws IOException {
         Optional<TorrentsEntity> entityOptional = Optional.ofNullable(torrentsService.getById(id));
-        if (entityOptional.isEmpty())
-            throw new RocketPTException(CommonResultStatus.PARAM_ERROR, I18nMessage.getMessage("torrent_not_exists"));
+        if (entityOptional.isEmpty()) {
+            throw new RocketPTException(CommonResultStatus.PARAM_ERROR, I18nMessage.getMessage(
+                    "torrent_not_exists"));
+        }
         byte[] fetch = torrentManager.fetch(id);
         String filename = entityOptional.get().getFilename();
         filename = URLEncoder.encode(filename, StandardCharsets.UTF_8).replaceAll("\\+", "%20");
@@ -131,7 +145,9 @@ public class TorrentsController {
         response.setContentLength(fetch.length);
         response.setContentType("application/x-bittorrent");
         response.setHeader("Content-Disposition", "attachment;filename=" + filename);
-        if (response.isCommitted()) return;
+        if (response.isCommitted()) {
+            return;
+        }
         response.getOutputStream().write(fetch);
         response.getOutputStream().flush();
     }

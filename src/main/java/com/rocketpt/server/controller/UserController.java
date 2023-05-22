@@ -1,11 +1,10 @@
 package com.rocketpt.server.controller;
 
 import com.rocketpt.server.common.Constants;
-import com.rocketpt.server.common.authz.RequiresPermissions;
-import com.rocketpt.server.dto.entity.User;
+import com.rocketpt.server.dto.entity.UserEntity;
 import com.rocketpt.server.dto.sys.PageDTO;
-import com.rocketpt.server.sys.service.OrganizationService;
-import com.rocketpt.server.sys.service.UserService;
+import com.rocketpt.server.service.sys.OrganizationService;
+import com.rocketpt.server.service.sys.UserService;
 
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -19,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import cn.dev33.satoken.annotation.SaCheckPermission;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -40,43 +40,43 @@ public class UserController {
     private final UserService userService;
 
 
-    @RequiresPermissions("user:view")
+    @SaCheckPermission("user:view")
     @GetMapping
-    public ResponseEntity<PageDTO<User>> findUsers(Pageable pageable, User user) {
-        return ResponseEntity.ok(userService.findUsers(pageable, user));
+    public ResponseEntity<PageDTO<UserEntity>> findUsers(Pageable pageable, UserEntity userEntity) {
+        return ResponseEntity.ok(userService.findUsers(pageable, userEntity));
     }
 
-    @RequiresPermissions("user:create")
+    @SaCheckPermission("user:create")
     @PostMapping
-    public ResponseEntity<User> createUser(@RequestBody @Valid CreateUserRequest request) {
+    public ResponseEntity<UserEntity> createUser(@RequestBody @Valid CreateUserRequest request) {
         return new ResponseEntity<>(
                 userService.createUser(
                         request.username(), request.fullName(), request.avatar(), request.gender(),
-                        request.email, User.State.NORMAL, request.organizationId()),
+                        request.email, UserEntity.State.NORMAL, request.organizationId()),
                 HttpStatus.CREATED);
     }
 
-    @RequiresPermissions("user:update")
+    @SaCheckPermission("user:update")
     @PutMapping("/{userId}")
-    public ResponseEntity<User> updateUser(@PathVariable Long userId,
-                                           @RequestBody @Valid UpdateUserRequest request) {
+    public ResponseEntity<UserEntity> updateUser(@PathVariable Long userId,
+                                                 @RequestBody @Valid UpdateUserRequest request) {
         return ResponseEntity.ok(userService.updateUser(userId, request.fullName(),
-                request.avatar(), request.gender(), User.State.NORMAL, request.organizationId()));
+                request.avatar(), request.gender(), UserEntity.State.NORMAL, request.organizationId()));
     }
 
-    @RequiresPermissions("user:update")
+    @SaCheckPermission("user:update")
     @PostMapping("/{userId}:lock")
-    public ResponseEntity<User> lockUser(@PathVariable Long userId) {
+    public ResponseEntity<UserEntity> lockUser(@PathVariable Long userId) {
         return ResponseEntity.ok(userService.lockUser(userId));
     }
 
-    @RequiresPermissions("user:update")
+    @SaCheckPermission("user:update")
     @PostMapping("/{userId}:unlock")
-    public ResponseEntity<User> unlockUser(@PathVariable Long userId) {
+    public ResponseEntity<UserEntity> unlockUser(@PathVariable Long userId) {
         return ResponseEntity.ok(userService.unlockUser(userId));
     }
 
-    @RequiresPermissions("user:delete")
+    @SaCheckPermission("user:delete")
     @DeleteMapping("/{userId}")
     public ResponseEntity<Void> deleteUser(@PathVariable Long userId) {
         userService.delete(userId);
@@ -84,11 +84,11 @@ public class UserController {
     }
 
     record CreateUserRequest(@NotBlank String username, @NotBlank String fullName,
-                             @NotNull User.Gender gender, String email,
+                             @NotNull UserEntity.Gender gender, String email,
                              @NotBlank String avatar, Long organizationId) {
     }
 
-    record UpdateUserRequest(@NotBlank String fullName, @NotNull User.Gender gender,
+    record UpdateUserRequest(@NotBlank String fullName, @NotNull UserEntity.Gender gender,
                              @NotBlank String avatar, Long organizationId) {
     }
 

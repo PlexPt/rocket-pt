@@ -5,8 +5,8 @@ import com.rocketpt.server.common.Constants;
 import com.rocketpt.server.common.base.Result;
 import com.rocketpt.server.common.exception.RocketPTException;
 import com.rocketpt.server.dto.param.RegisterParam;
-import com.rocketpt.server.sys.service.CaptchaService;
-import com.rocketpt.server.sys.service.UserService;
+import com.rocketpt.server.service.sys.CaptchaService;
+import com.rocketpt.server.service.sys.UserService;
 
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;

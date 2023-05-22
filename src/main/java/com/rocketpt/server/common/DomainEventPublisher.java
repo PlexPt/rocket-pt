@@ -22,7 +22,8 @@ import java.util.function.Consumer;
 
 public class DomainEventPublisher {
 
-    private static final ThreadLocal<DomainEventPublisher> instance = ThreadLocal.withInitial(() -> new DomainEventPublisher());
+    private static final ThreadLocal<DomainEventPublisher> instance =
+            ThreadLocal.withInitial(() -> new DomainEventPublisher());
 
     private boolean publishing;
 

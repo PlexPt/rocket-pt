@@ -36,8 +36,10 @@ public class ExceptionControllerAdvice {
     }};
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<Map<String, Object>> handleDefaultErrorView(Exception ex, HttpServletRequest request) {
-        log.error("Handle exception, message={}, requestUrl={}", ex.getMessage(), request.getRequestURI(), ex);
+    public ResponseEntity<Map<String, Object>> handleDefaultErrorView(Exception ex,
+                                                                      HttpServletRequest request) {
+        log.error("Handle exception, message={}, requestUrl={}", ex.getMessage(),
+                request.getRequestURI(), ex);
         Map<String, Object> body = new HashMap<>();
         body.put("code", CommonResultStatus.SERVER_ERROR.getCode());
         body.put("message", ex.getMessage());
@@ -47,7 +49,8 @@ public class ExceptionControllerAdvice {
 
     @ExceptionHandler(RocketPTException.class)
     public ResponseEntity<Map<String, Object>> handleBusinessException(RocketPTException ex) {
-        Map<String, Object> body = Map.of("code", ex.getStatus().getCode(), "message", ex.getMessage(), "success", false);
+        Map<String, Object> body = Map.of("code", ex.getStatus().getCode(), "message",
+                ex.getMessage(), "success", false);
         return ResponseEntity.status(codeMap.getOrDefault(ex.getStatus(), HttpStatus.BAD_REQUEST)).body(body);
     }
 

@@ -1,11 +1,12 @@
 package com.rocketpt.server.common.base;
 
 import com.baomidou.mybatisplus.core.metadata.OrderItem;
-import lombok.Data;
-import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import lombok.Data;
+import lombok.Setter;
 
 /**
  * 简单分页模型

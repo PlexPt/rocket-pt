@@ -4,7 +4,7 @@ import com.baomidou.mybatisplus.annotation.EnumValue;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
@@ -94,7 +94,7 @@ public class TorrentsEntity {
     /**
      * 添加日期
      */
-    private Date added;
+    private LocalDateTime added;
     /**
      * 类型
      */
@@ -130,7 +130,7 @@ public class TorrentsEntity {
     /**
      * 最后操作日期
      */
-    private Date lastAction;
+    private LocalDateTime lastAction;
     /**
      * 可见性
      */
@@ -154,7 +154,7 @@ public class TorrentsEntity {
     /**
      * 促销截止日期
      */
-    private Date promotionUntil;
+    private LocalDateTime promotionUntil;
     /**
      * 匿名
      */
@@ -170,7 +170,7 @@ public class TorrentsEntity {
     /**
      * 位置状态截止日期
      */
-    private Date posStateUntil;
+    private LocalDateTime posStateUntil;
     /**
      *
      */
@@ -182,11 +182,11 @@ public class TorrentsEntity {
     /**
      * 推荐日期
      */
-    private Date picktime;
+    private LocalDateTime picktime;
     /**
      * 最后做种日期
      */
-    private Date lastReseed;
+    private LocalDateTime lastReseed;
     /**
      * ptgen生成内容
      */
