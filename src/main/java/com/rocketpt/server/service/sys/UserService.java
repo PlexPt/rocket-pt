@@ -351,6 +351,7 @@ public class UserService extends ServiceImpl<UserDao, UserEntity> {
         if (!entity.getState().equals(2)) {
             throw new RocketPTException("用户状态不正确");
         }
+
         entity.setState(0);
         updateById(entity);
 

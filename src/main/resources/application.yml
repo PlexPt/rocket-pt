@@ -87,15 +87,21 @@ springdoc:
     - group: 'default'
       paths-to-match: '/**'
       packages-to-scan: com.rocketpt.server
+  default-flat-param-object: true
 
 # knife4j的增强配置，不需要增强可以不配
 knife4j:
   enable: true
   setting:
     language: zh_cn
-    enable-swagger-models: true
-    enable-document-manage: true
+#    enable-swagger-models: true
+#    enable-document-manage: true
     swagger-model-name: 实体类列表
+
+  documents:
+    - name: 接口基础
+      locations: classpath:doc/base/*
+      group: default
 
 
 

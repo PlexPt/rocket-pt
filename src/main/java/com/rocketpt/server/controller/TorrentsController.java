@@ -29,6 +29,7 @@ import java.util.Arrays;
 import java.util.Objects;
 import java.util.Optional;
 
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.constraints.Positive;
@@ -116,6 +117,7 @@ public class TorrentsController {
     /**
      * 上传
      */
+    @Operation(summary = "上传")
     @PostMapping("/upload")
     public Result upload(@RequestPart("file") MultipartFile multipartFile,
                          @RequestPart("entity") TorrentsEntity torrentsEntity) {
@@ -131,6 +133,7 @@ public class TorrentsController {
         }
     }
 
+    @Operation(summary = "下载")
     @GetMapping("/download")
     public void download(@RequestParam("id") @Positive Integer id, HttpServletResponse response) throws IOException {
         Optional<TorrentsEntity> entityOptional = Optional.ofNullable(torrentsService.getById(id));

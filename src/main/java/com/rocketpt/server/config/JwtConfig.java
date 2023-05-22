@@ -11,8 +11,8 @@ import cn.dev33.satoken.stp.StpLogic;
 public class JwtConfig {
 
     // Sa-Token 整合 jwt (Stateless 无状态模式)
-    @Bean
-    public StpLogic getStpLogicJwt() {
-        return new StpLogicJwtForStateless();
-    }
+//    @Bean
+//    public StpLogic getStpLogicJwt() {
+//        return new StpLogicJwtForStateless();
+//    }
 }

@@ -10,11 +10,15 @@ import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry
 import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.info.Info;
 import lombok.RequiredArgsConstructor;
 
 /**
  * @author plexpt
  */
+
+
 @Configuration
 @RequiredArgsConstructor
 public class WebMvcConfiguration implements WebMvcConfigurer {
@@ -45,20 +49,4 @@ public class WebMvcConfiguration implements WebMvcConfigurer {
         eventSubscribesInterceptor.addPathPatterns("/**");
     }
 
-    @Override
-    public void addViewControllers(ViewControllerRegistry registry) {
-        registry.addViewController("/").setViewName("/index.html");
-    }
-
-    @Override
-    public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        registry.addResourceHandler("/**")
-                .addResourceLocations("classpath:/META-INF/resources" +
-                        "/webjars/admin3-ui/");
-    }
-
-//    @Bean
-//    public Jackson2ObjectMapperBuilderCustomizer jsonCustomizer() {
-//        return builder -> builder.serializers(EntityBaseSerializer.instance);
-//    }
 }

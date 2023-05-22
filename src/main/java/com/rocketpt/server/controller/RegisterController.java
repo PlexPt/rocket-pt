@@ -15,6 +15,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -33,6 +36,7 @@ public class RegisterController {
 
     final UserService userService;
 
+    @Operation(summary = "注册")
     @PostMapping
     public Result register(@RequestBody @Validated RegisterParam param) {
         if (!captchaService.verifyCaptcha(param.getUuid(), param.getCode())) {
@@ -49,6 +53,8 @@ public class RegisterController {
     /**
      * @return secret
      */
+    @Operation(summary = "注册确认")
+    @Parameter(name = "code", description = "邮件里面的code", required = true, in = ParameterIn.PATH)
     @PostMapping("/confirm/{code}")
     public Result confirm(@PathVariable String code) {
         userService.confirm(code);

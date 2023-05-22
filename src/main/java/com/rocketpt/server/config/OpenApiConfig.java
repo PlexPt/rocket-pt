@@ -3,7 +3,6 @@ package com.rocketpt.server.config;
 import com.rocketpt.server.common.Constants;
 
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
@@ -17,7 +16,7 @@ import io.swagger.v3.oas.models.media.StringSchema;
 /**
  * @author plexpt
  */
-@Configuration
+//@Configuration
 //@ConditionalOnProperty(havingValue = "")
 @OpenAPIDefinition(info = @Info(title = "Rocket PT",
         description = "A Flexible and Efficient private tracker",

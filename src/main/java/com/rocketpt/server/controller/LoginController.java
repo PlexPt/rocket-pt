@@ -24,6 +24,9 @@ import javax.imageio.ImageIO;
 import cn.dev33.satoken.annotation.SaCheckLogin;
 import cn.dev33.satoken.annotation.SaIgnore;
 import cn.dev33.satoken.stp.StpUtil;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.ServletOutputStream;
 import jakarta.servlet.http.HttpServletResponse;
@@ -46,6 +49,8 @@ public class LoginController {
     /**
      * 验证码
      */
+    @Operation(summary = "获取验证码", description = "根据uuid获取验证码")
+    @Parameter(name = "uuid", description = "前端随机生成的UUID", required = true, in = ParameterIn.QUERY)
     @GetMapping("/code.jpg")
     public void captcha(HttpServletResponse response, String uuid) throws IOException {
         response.setHeader("Cache-Control", "no-store, no-cache");
@@ -61,6 +66,7 @@ public class LoginController {
     }
 
 
+    @Operation(summary = "登录", description = "根据 用户名密码登录")
     @PostMapping("/login")
     private Result login(@RequestBody LoginParam param) {
         if (!captchaService.verifyCaptcha(param.getUuid(), param.getCode())) {
@@ -77,12 +83,67 @@ public class LoginController {
         throw new UserException(CommonResultStatus.UNAUTHORIZED, "密码不正确");
     }
 
+
+    @Operation(summary = "忘记密码", description = "忘记密码 1 发送验证码 2 发送邮件 3 根据邮件重置密码")
+    @PostMapping("/forgot-password")
+    private Result forgotPassword(@RequestBody LoginParam param) {
+        if (!captchaService.verifyCaptcha(param.getUuid(), param.getCode())) {
+            throw new RocketPTException("验证码不正确");
+        }
+
+        Long userId = userService.login(param);
+        if (userId > 0) {
+            StpUtil.login(userId);
+
+            return Result.ok();
+        }
+
+        throw new UserException(CommonResultStatus.UNAUTHORIZED, "密码不正确");
+    }
+
+
+    @Operation(summary = "重置密码", description = "根据邮件重置密码")
+    @PostMapping("/reset-password")
+    private Result resetPassword(@RequestBody LoginParam param) {
+        if (!captchaService.verifyCaptcha(param.getUuid(), param.getCode())) {
+            throw new RocketPTException("验证码不正确");
+        }
+
+        Long userId = userService.login(param);
+        if (userId > 0) {
+            StpUtil.login(userId);
+
+            return Result.ok();
+        }
+
+        throw new UserException(CommonResultStatus.UNAUTHORIZED, "密码不正确");
+    }
+
+    @Operation(summary = "修改密码", description = "根据旧密码改密码")
+    @PostMapping("/change-password")
+    private Result changePassword(@RequestBody LoginParam param) {
+        if (!captchaService.verifyCaptcha(param.getUuid(), param.getCode())) {
+            throw new RocketPTException("验证码不正确");
+        }
+
+        Long userId = userService.login(param);
+        if (userId > 0) {
+            StpUtil.login(userId);
+
+            return Result.ok();
+        }
+
+        throw new UserException(CommonResultStatus.UNAUTHORIZED, "密码不正确");
+    }
+
     @SaIgnore
+    @Operation(summary = "是否登录")
     @GetMapping("isLogin")
     public Result isLogin() {
         return Result.ok(StpUtil.isLogin());
     }
 
+    @Operation(summary = "退出登录")
     @PostMapping("/logout")
     @SneakyThrows
     public Result logout() {
@@ -91,6 +152,7 @@ public class LoginController {
         return Result.ok("成功");
     }
 
+    @Operation(summary = "用户信息")
     @SaCheckLogin
     @GetMapping("/userinfo")
     public Result info() {

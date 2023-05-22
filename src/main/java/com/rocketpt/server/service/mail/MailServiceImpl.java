@@ -1,4 +1,4 @@
-package com.rocketpt.server.mail;
+package com.rocketpt.server.service.mail;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.mail.javamail.JavaMailSenderImpl;

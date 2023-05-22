@@ -1,6 +1,7 @@
 package com.rocketpt.server.controller;
 
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.rocketpt.server.common.Constants;
 import com.rocketpt.server.common.base.Result;
 import com.rocketpt.server.dto.entity.UserEntity;
 import com.rocketpt.server.service.sys.UserService;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Optional;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -21,6 +23,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
+@Tag(name = "校验相关", description = Constants.FinishStatus.FINISHED)
 @RequestMapping("/validate")
 public class ValidateController {
 

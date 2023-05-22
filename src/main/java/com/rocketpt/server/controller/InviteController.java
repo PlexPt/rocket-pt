@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 
@@ -26,6 +27,7 @@ public class InviteController {
 
     private final UserService userService;
 
+    @Operation(summary = "发送邀请")
     @PostMapping("/send")
     public Result register(@RequestBody @Validated InviteParam param) {
 

@@ -1,6 +1,7 @@
 package com.rocketpt.server.dto.param;
 
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 /**
@@ -13,8 +14,10 @@ public class InviteParam {
 
     private String email;
 
+    @Schema(description = "邀请内容")
     private String content;
 
+    @Schema(description = "备注")
     private String remark;
 
 }

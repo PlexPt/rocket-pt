@@ -1,4 +1,4 @@
-package com.rocketpt.server.mail;
+package com.rocketpt.server.service.mail;
 
 
 /**
