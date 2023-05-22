@@ -1,6 +1,6 @@
 package com.rocketpt.server.service.infra;
 
-import com.rocketpt.server.dto.entity.UserCredential;
+import com.rocketpt.server.dto.entity.UserCredentialEntity;
 
 import java.io.Serializable;
 
@@ -9,7 +9,7 @@ import java.io.Serializable;
  */
 public interface SessionManager {
 
-    void store(String key, UserCredential credential, Serializable value);
+    void store(String key, UserCredentialEntity credential, Serializable value);
 
     void invalidate(String key);
 

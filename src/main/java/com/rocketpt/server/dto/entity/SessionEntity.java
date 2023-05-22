@@ -38,7 +38,7 @@ public class SessionEntity extends EntityBase {
     private boolean active;
 
 
-    public static SessionEntity of(Long id, String token, UserCredential credential,
+    public static SessionEntity of(Long id, String token, UserCredentialEntity credential,
                                    Serializable data,
                                    LocalDateTime expireTime) {
         SessionEntity authSessionEntity = new SessionEntity();

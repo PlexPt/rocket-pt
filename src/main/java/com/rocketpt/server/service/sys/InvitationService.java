@@ -31,7 +31,7 @@ public class InvitationService extends ServiceImpl<InvitationDao, InvitationEnti
         return invitationOptional.isPresent();
     }
 
-    void consume(String inviteeEmail, String invitationCode, UserEntity userEntity) {
+    public void consume(String inviteeEmail, String invitationCode, UserEntity userEntity) {
         InvitationEntity invitationEntity = getOne(
                 Wrappers.<InvitationEntity>lambdaQuery()
                         .eq(InvitationEntity::getInviteeEmail, inviteeEmail)

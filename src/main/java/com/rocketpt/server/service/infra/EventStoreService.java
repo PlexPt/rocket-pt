@@ -2,8 +2,8 @@ package com.rocketpt.server.service.infra;
 
 import com.rocketpt.server.common.DomainEvent;
 import com.rocketpt.server.common.EventStore;
-import com.rocketpt.server.dto.entity.StoredEventEntity;
 import com.rocketpt.server.dao.StoredEventDao;
+import com.rocketpt.server.dto.entity.StoredEventEntity;
 import com.rocketpt.server.util.JsonUtils;
 
 import org.springframework.stereotype.Service;
@@ -21,6 +21,10 @@ public class EventStoreService implements EventStore {
 
     @Override
     public void append(DomainEvent aDomainEvent) {
+        if (!aDomainEvent.needSave()) {
+            return;
+        }
+
         StoredEventEntity storedEventEntity = new StoredEventEntity();
         storedEventEntity.setEventBody(JsonUtils.stringify(aDomainEvent));
         storedEventEntity.setOccurredOn(aDomainEvent.occurredOn());

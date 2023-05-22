@@ -19,7 +19,6 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class WebMvcConfiguration implements WebMvcConfigurer {
 
-    private final SessionService sessionService;
     private final EventStore eventStore;
 
     @Override
@@ -42,7 +41,7 @@ public class WebMvcConfiguration implements WebMvcConfigurer {
 //                "/"
 //        );
         InterceptorRegistration eventSubscribesInterceptor =
-                registry.addInterceptor(new EventSubscribesInterceptor(eventStore, sessionService));
+                registry.addInterceptor(new EventSubscribesInterceptor(eventStore ));
         eventSubscribesInterceptor.addPathPatterns("/**");
     }
 

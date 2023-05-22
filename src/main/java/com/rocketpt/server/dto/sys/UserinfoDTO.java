@@ -1,7 +1,5 @@
 package com.rocketpt.server.dto.sys;
 
-import com.rocketpt.server.dto.entity.UserCredential;
-
 import java.io.Serializable;
 import java.util.Set;
 
@@ -16,7 +14,7 @@ public record UserinfoDTO(String token,
                           Credential credential,
                           Set<String> permissions) implements Serializable {
 
-    public record Credential(String identifier, UserCredential.IdentityType type, String passkey) {
+    public record Credential(String identifier, String passkey) {
     }
 
 }

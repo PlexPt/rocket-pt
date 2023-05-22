@@ -24,6 +24,9 @@ public class Result<T> {
     @JsonProperty
     private T data;
 
+    private  Object page;
+
+
     public Result(Status status) {
         this.code = status.getCode();
         this.msg = status.getMsg();

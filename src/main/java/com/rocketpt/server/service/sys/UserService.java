@@ -1,5 +1,6 @@
 package com.rocketpt.server.service.sys;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.github.pagehelper.PageHelper;
@@ -8,20 +9,25 @@ import com.rocketpt.server.common.CommonResultStatus;
 import com.rocketpt.server.common.DomainEventPublisher;
 import com.rocketpt.server.common.base.I18nMessage;
 import com.rocketpt.server.common.exception.RocketPTException;
+import com.rocketpt.server.common.exception.UserException;
+import com.rocketpt.server.dao.UserDao;
 import com.rocketpt.server.dto.entity.OrganizationEntity;
-import com.rocketpt.server.dto.entity.UserCredential;
+import com.rocketpt.server.dto.entity.UserCredentialEntity;
 import com.rocketpt.server.dto.entity.UserEntity;
 import com.rocketpt.server.dto.event.UserCreated;
 import com.rocketpt.server.dto.event.UserDeleted;
 import com.rocketpt.server.dto.event.UserUpdated;
+import com.rocketpt.server.dto.param.LoginParam;
 import com.rocketpt.server.dto.param.RegisterParam;
 import com.rocketpt.server.dto.sys.PageDTO;
+import com.rocketpt.server.dto.sys.UserinfoDTO;
+import com.rocketpt.server.service.GoogleAuthenticatorService;
 import com.rocketpt.server.service.infra.CheckCodeManager;
 import com.rocketpt.server.service.infra.PasskeyManager;
-import com.rocketpt.server.dao.UserDao;
 import com.rocketpt.server.util.IPUtils;
 import com.rocketpt.server.util.JsonUtils;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,6 +39,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import cn.dev33.satoken.secure.SaSecureUtil;
+import cn.dev33.satoken.stp.StpUtil;
+import cn.hutool.core.util.RandomUtil;
 import lombok.RequiredArgsConstructor;
 
 import static com.rocketpt.server.common.CommonResultStatus.RECORD_NOT_EXIST;
@@ -51,9 +60,16 @@ public class UserService extends ServiceImpl<UserDao, UserEntity> {
     private final PasskeyManager passkeyManager;
     private final CaptchaService captchaService;
 
+    private final GoogleAuthenticatorService googleAuthenticatorService;
+
     @Transactional(rollbackFor = Exception.class)
-    public UserEntity createUser(String username, String fullName, String avatar, UserEntity.Gender gender,
-                                 String email, UserEntity.State state, Long organization) {
+    public UserEntity createUser(String username,
+                                 String fullName,
+                                 String avatar,
+                                 UserEntity.Gender gender,
+                                 String email,
+                                 UserEntity.State state,
+                                 Long organization) {
         UserEntity userEntity = new UserEntity();
         userEntity.setUsername(username);
         userEntity.setFullName(fullName);
@@ -86,8 +102,9 @@ public class UserService extends ServiceImpl<UserDao, UserEntity> {
         return userEntity;
     }
 
-    public PageDTO<UserEntity> findOrgUsers(Pageable pageable, String username, UserEntity.State state,
-                                                                           OrganizationEntity organizationEntity) {
+    public PageDTO<UserEntity> findOrgUsers(Pageable pageable, String username,
+                                            UserEntity.State state,
+                                            OrganizationEntity organizationEntity) {
         PageHelper.startPage(pageable.getPageNumber(), pageable.getPageSize());
         List<UserEntity> userEntities = userDao.findOrgUsers(pageable, username, state,
                 organizationEntity.getId(),
@@ -103,8 +120,9 @@ public class UserService extends ServiceImpl<UserDao, UserEntity> {
 
 
     @Transactional(rollbackFor = Exception.class)
-    public UserEntity updateUser(Long userId, String fullName, String avatar, UserEntity.Gender gender,
-                                                                UserEntity.State state, Long organization) {
+    public UserEntity updateUser(Long userId, String fullName, String avatar,
+                                 UserEntity.Gender gender,
+                                 UserEntity.State state, Long organization) {
         UserEntity userEntity = findUserById(userId);
         userEntity.setFullName(fullName);
         userEntity.setAvatar(avatar);
@@ -140,10 +158,14 @@ public class UserService extends ServiceImpl<UserDao, UserEntity> {
         return new PageDTO<>(userEntities, total);
     }
 
-    public boolean isExists(String email) {
-        return count(Wrappers.<UserEntity>lambdaQuery()
+    public boolean isExists(String email, String username) {
+        long count = count(Wrappers.<UserEntity>lambdaQuery()
                 .eq(UserEntity::getEmail, email)
-        ) != 0;
+                .or()
+                .eq(UserEntity::getUsername, username)
+        );
+
+        return count > 0;
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -153,39 +175,168 @@ public class UserService extends ServiceImpl<UserDao, UserEntity> {
         DomainEventPublisher.instance().publish(new UserDeleted(userEntity));
     }
 
+    /**
+     * 用户注册方法
+     *
+     * @param param 注册参数
+     * @throws RocketPTException 注册过程中的异常
+     */
     @Transactional(rollbackFor = SQLException.class)
     public void register(RegisterParam param) {
-        if (!captchaService.verifyCaptcha(param.getUuid(), param.getCode())) {
-            throw new RocketPTException("验证码不正确");
-        }
+
+        // 检查邀请码是否有效
         if (!invitationService.check(param.getEmail(), param.getInvitationCode())) {
             throw new RocketPTException(CommonResultStatus.PARAM_ERROR, I18nMessage.getMessage(
                     "invitation_not_exists"));
         }
-        if (isExists(param.getEmail())) {
+
+        // 检查邮箱和用户名是否已存在
+        if (isExists(param.getEmail(), param.getUsername())) {
             throw new RocketPTException(CommonResultStatus.PARAM_ERROR, I18nMessage.getMessage(
                     "email_exists"));
         }
-         UserEntity userEntity = createUser(
-                param.getUsername(), param.getNickname(), null, UserEntity.Gender.valueof(param.getSex()),
-                param.getEmail(), UserEntity.State.INACTIVATED, 3L
+
+        // 校验通过，创建用户实体
+        UserEntity userEntity = createUser(
+                param.getUsername(),
+                param.getNickname(),
+                null,
+                UserEntity.Gender.valueof(param.getSex()),
+                param.getEmail(),
+                UserEntity.State.INACTIVATED,
+                3L
         );
+
+        // 生成邮件验证码并设置用户属性
         String checkCode = checkCodeManager.generate(userEntity.getId(), userEntity.getEmail());
         userEntity.setCheckCode(checkCode);
         userEntity.setRegIp(IPUtils.getIpAddr());
         userEntity.setRegType(param.getType());
         updateById(userEntity);
-        UserCredential userCredential = new UserCredential(
-                userEntity.getId(),
-                userCredentialService.generate(param.getUsername(), param.getPassword()),
-                param.getUsername(),
-                UserCredential.IdentityType.PASSWORD,
-                passkeyManager.generate(userEntity.getId()),
-                null
-        );
-        userCredentialService.save(userCredential);
+
+        // 创建用户凭证实体
+        UserCredentialEntity userCredentialEntity = new UserCredentialEntity();
+        userCredentialEntity.setId(userEntity.getId());
+        userCredentialEntity.setUsername(param.getUsername());
+
+        // 生成随机盐和密码
+        String salt = RandomUtil.randomString(8);
+        String passkey = passkeyManager.generate(userEntity.getId());
+        userCredentialEntity.setSalt(salt);
+        userCredentialEntity.setPasskey(passkey);
+        String generatedPassword = userCredentialService.generate(param.getPassword(), salt);
+        userCredentialEntity.setPassword(generatedPassword);
+
+        // 保存用户凭证实体
+        userCredentialService.save(userCredentialEntity);
+
+        // 消费邀请码
         invitationService.consume(param.getEmail(), param.getInvitationCode(), userEntity);
+        //TODO 发邮件
     }
 
 
+    /**
+     * 用户登录方法
+     *
+     * @param param 登录参数
+     * @return 登录成功返回用户ID，登录失败返回0
+     */
+    public Long login(LoginParam param) {
+        String username = param.getUsername();
+        String password = param.getPassword();
+
+        // 根据用户名获取用户凭证实体
+        UserCredentialEntity user = userCredentialService.getByUsername(username);
+
+        if (user == null) {
+            return 0L;
+        }
+
+        // 对密码进行加密处理
+        String encryptedPassword = SaSecureUtil.sha256(password + user.getSalt());
+
+        // 比较加密后的密码与数据库中存储的密码是否一致
+        if (!user.getPassword().equals(encryptedPassword)) {
+            return 0L;
+        }
+
+        // 获取用户的TOTP
+        String totp = user.getTotp();
+
+        // 验证TOTP码是否有效
+        boolean codeValid = isTotpValid(param.getTotp(), totp);
+        if (!codeValid) {
+            return 0L;
+        }
+
+        if (isUserLocked(user.getId())) {
+            throw new UserException(CommonResultStatus.UNAUTHORIZED, "用户已经禁用，请与管理员联系");
+        }
+
+        // 返回用户ID
+        return user.getId();
+    }
+
+    /**
+     * @param userId
+     * @return 用户是否已经禁用
+     */
+    public boolean isUserLocked(long userId) {
+        UserEntity userEntity = getOne(new QueryWrapper<UserEntity>()
+                .lambda()
+                .select(UserEntity::getState)
+                .eq(UserEntity::getId, userId)
+        );
+
+        return userEntity.getState() == 1;
+    }
+
+    /**
+     * 验证TOTP码是否有效
+     *
+     * @param verificationCode 用户输入的验证码
+     * @param totp             用户的TOTP码
+     * @return 验证码有效返回true，无效返回false
+     */
+    private boolean isTotpValid(Integer verificationCode, String totp) {
+        // 如果用户的TOTP码为空，视为有效
+        if (StringUtils.isEmpty(totp)) {
+            return true;
+        }
+
+        // 如果用户输入的验证码为空，视为无效
+        if (verificationCode == null) {
+            return false;
+        }
+
+        // 使用Google Authenticator服务验证TOTP码的有效性
+        boolean codeValid = googleAuthenticatorService.isCodeValid(totp, verificationCode);
+
+        // 返回验证结果
+        return codeValid;
+    }
+
+
+    /**
+     * 根据username获取用户信息
+     *
+     * @param username
+     * @return
+     */
+    private UserEntity getByUsername(String username) {
+        return getOne(new QueryWrapper<UserEntity>()
+                .lambda()
+                .eq(UserEntity::getUsername, username), false
+        );
+    }
+
+    public Long getUserId() {
+        return StpUtil.getLoginIdAsLong();
+    }
+
+
+    public UserinfoDTO getUserInfo() {
+        return null;
+    }
 }

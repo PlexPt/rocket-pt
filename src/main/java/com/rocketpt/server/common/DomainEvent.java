@@ -25,4 +25,8 @@ public interface DomainEvent {
     default LocalDateTime occurredOn() {
         return LocalDateTime.now();
     }
+
+    default boolean needSave() {
+        return false;
+    }
 }
