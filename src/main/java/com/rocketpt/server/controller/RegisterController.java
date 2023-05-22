@@ -19,6 +19,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -56,7 +57,7 @@ public class RegisterController {
     @Operation(summary = "注册确认")
     @Parameter(name = "code", description = "邮件里面的code", required = true, in = ParameterIn.PATH)
     @PostMapping("/confirm/{code}")
-    public Result confirm(@PathVariable String code) {
+    public Result confirm(@PathVariable @NotBlank @Validated String code) {
         userService.confirm(code);
 
         return Result.ok();

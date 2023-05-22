@@ -6,14 +6,18 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
 @Data
-@Schema(description = "忘记密码")
-public class ForgotPasswordParam {
+@Schema(description = "重置密码")
+public class ResetPasswordParam {
 
     /**
      * 密码
      */
     @NotBlank(message = "email不能为空")
-    private String email;
+    private String checkCode;
+
+    @NotBlank(message = "不能为空")
+    @Schema(description = "新密码")
+    private String newPassword;
 
     /**
      * 验证码 UUID

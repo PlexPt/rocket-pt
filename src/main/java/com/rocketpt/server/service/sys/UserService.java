@@ -17,8 +17,11 @@ import com.rocketpt.server.dto.entity.UserEntity;
 import com.rocketpt.server.dto.event.UserCreated;
 import com.rocketpt.server.dto.event.UserDeleted;
 import com.rocketpt.server.dto.event.UserUpdated;
+import com.rocketpt.server.dto.param.ChangePasswordParam;
+import com.rocketpt.server.dto.param.ForgotPasswordParam;
 import com.rocketpt.server.dto.param.LoginParam;
 import com.rocketpt.server.dto.param.RegisterParam;
+import com.rocketpt.server.dto.param.ResetPasswordParam;
 import com.rocketpt.server.dto.sys.PageDTO;
 import com.rocketpt.server.dto.sys.UserinfoDTO;
 import com.rocketpt.server.service.GoogleAuthenticatorService;
@@ -217,7 +220,7 @@ public class UserService extends ServiceImpl<UserDao, UserEntity> {
         userCredentialEntity.setId(userEntity.getId());
         userCredentialEntity.setUsername(param.getUsername());
         String checkCode = passkeyManager.generate(userEntity.getId());
-        userEntity.setCheckCode(checkCode);
+        userCredentialEntity.setCheckCode(checkCode);
 
         // 生成随机盐和密码
         String salt = RandomUtil.randomString(8);
@@ -332,15 +335,39 @@ public class UserService extends ServiceImpl<UserDao, UserEntity> {
         );
     }
 
+    /**
+     * 根据email获取用户信息
+     *
+     * @return
+     */
+    private UserEntity getByEmail(String email) {
+        return getOne(new QueryWrapper<UserEntity>()
+                .lambda()
+                .eq(UserEntity::getEmail, email), false
+        );
+    }
+
+    /**
+     * 获取当前登录的用户ID
+     */
     public Long getUserId() {
         return StpUtil.getLoginIdAsLong();
     }
 
 
+    /**
+     * 获取用户信息
+     */
     public UserinfoDTO getUserInfo() {
+        //TODO    获取用户信息
         return null;
     }
 
+
+    /**
+     * 确认邮箱
+     */
+    @Transactional(rollbackFor = Exception.class)
     public void confirm(String code) {
         UserCredentialEntity userCredential = userCredentialService.getByCheckCode(code);
         if (userCredential == null) {
@@ -354,6 +381,81 @@ public class UserService extends ServiceImpl<UserDao, UserEntity> {
 
         entity.setState(0);
         updateById(entity);
+        userCredentialService.resetCheckCode(id);
+
+    }
+
+
+    /**
+     * 忘记密码
+     */
+    @Transactional(rollbackFor = Exception.class)
+    public void forgotPassword(ForgotPasswordParam param) {
+        UserEntity entity = getByEmail(param.getEmail());
+        if (entity == null) {
+            throw new RocketPTException("邮箱不正确");
+        }
+
+        if (!entity.getState().equals(0)) {
+            throw new RocketPTException("用户状态不正确");
+        }
+        String checkCode = userCredentialService.resetCheckCode(entity.getId());
+        //TODO 发邮件
+
+
+    }
+
+
+    /**
+     * 更新密码
+     */
+    @Transactional(rollbackFor = Exception.class)
+    public void changePassword(ChangePasswordParam param) {
+        // 获取用户凭证实体
+        Long userId = getUserId();
+        UserCredentialEntity credentialEntity = userCredentialService.getById(userId);
+
+        // 生成旧密码的哈希值
+        String old = userCredentialService.generate(param.getOldPassword(),
+                credentialEntity.getSalt());
+
+        // 获取数据库中保存的密码
+        String password = credentialEntity.getPassword();
+
+        // 检查旧密码是否正确
+        if (!old.equals(password)) {
+            // 抛出用户异常，表示未授权访问
+            throw new UserException(CommonResultStatus.UNAUTHORIZED, "密码不正确");
+        }
+
+        // 更新用户凭证实体中的密码
+        userCredentialService.updatePassword(userId, param.getNewPassword(),
+                credentialEntity.getSalt());
+
+    }
+
+
+    /**
+     * 重置密码
+     */
+    @Transactional(rollbackFor = Exception.class)
+    public void resetPassword(ResetPasswordParam param) {
+        String code = param.getCheckCode();
+        UserCredentialEntity userCredential = userCredentialService.getByCheckCode(code);
+        if (userCredential == null) {
+            throw new RocketPTException("校验码不正确");
+        }
+        Long userId = userCredential.getId();
+        UserEntity entity = getById(userId);
+        if (!entity.getState().equals(0)) {
+            throw new RocketPTException("用户状态不正确");
+        }
+
+        // 更新用户凭证实体中的密码
+        userCredentialService.updatePassword(userId, param.getNewPassword(),
+                userCredential.getSalt());
+
+        userCredentialService.resetCheckCode(userId);
 
     }
 }

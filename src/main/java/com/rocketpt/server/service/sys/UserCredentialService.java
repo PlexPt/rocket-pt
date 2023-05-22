@@ -1,6 +1,7 @@
 package com.rocketpt.server.service.sys;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.rocketpt.server.common.CommonResultStatus;
@@ -34,6 +35,28 @@ public class UserCredentialService extends ServiceImpl<UserCredentialDao, UserCr
     }
 
     /**
+     * 更新密码
+     */
+    public void updatePassword(Long userId, String newPassword) {
+        String salt = getById(userId).getSalt();
+        updatePassword(userId, newPassword, salt);
+    }
+
+
+    /**
+     * 更新密码
+     */
+    public void updatePassword(Long userId, String newPassword, String salt) {
+        String generatedPassword = generate(newPassword, salt);
+
+        update(new LambdaUpdateWrapper<UserCredentialEntity>()
+                .eq(UserCredentialEntity::getId, userId)
+                .set(UserCredentialEntity::getPassword, generatedPassword)
+        );
+
+    }
+
+    /**
      * 根据用户名获取
      *
      * @param username
@@ -45,6 +68,7 @@ public class UserCredentialService extends ServiceImpl<UserCredentialDao, UserCr
                 .eq(UserCredentialEntity::getUsername, username), false
         );
     }
+
     /**
      * 获取
      *
@@ -77,5 +101,16 @@ public class UserCredentialService extends ServiceImpl<UserCredentialDao, UserCr
 
         credential.setPasskey(key);
         updateById(credential);
+    }
+
+    public String resetCheckCode(Long userId) {
+        String checkCode = passkeyManager.generate(userId);
+
+        update(new LambdaUpdateWrapper<UserCredentialEntity>()
+                .eq(UserCredentialEntity::getId, userId)
+                .set(UserCredentialEntity::getCheckCode, checkCode)
+        );
+
+        return checkCode;
     }
 }

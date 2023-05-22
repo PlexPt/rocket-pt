@@ -8,6 +8,7 @@ import lombok.Data;
  * 注册参数
  */
 @Data
+@Schema(description = "邀请")
 public class InviteParam {
 
     private String username;
