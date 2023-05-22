@@ -17,7 +17,7 @@ import lombok.RequiredArgsConstructor;
  * @date 2023-02-09 12:01:16
  */
 @Data
-@TableName("user")
+@TableName("t_user")
 public class UserEntity {
 
 

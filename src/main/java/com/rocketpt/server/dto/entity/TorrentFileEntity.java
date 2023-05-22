@@ -16,7 +16,7 @@ import lombok.RequiredArgsConstructor;
  */
 @Data
 @NoArgsConstructor
-@TableName("torrent_file")
+@TableName("t_torrent_file")
 public class TorrentFileEntity extends EntityBase {
 
     /**

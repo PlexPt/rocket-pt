@@ -11,7 +11,7 @@ import lombok.Data;
  * @author plexpt
  */
 @Data
-@TableName("stored_event")
+@TableName("t_stored_event")
 public class StoredEventEntity extends EntityBase {
 
     private String eventBody;

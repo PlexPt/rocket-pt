@@ -15,7 +15,7 @@ import lombok.RequiredArgsConstructor;
  * @author plexpt
  */
 @Data
-@TableName("organization")
+@TableName("t_organization")
 public class OrganizationEntity extends EntityBase {
 
     @TableField(insertStrategy = FieldStrategy.NOT_EMPTY, updateStrategy = FieldStrategy.NOT_EMPTY)

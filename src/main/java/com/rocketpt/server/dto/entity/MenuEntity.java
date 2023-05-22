@@ -17,7 +17,7 @@ import lombok.RequiredArgsConstructor;
  * @author plexpt
  */
 @Data
-@TableName("resource")
+@TableName("t_menu")
 public class MenuEntity extends EntityBase {
     @TableId
     private Long id;

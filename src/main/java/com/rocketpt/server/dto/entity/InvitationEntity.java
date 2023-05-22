@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 import lombok.Data;
 
 @Data
-@TableName("invitation")
+@TableName("t_invitation")
 public class InvitationEntity extends EntityBase {
 
     /**

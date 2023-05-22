@@ -15,7 +15,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@TableName("user_role")
+@TableName("t_user_role")
 public class UserRoleEntity {
 
     /**

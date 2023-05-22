@@ -18,7 +18,7 @@ import lombok.Data;
  * @author plexpt
  */
 @Data
-@TableName("role")
+@TableName("t_role")
 public class RoleEntity extends EntityBase {
 
     /**
