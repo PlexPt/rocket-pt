@@ -44,6 +44,10 @@ public class UserCredentialEntity extends EntityBase {
      * passkey
      */
     private String passkey;
+    /**
+     * passkey
+     */
+    private String checkCode;
 
     /**
      * 二步验证 totp

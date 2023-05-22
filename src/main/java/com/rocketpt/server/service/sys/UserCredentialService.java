@@ -45,6 +45,17 @@ public class UserCredentialService extends ServiceImpl<UserCredentialDao, UserCr
                 .eq(UserCredentialEntity::getUsername, username), false
         );
     }
+    /**
+     * 获取
+     *
+     * @return
+     */
+    public UserCredentialEntity getByCheckCode(String code) {
+        return getOne(new QueryWrapper<UserCredentialEntity>()
+                .lambda()
+                .eq(UserCredentialEntity::getCheckCode, code), false
+        );
+    }
 
 
     /**

@@ -208,8 +208,6 @@ public class UserService extends ServiceImpl<UserDao, UserEntity> {
         );
 
         // 生成邮件验证码并设置用户属性
-        String checkCode = checkCodeManager.generate(userEntity.getId(), userEntity.getEmail());
-        userEntity.setCheckCode(checkCode);
         userEntity.setRegIp(IPUtils.getIpAddr());
         userEntity.setRegType(param.getType());
         updateById(userEntity);
@@ -218,10 +216,13 @@ public class UserService extends ServiceImpl<UserDao, UserEntity> {
         UserCredentialEntity userCredentialEntity = new UserCredentialEntity();
         userCredentialEntity.setId(userEntity.getId());
         userCredentialEntity.setUsername(param.getUsername());
+        String checkCode = passkeyManager.generate(userEntity.getId());
+        userEntity.setCheckCode(checkCode);
 
         // 生成随机盐和密码
         String salt = RandomUtil.randomString(8);
         String passkey = passkeyManager.generate(userEntity.getId());
+
         userCredentialEntity.setSalt(salt);
         userCredentialEntity.setPasskey(passkey);
         String generatedPassword = userCredentialService.generate(param.getPassword(), salt);
@@ -338,5 +339,20 @@ public class UserService extends ServiceImpl<UserDao, UserEntity> {
 
     public UserinfoDTO getUserInfo() {
         return null;
+    }
+
+    public void confirm(String code) {
+        UserCredentialEntity userCredential = userCredentialService.getByCheckCode(code);
+        if (userCredential == null) {
+            throw new RocketPTException("校验码不正确");
+        }
+        Long id = userCredential.getId();
+        UserEntity entity = getById(id);
+        if (!entity.getState().equals(2)) {
+            throw new RocketPTException("用户状态不正确");
+        }
+        entity.setState(0);
+        updateById(entity);
+
     }
 }
