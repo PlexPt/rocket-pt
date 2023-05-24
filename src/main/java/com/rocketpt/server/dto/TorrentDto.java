@@ -22,7 +22,7 @@ import lombok.Data;
 public class TorrentDto {
 
     @TableId(type = IdType.AUTO)
-    private Long id;
+    private Integer id;
     // 创建时间
     @TableField(fill = FieldFill.INSERT)
     private LocalDateTime created;

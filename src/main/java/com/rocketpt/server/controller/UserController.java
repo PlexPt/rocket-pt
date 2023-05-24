@@ -60,7 +60,7 @@ public class UserController {
     @Operation(summary = "锁定用户")
     @SaCheckPermission("user:update")
     @PostMapping("/lock/{userId}")
-    public Result lockUser(@PathVariable Long userId) {
+    public Result lockUser(@PathVariable Integer userId) {
         userService.lockUser(userId);
 
         return Result.ok();
@@ -69,7 +69,7 @@ public class UserController {
     @Operation(summary = "解锁用户")
     @SaCheckPermission("user:update")
     @PostMapping("/unlock/{userId}")
-    public Result unlockUser(@PathVariable Long userId) {
+    public Result unlockUser(@PathVariable Integer userId) {
         userService.unlockUser(userId);
 
         return Result.ok();
@@ -78,7 +78,7 @@ public class UserController {
     @Operation(summary = "删除用户")
     @SaCheckPermission("user:delete")
     @PostMapping("/remove/{userId}")
-    public Result deleteUser(@PathVariable Long userId) {
+    public Result deleteUser(@PathVariable Integer userId) {
         userService.delete(userId);
         return Result.ok();
     }

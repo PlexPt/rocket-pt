@@ -60,7 +60,7 @@ public class ResourceController {
     @GetMapping("/{id}")
     @Operation(summary = "获取单个资源详情")
     @SaCheckPermission("resource:view")
-    public Result get(@PathVariable("id") Long id) {
+    public Result get(@PathVariable("id") Integer id) {
         ResourceEntity entity = resourceService.getById(id);
 
         return Result.ok(entity);

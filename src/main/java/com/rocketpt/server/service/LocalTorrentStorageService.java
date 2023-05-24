@@ -18,7 +18,7 @@ public class LocalTorrentStorageService implements TorrentStorageService {
     String defaultTorrentDir = TorrentUtils.getDefaultTorrentDir();
 
     @Override
-    public void save(Long id, byte[] torrent) {
+    public void save(Integer id, byte[] torrent) {
         String path = defaultTorrentDir + id + ".torrent";
 
         FileUtil.writeBytes(torrent, path);
@@ -26,7 +26,7 @@ public class LocalTorrentStorageService implements TorrentStorageService {
     }
 
     @Override
-    public byte[] read(Long id) {
+    public byte[] read(Integer id) {
         String path = defaultTorrentDir + id + ".torrent";
 
         return FileUtil.readBytes(path);

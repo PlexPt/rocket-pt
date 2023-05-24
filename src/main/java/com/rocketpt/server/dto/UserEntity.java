@@ -46,10 +46,7 @@ public class UserEntity extends EntityBase {
      * 账户名
      */
     private String username;
-    /**
-     * 组织ID
-     */
-    private Long organizationId;
+
     /**
      * 邮件地址
      */

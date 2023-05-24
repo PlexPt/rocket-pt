@@ -11,7 +11,7 @@ public interface Constants {
     /**
      * 菜单根id
      */
-    long RESOURCE_ROOT_ID = 1L;
+    Integer RESOURCE_ROOT_ID = 1;
 
     interface Order {
         String DEFAULT_ORDER_TYPE = "desc";

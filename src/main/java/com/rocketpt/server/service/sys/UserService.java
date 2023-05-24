@@ -94,17 +94,17 @@ public class UserService extends ServiceImpl<UserDao, UserEntity> {
         return entity;
     }
 
-    public Set<UserEntity> findUserByIds(Set<Long> userIds) {
+    public Set<UserEntity> findUserByIds(Set<Integer> userIds) {
         List<UserEntity> userEntities = listByIds(userIds);
         return new LinkedHashSet<>(userEntities);
     }
 
-    public List<UserEntity> findUserByIds(List<Long> ids) {
+    public List<UserEntity> findUserByIds(List<Integer> ids) {
         List<UserEntity> list = listByIds(ids);
         return list;
     }
 
-    public UserEntity findUserById(Long userId) {
+    public UserEntity findUserById(Integer userId) {
         UserEntity userEntity = getById(userId);
         if (userEntity == null) {
             throw new RocketPTException(RECORD_NOT_EXIST);
@@ -114,7 +114,7 @@ public class UserService extends ServiceImpl<UserDao, UserEntity> {
 
 
     @Transactional(rollbackFor = Exception.class)
-    public UserEntity updateUser(Long userId, String fullName, String avatar,
+    public UserEntity updateUser(Integer userId, String fullName, String avatar,
                                  UserEntity.Gender gender,
                                  UserEntity.State state, Long organization) {
         UserEntity userEntity = findUserById(userId);
@@ -138,7 +138,7 @@ public class UserService extends ServiceImpl<UserDao, UserEntity> {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public UserEntity lockUser(Long userId) {
+    public UserEntity lockUser(Integer userId) {
         UserEntity userEntity = findUserById(userId);
         userEntity.setState(UserEntity.State.LOCKED.getCode());
         updateById(userEntity);
@@ -146,7 +146,7 @@ public class UserService extends ServiceImpl<UserDao, UserEntity> {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public UserEntity unlockUser(Long userId) {
+    public UserEntity unlockUser(Integer userId) {
         UserEntity userEntity = findUserById(userId);
         userEntity.setState(UserEntity.State.NORMAL.getCode());
         updateById(userEntity);
@@ -184,7 +184,7 @@ public class UserService extends ServiceImpl<UserDao, UserEntity> {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public void delete(Long userId) {
+    public void delete(Integer userId) {
         UserEntity userEntity = findUserById(userId);
         removeById(userEntity);
         DomainEventPublisher.instance().publish(new UserDeleted(userEntity));
@@ -258,7 +258,7 @@ public class UserService extends ServiceImpl<UserDao, UserEntity> {
      * @param param 登录参数
      * @return 登录成功返回用户ID，登录失败返回0
      */
-    public Long login(LoginParam param) {
+    public Integer login(LoginParam param) {
         String username = param.getUsername();
         String password = param.getPassword();
 
@@ -266,7 +266,7 @@ public class UserService extends ServiceImpl<UserDao, UserEntity> {
         UserCredentialEntity user = userCredentialService.getByUsername(username);
 
         if (user == null) {
-            return 0L;
+            return 0;
         }
 
         // 对密码进行加密处理
@@ -274,7 +274,7 @@ public class UserService extends ServiceImpl<UserDao, UserEntity> {
 
         // 比较加密后的密码与数据库中存储的密码是否一致
         if (!user.getPassword().equals(encryptedPassword)) {
-            return 0L;
+            return 0;
         }
 
         // 获取用户的TOTP
@@ -283,7 +283,7 @@ public class UserService extends ServiceImpl<UserDao, UserEntity> {
         // 验证TOTP码是否有效
         boolean codeValid = isTotpValid(param.getTotp(), totp);
         if (!codeValid) {
-            return 0L;
+            return 0;
         }
 
         if (isUserLocked(user.getId())) {
@@ -298,7 +298,7 @@ public class UserService extends ServiceImpl<UserDao, UserEntity> {
      * @param userId
      * @return 用户是否已经禁用
      */
-    public boolean isUserLocked(long userId) {
+    public boolean isUserLocked(Integer userId) {
         UserEntity userEntity = getOne(new QueryWrapper<UserEntity>()
                 .lambda()
                 .select(UserEntity::getState)
@@ -362,8 +362,8 @@ public class UserService extends ServiceImpl<UserDao, UserEntity> {
     /**
      * 获取当前登录的用户ID
      */
-    public Long getUserId() {
-        return StpUtil.getLoginIdAsLong();
+    public Integer getUserId() {
+        return StpUtil.getLoginIdAsInt();
     }
 
 
@@ -385,7 +385,7 @@ public class UserService extends ServiceImpl<UserDao, UserEntity> {
         if (userCredential == null) {
             throw new RocketPTException("校验码不正确");
         }
-        Long id = userCredential.getId();
+        Integer id = userCredential.getId();
         UserEntity entity = getById(id);
         if (!entity.getState().equals(2)) {
             throw new RocketPTException("用户状态不正确");
@@ -424,7 +424,7 @@ public class UserService extends ServiceImpl<UserDao, UserEntity> {
     @Transactional(rollbackFor = Exception.class)
     public void changePassword(ChangePasswordParam param) {
         // 获取用户凭证实体
-        Long userId = getUserId();
+        Integer userId = getUserId();
         UserCredentialEntity credentialEntity = userCredentialService.getById(userId);
 
         // 生成旧密码的哈希值
@@ -457,7 +457,7 @@ public class UserService extends ServiceImpl<UserDao, UserEntity> {
         if (userCredential == null) {
             throw new RocketPTException("校验码不正确");
         }
-        Long userId = userCredential.getId();
+        Integer userId = userCredential.getId();
         UserEntity entity = getById(userId);
         if (!entity.getState().equals(0)) {
             throw new RocketPTException("用户状态不正确");

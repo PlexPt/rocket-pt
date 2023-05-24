@@ -17,7 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 @Slf4j
 public class RoleResourceService extends ServiceImpl<RoleResourceDao, RoleResourceEntity> {
-    public List<Long> getResourceIdsByRoleId(Long roleId) {
+    public List<Integer> getResourceIdsByRoleId(Integer roleId) {
         List<RoleResourceEntity> list = list(Wrappers.lambdaQuery(RoleResourceEntity.class)
                 .select(RoleResourceEntity::getResourceId)
                 .eq(RoleResourceEntity::getRoleId, roleId)
@@ -26,7 +26,7 @@ public class RoleResourceService extends ServiceImpl<RoleResourceDao, RoleResour
             return new ArrayList<>();
         }
 
-        List<Long> ids = list.stream()
+        List<Integer> ids = list.stream()
                 .map(RoleResourceEntity::getResourceId)
                 .toList();
 

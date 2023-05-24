@@ -77,7 +77,7 @@ public class LoginController {
             throw new RocketPTException("验证码不正确");
         }
 
-        Long userId = userService.login(param);
+        Integer userId = userService.login(param);
         if (userId > 0) {
             StpUtil.login(userId);
 

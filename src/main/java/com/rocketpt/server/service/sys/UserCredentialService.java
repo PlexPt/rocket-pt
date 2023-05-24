@@ -37,7 +37,7 @@ public class UserCredentialService extends ServiceImpl<UserCredentialDao, UserCr
     /**
      * 更新密码
      */
-    public void updatePassword(Long userId, String newPassword) {
+    public void updatePassword(Integer userId, String newPassword) {
         String salt = getById(userId).getSalt();
         updatePassword(userId, newPassword, salt);
     }
@@ -46,7 +46,7 @@ public class UserCredentialService extends ServiceImpl<UserCredentialDao, UserCr
     /**
      * 更新密码
      */
-    public void updatePassword(Long userId, String newPassword, String salt) {
+    public void updatePassword(Integer userId, String newPassword, String salt) {
         String generatedPassword = generate(newPassword, salt);
 
         update(new LambdaUpdateWrapper<UserCredentialEntity>()
@@ -87,7 +87,7 @@ public class UserCredentialService extends ServiceImpl<UserCredentialDao, UserCr
      *
      * @param userId
      */
-    public void refreshPasskey(long userId) {
+    public void refreshPasskey(Integer userId) {
 
         UserCredentialEntity credentialEntity = getOne(
                 Wrappers.<UserCredentialEntity>lambdaQuery()
@@ -103,7 +103,7 @@ public class UserCredentialService extends ServiceImpl<UserCredentialDao, UserCr
         updateById(credential);
     }
 
-    public String resetCheckCode(Long userId) {
+    public String resetCheckCode(Integer userId) {
         String checkCode = passkeyManager.generate(userId);
 
         update(new LambdaUpdateWrapper<UserCredentialEntity>()

@@ -24,12 +24,12 @@ import lombok.RequiredArgsConstructor;
 @TableName("t_resource")
 public class ResourceEntity extends EntityBase {
     @TableId(type = IdType.AUTO)
-    private Long id;
+    private Integer id;
     /**
      * 父菜单ID，一级菜单为0
      */
     @Schema(description = "父ID")
-    private Long pid;
+    private Integer pid;
     /**
      * 菜单名称
      */
@@ -71,7 +71,7 @@ public class ResourceEntity extends EntityBase {
      * 创建者ID
      */
     @Schema(description = "创建者ID")
-    private Long createBy;
+    private Integer createBy;
     /**
      * 创建时间
      */
@@ -81,12 +81,18 @@ public class ResourceEntity extends EntityBase {
      * 更新者ID
      */
     @Schema(description = "更新者ID")
-    private Long updateBy;
+    private Integer updateBy;
     /**
      * 更新时间
      */
     @Schema(description = "更新时间")
     private LocalDateTime updateTime;
+
+    /**
+     * 备注
+     */
+    @Schema(description = "备注")
+    private String remark;
 
     /**
      * 上级菜单名称

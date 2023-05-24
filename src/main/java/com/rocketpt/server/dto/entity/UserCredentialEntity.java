@@ -22,7 +22,7 @@ public class UserCredentialEntity extends EntityBase {
      * 用户ID
      */
     @TableId(type = IdType.INPUT)
-    private Long id;
+    private Integer id;
 
 
     /**
@@ -31,12 +31,12 @@ public class UserCredentialEntity extends EntityBase {
     private String username;
 
     /**
-     * passkey
+     * password
      */
     private String password;
 
     /**
-     * passkey
+     * salt
      */
     private String salt;
 
@@ -45,7 +45,7 @@ public class UserCredentialEntity extends EntityBase {
      */
     private String passkey;
     /**
-     * passkey
+     * 邮箱校验码
      */
     private String checkCode;
 

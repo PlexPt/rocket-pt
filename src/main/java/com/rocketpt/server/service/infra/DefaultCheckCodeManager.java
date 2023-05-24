@@ -8,7 +8,7 @@ import java.util.Random;
 @Component
 public class DefaultCheckCodeManager implements CheckCodeManager {
     @Override
-    public String generate(long userId, String email) {
+    public String generate(Integer userId, String email) {
         ByteBuffer buf = ByteBuffer.allocate(8 + email.getBytes().length);
         buf.putLong(userId);
         buf.put(email.getBytes());

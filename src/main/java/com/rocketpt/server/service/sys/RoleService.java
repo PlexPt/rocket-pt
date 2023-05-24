@@ -49,14 +49,14 @@ public class RoleService extends ServiceImpl<RoleDao, RoleEntity> {
 
         List<RoleEntity> entities = list();
         for (RoleEntity entity : entities) {
-            List<Long> resourceIds = roleResourceService.getResourceIdsByRoleId(entity.getId());
+            List<Integer> resourceIds = roleResourceService.getResourceIdsByRoleId(entity.getId());
             entity.setResourceIds(resourceIds);
         }
 
         return entities;
     }
 
-    public RoleEntity findRoleById(Long roleId) {
+    public RoleEntity findRoleById(Integer roleId) {
         RoleEntity roleEntity = getById(roleId);
         if (roleEntity == null) {
             throw new RocketPTException(CommonResultStatus.RECORD_NOT_EXIST);
@@ -64,7 +64,7 @@ public class RoleService extends ServiceImpl<RoleDao, RoleEntity> {
         return roleEntity;
     }
 
-    public RoleEntity changeMenu(Long roleId, Set<ResourceEntity> menuEntities) {
+    public RoleEntity changeMenu(Integer roleId, Set<ResourceEntity> menuEntities) {
         roleResourceService.remove(new QueryWrapper<RoleResourceEntity>()
                 .lambda()
                 .eq(RoleResourceEntity::getRoleId, roleId)
@@ -81,14 +81,14 @@ public class RoleService extends ServiceImpl<RoleDao, RoleEntity> {
         return roleEntity;
     }
 
-    public RoleEntity changeUsers(Long roleId, List<UserEntity> users) {
+    public RoleEntity changeUsers(Integer roleId, List<UserEntity> users) {
         userRoleService.remove(new QueryWrapper<UserRoleEntity>()
                 .lambda()
                 .eq(UserRoleEntity::getRoleId, roleId)
         );
         List<UserRoleEntity> userRoleEntities = users.stream()
                 .map(UserEntity::getId)
-                .map(userId -> new UserRoleEntity(null, (long) userId, roleId))
+                .map(userId -> new UserRoleEntity(null, userId, roleId))
                 .collect(Collectors.toList());
         userRoleService.saveBatch(userRoleEntities);
 
@@ -100,7 +100,7 @@ public class RoleService extends ServiceImpl<RoleDao, RoleEntity> {
     }
 
     public void changeUsers(RoleUserParam param) {
-        Long roleId = param.getRoleId();
+        Integer roleId = param.getRoleId();
         userRoleService.remove(new QueryWrapper<UserRoleEntity>()
                 .lambda()
                 .eq(UserRoleEntity::getRoleId, roleId)
@@ -108,7 +108,7 @@ public class RoleService extends ServiceImpl<RoleDao, RoleEntity> {
 
         List<UserRoleEntity> userRoleEntities = param.getUserIds()
                 .stream()
-                .map(userId -> new UserRoleEntity(null, (long) userId, roleId))
+                .map(userId -> new UserRoleEntity(null, userId, roleId))
                 .collect(Collectors.toList());
 
         userRoleService.saveBatch(userRoleEntities);
@@ -116,7 +116,7 @@ public class RoleService extends ServiceImpl<RoleDao, RoleEntity> {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public RoleEntity updateRole(Long roleId, String name, String description) {
+    public RoleEntity updateRole(Integer roleId, String name, String description) {
         RoleEntity role = findRoleById(roleId);
         role.setName(name);
         role.setRemark(description);
@@ -126,7 +126,7 @@ public class RoleService extends ServiceImpl<RoleDao, RoleEntity> {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public void deleteRoleById(Long roleId) {
+    public void deleteRoleById(Integer roleId) {
         removeById(roleId);
         roleResourceService.remove(new QueryWrapper<RoleResourceEntity>()
                 .lambda()
@@ -146,13 +146,13 @@ public class RoleService extends ServiceImpl<RoleDao, RoleEntity> {
      * @param param
      * @return
      */
-    public Result findRoleUsers(Long roleId, OrderPageParam param) {
+    public Result findRoleUsers(Integer roleId, OrderPageParam param) {
         PageHelper.startPage(param.getPage(), param.getSize());
 
         List<UserRoleEntity> list = userRoleService.list(Wrappers.<UserRoleEntity>lambdaQuery()
                 .eq(UserRoleEntity::getRoleId, roleId)
         );
-        List<Long> userids = list.stream()
+        List<Integer> userids = list.stream()
                 .map(UserRoleEntity::getUserId)
                 .toList();
 
@@ -174,7 +174,7 @@ public class RoleService extends ServiceImpl<RoleDao, RoleEntity> {
 
     @Transactional(rollbackFor = Exception.class)
     public void changeResources(RoleEntity entity) {
-        Long roleId = entity.getId();
+        Integer roleId = entity.getId();
         entity.setUpdateBy(userService.getUserId());
         entity.setUpdateTime(LocalDateTime.now());
 

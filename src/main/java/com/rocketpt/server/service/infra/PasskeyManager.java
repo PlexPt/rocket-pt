@@ -5,6 +5,6 @@ package com.rocketpt.server.service.infra;
  */
 public interface PasskeyManager {
 
-    String generate(long userId);
+    String generate(Integer userId);
 
 }

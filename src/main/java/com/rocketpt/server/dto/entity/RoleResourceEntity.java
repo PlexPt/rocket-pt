@@ -22,14 +22,14 @@ public class RoleResourceEntity {
      *
      */
     @TableId
-    private Long id;
+    private Integer id;
     /**
      * 角色ID
      */
-    private Long roleId;
+    private Integer roleId;
     /**
      * 菜单ID
      */
-    private Long resourceId;
+    private Integer resourceId;
 
 }

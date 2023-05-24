@@ -41,7 +41,7 @@ public class InvitationEntity extends EntityBase {
     @Schema(description = "用户名")
     private String username;
     @Schema(description = "注册用户ID")
-    private Long userId;
+    private Integer userId;
 
     /**
      * 注册时间

@@ -26,7 +26,7 @@ public class RoleEntity extends EntityBase {
      *
      */
     @TableId
-    private Long id;
+    private Integer id;
     /**
      * 角色名称
      */
@@ -41,7 +41,7 @@ public class RoleEntity extends EntityBase {
      * 创建者ID
      */
     @Schema(description = "创建者ID")
-    private Long createBy;
+    private Integer createBy;
     /**
      * 创建时间
      */
@@ -51,7 +51,7 @@ public class RoleEntity extends EntityBase {
      * 更新者ID
      */
     @Schema(description = "更新者ID")
-    private Long updateBy;
+    private Integer updateBy;
     /**
      * 更新时间
      */
@@ -61,7 +61,7 @@ public class RoleEntity extends EntityBase {
 
     @Schema(description = "角色菜单ID")
     @TableField(exist = false)
-    private List<Long> resourceIds = new ArrayList<>();
+    private List<Integer> resourceIds = new ArrayList<>();
 
     @TableField(exist = false)
     private List<UserEntity> users = new ArrayList<>();

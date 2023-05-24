@@ -22,8 +22,8 @@ public class UserRoleEntity {
      *
      */
     @TableId
-    private Long id;
-    private Long userId;
-    private Long roleId;
+    private Integer id;
+    private Integer userId;
+    private Integer roleId;
 
 }

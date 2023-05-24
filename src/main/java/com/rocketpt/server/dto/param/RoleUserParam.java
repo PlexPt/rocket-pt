@@ -13,10 +13,10 @@ public class RoleUserParam {
 
     @NotNull
     @Schema(description = "角色ID")
-    Long roleId;
+    Integer roleId;
 
     @NotNull
     @Schema(description = "用户ID")
-    List<Long> userIds;
+    List<Integer> userIds;
 
 }

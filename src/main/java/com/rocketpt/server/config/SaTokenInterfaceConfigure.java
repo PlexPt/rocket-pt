@@ -32,7 +32,7 @@ public class SaTokenInterfaceConfigure implements StpInterface {
     @Override
     public List<String> getPermissionList(Object loginId, String loginType) {
 
-        Long id = (Long.parseLong((String) loginId));
+        Integer id = (Integer.parseInt((String) loginId));
 
         List<String> list = userDao.queryAllPerms(id);
 
@@ -58,7 +58,7 @@ public class SaTokenInterfaceConfigure implements StpInterface {
         );
 
         if (!CollectionUtils.isEmpty(list)) {
-            List<Long> ids = list.stream()
+            List<Integer> ids = list.stream()
                     .map(UserRoleEntity::getRoleId)
                     .toList();
             List<RoleEntity> roleEntities = roleService.list(new QueryWrapper<RoleEntity>()

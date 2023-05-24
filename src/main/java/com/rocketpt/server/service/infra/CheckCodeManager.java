@@ -5,6 +5,6 @@ package com.rocketpt.server.service.infra;
  */
 public interface CheckCodeManager {
 
-    String generate(long userId, String email);
+    String generate(Integer userId, String email);
 
 }

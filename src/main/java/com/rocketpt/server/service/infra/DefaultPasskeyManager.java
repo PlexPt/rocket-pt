@@ -12,7 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 public class DefaultPasskeyManager implements PasskeyManager {
 
     @Override
-    public String generate(long userId) {
+    public String generate(Integer userId) {
         String passkey = UUID.fastUUID().toString(true);
 
         return passkey;

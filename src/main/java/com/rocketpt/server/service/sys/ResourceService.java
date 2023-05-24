@@ -74,7 +74,7 @@ public class ResourceService extends ServiceImpl<ResourceDao, ResourceEntity> {
         return getResourceTree(allResources, Constants.RESOURCE_ROOT_ID);
     }
 
-    private List<ResourceEntity> getResourceTree(List<ResourceEntity> menuEntities, Long parentId) {
+    private List<ResourceEntity> getResourceTree(List<ResourceEntity> menuEntities, Integer parentId) {
         return menuEntities.stream()
                 .filter(r -> r.getPid() != null && r.getPid().equals(parentId))
                 .peek(entity -> {
@@ -85,7 +85,7 @@ public class ResourceService extends ServiceImpl<ResourceDao, ResourceEntity> {
                 .collect(Collectors.toList());
     }
 
-    private String getParentName(Long parentId, List<ResourceEntity> menuEntities) {
+    private String getParentName(Integer parentId, List<ResourceEntity> menuEntities) {
         for (ResourceEntity resourceEntity : menuEntities) {
             if (resourceEntity.getId().equals(parentId)) {
                 return resourceEntity.getName();
@@ -98,7 +98,7 @@ public class ResourceService extends ServiceImpl<ResourceDao, ResourceEntity> {
     @Transactional(rollbackFor = Exception.class)
     public ResourceEntity createResource(String name, ResourceEntity.Type type, String url,
                                          String icon,
-                                         String permission, Long parentId) {
+                                         String permission, Integer parentId) {
         ResourceEntity resourceEntity = new ResourceEntity();
         resourceEntity.setName(name);
         resourceEntity.setType(type);

@@ -9,9 +9,9 @@ package com.rocketpt.server.service;
  */
 public interface TorrentStorageService {
 
-    void save(Long id, byte[] torrent);
+    void save(Integer id, byte[] torrent);
 
-    byte[] read(Long id);
+    byte[] read(Integer id);
 
 }
 

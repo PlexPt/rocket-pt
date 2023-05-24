@@ -21,12 +21,12 @@ public interface UserDao extends BaseMapper<com.rocketpt.server.dto.entity.UserE
      *
      * @param userId 用户ID
      */
-    List<String> queryAllPerms(Long userId);
+    List<String> queryAllPerms(Integer userId);
 
     @Select("select * from User where id in (#{userIds})")
     Set<UserEntity> findByIds(Set<Long> userIds);
 
-    Set<String> listUserPermissions(Long userId);
+    Set<String> listUserPermissions(Integer userId);
 
 
 }

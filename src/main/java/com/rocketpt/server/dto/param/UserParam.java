@@ -22,7 +22,7 @@ public class UserParam extends PageParam {
 
 
     @TableId
-    private Long id;
+    private Integer id;
     /**
      * 头像
      */

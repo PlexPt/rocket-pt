@@ -7,7 +7,7 @@ import java.util.Set;
  * @author plexpt
  */
 public record UserinfoDTO(String token,
-                          Long userId,
+                          Integer userId,
                           String username,
                           String fullName,
                           String avatar,

@@ -31,7 +31,7 @@ public abstract class EntityBase {
      * has not been saved is recognizable by a null identity.
      */
     @TableId(type = IdType.AUTO)
-    private Long id;
+    private Integer id;
 
     @Override
     public boolean equals(final Object object) {

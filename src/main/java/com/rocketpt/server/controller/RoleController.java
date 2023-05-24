@@ -50,7 +50,7 @@ public class RoleController {
     @Schema(description = "查看角色用户列表-分页")
     @SaCheckPermission("role:view")
     @PostMapping("/{roleId}/users")
-    public Result findRoleUsers(@PathVariable Long roleId,
+    public Result findRoleUsers(@PathVariable Integer roleId,
                                 @RequestBody @Validated OrderPageParam param) {
 
         return roleService.findRoleUsers(roleId, param);
@@ -116,7 +116,7 @@ public class RoleController {
     @Schema(description = "删除角色")
     @SaCheckPermission("role:edit")
     @PostMapping("/remove/{roleId}")
-    public Result deleteRole(@PathVariable Long roleId) {
+    public Result deleteRole(@PathVariable Integer roleId) {
         roleService.deleteRoleById(roleId);
         return Result.ok();
     }
