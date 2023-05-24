@@ -2,9 +2,22 @@ package com.rocketpt.server.dto.sys;
 
 import java.util.List;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 /**
  * @author plexpt
  */
-public record PageDTO<T>(List<T> list, long total) {
+
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+public class PageDTO<T> {
+
+    List<T> list;
+
+
+    long total;
 
 }

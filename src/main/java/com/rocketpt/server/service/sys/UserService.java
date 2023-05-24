@@ -4,14 +4,15 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.github.pagehelper.PageHelper;
-import com.github.pagehelper.PageInfo;
 import com.rocketpt.server.common.CommonResultStatus;
 import com.rocketpt.server.common.DomainEventPublisher;
 import com.rocketpt.server.common.base.I18nMessage;
+import com.rocketpt.server.common.base.PageUtil;
+import com.rocketpt.server.common.base.ResPage;
+import com.rocketpt.server.common.base.Result;
 import com.rocketpt.server.common.exception.RocketPTException;
 import com.rocketpt.server.common.exception.UserException;
 import com.rocketpt.server.dao.UserDao;
-import com.rocketpt.server.dto.entity.OrganizationEntity;
 import com.rocketpt.server.dto.entity.UserCredentialEntity;
 import com.rocketpt.server.dto.entity.UserEntity;
 import com.rocketpt.server.dto.event.UserCreated;
@@ -22,16 +23,14 @@ import com.rocketpt.server.dto.param.ForgotPasswordParam;
 import com.rocketpt.server.dto.param.LoginParam;
 import com.rocketpt.server.dto.param.RegisterParam;
 import com.rocketpt.server.dto.param.ResetPasswordParam;
-import com.rocketpt.server.dto.sys.PageDTO;
+import com.rocketpt.server.dto.param.UserParam;
 import com.rocketpt.server.dto.sys.UserinfoDTO;
 import com.rocketpt.server.service.GoogleAuthenticatorService;
 import com.rocketpt.server.service.infra.CheckCodeManager;
 import com.rocketpt.server.service.infra.PasskeyManager;
 import com.rocketpt.server.util.IPUtils;
-import com.rocketpt.server.util.JsonUtils;
 
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -39,7 +38,6 @@ import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import cn.dev33.satoken.secure.SaSecureUtil;
@@ -87,6 +85,15 @@ public class UserService extends ServiceImpl<UserDao, UserEntity> {
         return userEntity;
     }
 
+    @Transactional(rollbackFor = Exception.class)
+    public UserEntity createUser(UserEntity entity) {
+        entity.setState(0);
+        entity.setCreatedTime(LocalDateTime.now());
+        save(entity);
+        DomainEventPublisher.instance().publish(new UserCreated(entity));
+        return entity;
+    }
+
     public Set<UserEntity> findUserByIds(Set<Long> userIds) {
         List<UserEntity> userEntities = listByIds(userIds);
         return new LinkedHashSet<>(userEntities);
@@ -105,22 +112,6 @@ public class UserService extends ServiceImpl<UserDao, UserEntity> {
         return userEntity;
     }
 
-    public PageDTO<UserEntity> findOrgUsers(Pageable pageable, String username,
-                                            UserEntity.State state,
-                                            OrganizationEntity organizationEntity) {
-        PageHelper.startPage(pageable.getPageNumber(), pageable.getPageSize());
-        List<UserEntity> userEntities = userDao.findOrgUsers(pageable, username, state,
-                organizationEntity.getId(),
-                organizationEntity.makeSelfAsParentIds());
-        long total = new PageInfo(userEntities).getTotal();
-        return new PageDTO<>(userEntities, total);
-    }
-
-    public boolean existsUsers(OrganizationEntity organizationEntity) {
-        String orgParentIds = organizationEntity.makeSelfAsParentIds();
-        return userDao.countOrgUsers(organizationEntity.getId(), orgParentIds) > 0;
-    }
-
 
     @Transactional(rollbackFor = Exception.class)
     public UserEntity updateUser(Long userId, String fullName, String avatar,
@@ -135,6 +126,15 @@ public class UserService extends ServiceImpl<UserDao, UserEntity> {
         updateById(userEntity);
         DomainEventPublisher.instance().publish(new UserUpdated(userEntity));
         return userEntity;
+    }
+
+
+    @Transactional(rollbackFor = Exception.class)
+    public UserEntity updateUser(UserEntity entity) {
+
+        updateById(entity);
+        DomainEventPublisher.instance().publish(new UserUpdated(entity));
+        return entity;
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -153,12 +153,24 @@ public class UserService extends ServiceImpl<UserDao, UserEntity> {
         return userEntity;
     }
 
-    public PageDTO<UserEntity> findUsers(Pageable pageable, UserEntity userEntity) {
-        PageHelper.startPage(pageable.getPageNumber(), pageable.getPageSize());
-        Map<String, Object> map = JsonUtils.parseToMap(JsonUtils.stringify(userEntity));
-        List<UserEntity> userEntities = listByMap(map);
-        long total = new PageInfo(userEntities).getTotal();
-        return new PageDTO<>(userEntities, total);
+//    public PageDTO<UserEntity> findUsers(Pageable pageable, UserEntity userEntity) {
+//        PageHelper.startPage(pageable.getPageNumber(), pageable.getPageSize());
+//        Map<String, Object> map = JsonUtils.parseToMap(JsonUtils.stringify(userEntity));
+//        List<UserEntity> userEntities = listByMap(map);
+//        long total = new PageInfo(userEntities).getTotal();
+//        return new PageDTO<>(userEntities, total);
+//    }
+
+    public Result findUsers(UserParam param) {
+        PageHelper.startPage(param.getPage(), param.getSize());
+        boolean usernameNotEmpty = StringUtils.isNotEmpty(param.getUsername());
+        List<UserEntity> list = list(new QueryWrapper<UserEntity>()
+                .lambda()
+                .like(usernameNotEmpty, UserEntity::getUsername, param.getUsername())
+        );
+
+        ResPage page = PageUtil.getPage(list);
+        return Result.ok(list, page);
     }
 
     public boolean isExists(String email, String username) {
@@ -458,4 +470,6 @@ public class UserService extends ServiceImpl<UserDao, UserEntity> {
         userCredentialService.resetCheckCode(userId);
 
     }
+
+
 }

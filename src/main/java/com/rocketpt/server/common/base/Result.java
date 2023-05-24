@@ -24,7 +24,7 @@ public class Result<T> {
     @JsonProperty
     private T data;
 
-    private  Object page;
+    private ResPage page;
 
 
     public Result(Status status) {
@@ -61,6 +61,27 @@ public class Result<T> {
         this.code = status.getCode();
         this.msg = I18nMessage.getMessage(String.valueOf(msgCode));
         this.data = data;
+    }
+
+    public Result(Status status, T data, ResPage page) {
+        this.code = status.getCode();
+        this.msg = status.getMsg();
+        this.data = data;
+        this.page = page;
+    }
+
+    public Result(Status status, String msg, T data, ResPage page) {
+        this.code = status.getCode();
+        this.msg = msg;
+        this.data = data;
+        this.page = page;
+    }
+
+    public Result(Status status, int msgCode, T data, ResPage page) {
+        this.code = status.getCode();
+        this.msg = I18nMessage.getMessage(String.valueOf(msgCode));
+        this.data = data;
+        this.page = page;
     }
 
     @JsonIgnore
@@ -136,4 +157,21 @@ public class Result<T> {
     public static <T> Result<T> build(Status status, int msgCode, T data) {
         return new Result<T>(status, msgCode, data);
     }
+
+    public static Result ok(Object data, ResPage page) {
+        return new Result(Status.SUCCESS, data, page);
+    }
+
+    public static Result build(Status status, Object data, ResPage page) {
+        return new Result(status, data, page);
+    }
+
+    public static Result build(Status status, String msg, Object data, ResPage page) {
+        return new Result(status, msg, data, page);
+    }
+
+    public static Result build(Status status, int msgCode, Object data, ResPage page) {
+        return new Result(status, msgCode, data, page);
+    }
+
 }

@@ -4,25 +4,26 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.github.pagehelper.PageHelper;
-import com.github.pagehelper.PageInfo;
 import com.rocketpt.server.common.CommonResultStatus;
 import com.rocketpt.server.common.DomainEventPublisher;
+import com.rocketpt.server.common.base.OrderPageParam;
+import com.rocketpt.server.common.base.PageUtil;
+import com.rocketpt.server.common.base.Result;
 import com.rocketpt.server.common.exception.RocketPTException;
 import com.rocketpt.server.dao.RoleDao;
-import com.rocketpt.server.dto.entity.MenuEntity;
+import com.rocketpt.server.dto.entity.ResourceEntity;
 import com.rocketpt.server.dto.entity.RoleEntity;
-import com.rocketpt.server.dto.entity.RoleMenuEntity;
+import com.rocketpt.server.dto.entity.RoleResourceEntity;
 import com.rocketpt.server.dto.entity.UserEntity;
 import com.rocketpt.server.dto.entity.UserRoleEntity;
 import com.rocketpt.server.dto.event.RoleCreated;
 import com.rocketpt.server.dto.event.RoleUpdated;
-import com.rocketpt.server.dto.sys.PageDTO;
-import com.rocketpt.server.dto.sys.RoleDTO;
+import com.rocketpt.server.dto.param.RoleUserParam;
 
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -40,24 +41,19 @@ public class RoleService extends ServiceImpl<RoleDao, RoleEntity> {
 
 
     private final UserRoleService userRoleService;
-    private final RoleMenuService roleMenuService;
+    private final RoleResourceService roleResourceService;
     private final UserService userService;
 
-    public List<RoleDTO> findRoles() {
+    public List<RoleEntity> findRoles() {
 
 
-        List<RoleDTO> list = list()
-                .stream()
-                .map(role -> new RoleDTO(
-                        role.getId(),
-                        role.getName(),
-                        role.getDescription(),
-                        true,
-                        roleMenuService.getMenuIdsByRoleId(role.getId()))
-                )
-                .toList();
+        List<RoleEntity> entities = list();
+        for (RoleEntity entity : entities) {
+            List<Long> resourceIds = roleResourceService.getResourceIdsByRoleId(entity.getId());
+            entity.setResourceIds(resourceIds);
+        }
 
-        return list;
+        return entities;
     }
 
     public RoleEntity findRoleById(Long roleId) {
@@ -68,30 +64,19 @@ public class RoleService extends ServiceImpl<RoleDao, RoleEntity> {
         return roleEntity;
     }
 
-    @Transactional(rollbackFor = Exception.class)
-    public RoleEntity createRole(String name, String description) {
-        RoleEntity role = new RoleEntity();
-        role.setName(name);
-        role.setDescription(description);
-        save(role);
-        DomainEventPublisher.instance().publish(new RoleCreated(role));
-        return role;
-    }
-
-
-    public RoleEntity changeMenu(Long roleId, Set<MenuEntity> menuEntities) {
-        roleMenuService.remove(new QueryWrapper<RoleMenuEntity>()
+    public RoleEntity changeMenu(Long roleId, Set<ResourceEntity> menuEntities) {
+        roleResourceService.remove(new QueryWrapper<RoleResourceEntity>()
                 .lambda()
-                .eq(RoleMenuEntity::getRoleId, roleId)
+                .eq(RoleResourceEntity::getRoleId, roleId)
         );
-        List<RoleMenuEntity> roleMenuEntities = menuEntities.stream()
-                .map(MenuEntity::getId)
-                .map(menuId -> new RoleMenuEntity(null, roleId, menuId))
+        List<RoleResourceEntity> roleMenuEntities = menuEntities.stream()
+                .map(ResourceEntity::getId)
+                .map(rid -> new RoleResourceEntity(null, roleId, rid))
                 .collect(Collectors.toList());
-        roleMenuService.saveBatch(roleMenuEntities);
+        roleResourceService.saveBatch(roleMenuEntities);
 
         RoleEntity roleEntity = findRoleById(roleId);
-        roleEntity.setMenuEntities(menuEntities);
+        roleEntity.setResourceEntities(menuEntities);
         DomainEventPublisher.instance().publish(new RoleUpdated(roleEntity));
         return roleEntity;
     }
@@ -114,11 +99,27 @@ public class RoleService extends ServiceImpl<RoleDao, RoleEntity> {
         return roleEntity;
     }
 
+    public void changeUsers(RoleUserParam param) {
+        Long roleId = param.getRoleId();
+        userRoleService.remove(new QueryWrapper<UserRoleEntity>()
+                .lambda()
+                .eq(UserRoleEntity::getRoleId, roleId)
+        );
+
+        List<UserRoleEntity> userRoleEntities = param.getUserIds()
+                .stream()
+                .map(userId -> new UserRoleEntity(null, (long) userId, roleId))
+                .collect(Collectors.toList());
+
+        userRoleService.saveBatch(userRoleEntities);
+
+    }
+
     @Transactional(rollbackFor = Exception.class)
     public RoleEntity updateRole(Long roleId, String name, String description) {
         RoleEntity role = findRoleById(roleId);
         role.setName(name);
-        role.setDescription(description);
+        role.setRemark(description);
         updateById(role);
 //        DomainEventPublisher.instance().publish(new RoleUpdated(role));
         return role;
@@ -126,22 +127,27 @@ public class RoleService extends ServiceImpl<RoleDao, RoleEntity> {
 
     @Transactional(rollbackFor = Exception.class)
     public void deleteRoleById(Long roleId) {
-//        RoleEntity role = findRoleById(roleId);
         removeById(roleId);
-        roleMenuService.remove(new QueryWrapper<RoleMenuEntity>()
+        roleResourceService.remove(new QueryWrapper<RoleResourceEntity>()
                 .lambda()
-                .eq(RoleMenuEntity::getRoleId, roleId)
+                .eq(RoleResourceEntity::getRoleId, roleId)
         );
         userRoleService.remove(new QueryWrapper<UserRoleEntity>()
                 .lambda()
                 .eq(UserRoleEntity::getRoleId, roleId)
         );
 
-//        DomainEventPublisher.instance().publish(new RoleDeleted(roleId));
     }
 
-    public PageDTO<UserEntity> findRoleUsers(Long roleId, Pageable pageable) {
-        PageHelper.startPage(pageable.getPageNumber(), pageable.getPageSize());
+    /**
+     * 根据角色获取所有拥有角色的用户
+     *
+     * @param roleId
+     * @param param
+     * @return
+     */
+    public Result findRoleUsers(Long roleId, OrderPageParam param) {
+        PageHelper.startPage(param.getPage(), param.getSize());
 
         List<UserRoleEntity> list = userRoleService.list(Wrappers.<UserRoleEntity>lambdaQuery()
                 .eq(UserRoleEntity::getRoleId, roleId)
@@ -152,7 +158,37 @@ public class RoleService extends ServiceImpl<RoleDao, RoleEntity> {
 
         List<UserEntity> users = userService.findUserByIds(userids);
 
-        long total = new PageInfo(users).getTotal();
-        return new PageDTO<>(users, total);
+        return Result.ok(users, PageUtil.getPage(list));
+
+    }
+
+    public void createRole(RoleEntity entity) {
+        entity.setId(null);
+        entity.setCreateBy(userService.getUserId());
+        entity.setUpdateBy(userService.getUserId());
+        entity.setCreateTime(LocalDateTime.now());
+        entity.setUpdateTime(LocalDateTime.now());
+        save(entity);
+        DomainEventPublisher.instance().publish(new RoleCreated(entity));
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public void changeResources(RoleEntity entity) {
+        Long roleId = entity.getId();
+        entity.setUpdateBy(userService.getUserId());
+        entity.setUpdateTime(LocalDateTime.now());
+
+        updateById(entity);
+
+        roleResourceService.remove(new QueryWrapper<RoleResourceEntity>()
+                .lambda()
+                .eq(RoleResourceEntity::getRoleId, roleId)
+        );
+        List<RoleResourceEntity> roleMenuEntities = entity.getResourceIds()
+                .stream()
+                .map(rid -> new RoleResourceEntity(null, roleId, rid))
+                .collect(Collectors.toList());
+
+        roleResourceService.saveBatch(roleMenuEntities);
     }
 }

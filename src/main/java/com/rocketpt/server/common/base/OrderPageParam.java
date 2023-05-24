@@ -13,6 +13,7 @@ import java.util.List;
 
 import cn.hutool.core.util.ArrayUtil;
 import cn.hutool.core.util.StrUtil;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -23,11 +24,13 @@ public class OrderPageParam extends PageParam {
     /**
      * 排序字段
      */
+    @Schema(description = "排序字段")
     protected String prop;
 
     /**
      * 排序规则
      */
+    @Schema(description = "排序规则")
     protected String sort;
 
     public void validOrder(String[] orderKey) throws RocketPTException {

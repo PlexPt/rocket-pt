@@ -2,8 +2,8 @@ package com.rocketpt.server.controller;
 
 import com.rocketpt.server.common.Constants;
 import com.rocketpt.server.common.base.Result;
-import com.rocketpt.server.dto.entity.MenuEntity;
-import com.rocketpt.server.service.sys.MenuService;
+import com.rocketpt.server.dto.entity.ResourceEntity;
+import com.rocketpt.server.service.sys.ResourceService;
 
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,10 +18,9 @@ import java.util.List;
 
 import cn.dev33.satoken.annotation.SaCheckPermission;
 import cn.dev33.satoken.stp.StpUtil;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 
 /**
@@ -34,59 +33,63 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("/resources")
 public class ResourceController {
 
-    private final MenuService menuService;
+    private final ResourceService resourceService;
 
 
-    @GetMapping("/menu")
-    public Result findMenus() {
-        return Result.ok(menuService.findMenus());
-    }
-
+    @Operation(summary = "获取权限列表", description = "获取权限列表")
     @GetMapping("/permission")
     public Result permission() {
         List<String> list = StpUtil.getPermissionList();
         return Result.ok(list);
     }
 
+
+    @Operation(summary = "获取资源列表")
+    @GetMapping("/list")
+    public Result listResources() {
+        return Result.ok(resourceService.listResources());
+    }
+
+    @Operation(summary = "获取资源树")
     @SaCheckPermission("resource:view")
     @GetMapping("/tree")
     public Result findResourceTree() {
-        return Result.ok(menuService.findResourceTree());
+        return Result.ok(resourceService.findResourceTree());
     }
 
-    @SaCheckPermission("resource:create")
-    @PostMapping
-    public Result createResource(@RequestBody ResourceRequest request) {
-        MenuEntity menu = menuService.createResource(request.name(), request.type()
-                , request.url(), request.icon(), request.permission(), request.parentId());
-        return Result.ok(menu);
-    }
+    @GetMapping("/{id}")
+    @Operation(summary = "获取单个资源详情")
+    @SaCheckPermission("resource:view")
+    public Result get(@PathVariable("id") Long id) {
+        ResourceEntity entity = resourceService.getById(id);
 
-    @SaCheckPermission("resource:update")
-    @PutMapping("/{resourceId}")
-    public Result updateResource(@PathVariable Long resourceId,
-                                 @RequestBody ResourceRequest request) {
-        MenuEntity entity = menuService.updateResource(resourceId, request.name(),
-                request.type(), request.url(), request.icon(), request.permission(),
-                request.parentId());
         return Result.ok(entity);
     }
 
-    @SaCheckPermission("resource:delete")
-    @DeleteMapping("/{resourceId}")
-    public Result deleteResource(@PathVariable Long resourceId) {
-        menuService.deleteResourceById(resourceId);
+    @Operation(summary = "新增资源")
+    @SaCheckPermission("resource:edit")
+    @PostMapping("/add")
+    public Result addResource(@RequestBody ResourceEntity entity) {
+        resourceService.createResource(entity);
         return Result.ok();
     }
 
+    @Operation(summary = "修改资源")
+    @SaCheckPermission("resource:edit")
+    @PutMapping("/update")
+    public Result updateResource(@RequestBody ResourceEntity entity) {
 
-    record ResourceRequest(@NotBlank String name,
-                           @NotNull MenuEntity.Type type,
-                           String url,
-                           String icon,
-                           @NotBlank String permission,
-                           @NotNull Long parentId) {
+        resourceService.updateById(entity);
 
+        return Result.ok();
+    }
+
+    @Operation(summary = "删除资源")
+    @SaCheckPermission("resource:edit")
+    @DeleteMapping("/{resourceId}")
+    public Result deleteResource(@PathVariable Long resourceId) {
+        resourceService.deleteResourceById(resourceId);
+        return Result.ok();
     }
 
 }

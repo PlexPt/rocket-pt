@@ -1,6 +1,6 @@
 package com.rocketpt.server.dto.sys;
 
-import com.rocketpt.server.dto.entity.MenuEntity.Type;
+import com.rocketpt.server.dto.entity.ResourceEntity.Type;
 
 import java.util.List;
 

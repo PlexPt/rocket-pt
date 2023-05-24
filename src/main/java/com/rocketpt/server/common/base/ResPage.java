@@ -8,11 +8,6 @@ import lombok.ToString;
 
 /**
  * 分页的返回值
- *
- * @author liyue
- * @version v1
- * @create 2019-03-07 16:48:42
- * @copyright www.liderong.cn
  */
 @Getter
 @Setter

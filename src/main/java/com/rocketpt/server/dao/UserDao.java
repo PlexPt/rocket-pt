@@ -5,7 +5,6 @@ import com.rocketpt.server.dto.entity.UserEntity;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
-import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 import java.util.Set;
@@ -29,17 +28,5 @@ public interface UserDao extends BaseMapper<com.rocketpt.server.dto.entity.UserE
 
     Set<String> listUserPermissions(Long userId);
 
-    //or user.organization.parentIds like concat(#{orgParentIds}, '%'))
-    @Select("""
-            select * from user u where (u.organization_id=#{organizationId}
-                        
-            and (#{username} is null or u.username=#{username})
-            and (#{state} is null or u.state=#{state}))
-            """)
-    List<UserEntity> findOrgUsers(Pageable pageable, String username, UserEntity.State state,
-                                  Long organizationId, String orgParentIds);
 
-    //"or u.organization.parentIds like concat(#{orgParentIds}, '%')"
-    @Select("select count(u.id) from user u where u.organization_id=#{organizationId} ")
-    long countOrgUsers(Long organizationId, String orgParentIds);
 }

@@ -1,10 +1,10 @@
 package com.rocketpt.server.dto.event;
 
 import com.rocketpt.server.common.DomainEvent;
-import com.rocketpt.server.dto.entity.MenuEntity;
+import com.rocketpt.server.dto.entity.ResourceEntity;
 
 /**
  * @author plexpt
  */
-public record ResourceDeleted(MenuEntity menuEntity) implements DomainEvent {
+public record ResourceDeleted(ResourceEntity resourceEntity) implements DomainEvent {
 }

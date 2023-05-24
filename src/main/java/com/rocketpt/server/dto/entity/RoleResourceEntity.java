@@ -15,8 +15,8 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@TableName("t_role_menu")
-public class RoleMenuEntity {
+@TableName("t_role_resource")
+public class RoleResourceEntity {
 
     /**
      *
@@ -30,6 +30,6 @@ public class RoleMenuEntity {
     /**
      * 菜单ID
      */
-    private Long menuId;
+    private Long resourceId;
 
 }

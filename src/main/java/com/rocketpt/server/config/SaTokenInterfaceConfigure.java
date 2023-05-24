@@ -4,8 +4,8 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.rocketpt.server.dao.UserDao;
 import com.rocketpt.server.dto.entity.RoleEntity;
 import com.rocketpt.server.dto.entity.UserRoleEntity;
-import com.rocketpt.server.service.sys.MenuService;
-import com.rocketpt.server.service.sys.RoleMenuService;
+import com.rocketpt.server.service.sys.ResourceService;
+import com.rocketpt.server.service.sys.RoleResourceService;
 import com.rocketpt.server.service.sys.RoleService;
 import com.rocketpt.server.service.sys.UserRoleService;
 
@@ -23,10 +23,10 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class SaTokenInterfaceConfigure implements StpInterface {
 
-    final MenuService menuService;
+    final ResourceService resourceService;
     final RoleService roleService;
     final UserRoleService userRoleService;
-    final RoleMenuService roleMenuService;
+    final RoleResourceService roleResourceService;
     final UserDao userDao;
 
     @Override
