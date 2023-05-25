@@ -34,7 +34,7 @@ public class ConfigController {
     @SaCheckPermission("sys:config:edit")
     @PostMapping("/mail")
     public Result updateSmtpConfig(@RequestBody SmtpConfig config) {
-        sysConfigService.set("SmtpConfig", config);
+        sysConfigService.set("smtp_config", config);
 
         mailConfiger.changeConfig(config);
 

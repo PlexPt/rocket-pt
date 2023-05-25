@@ -1,0 +1,17 @@
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://127.0.0.1:3306/rocket?characterEncoding=utf8&zeroDateTimeBehavior=convertToNull
+    username: root
+    password: xp8bEGK3GAG6a8pd
+#  sql:
+#    init:
+#      data-locations: classpath:data.sql
+#      mode: always
+#      continue-on-error: true
+
+
+  mail:
+    host: smtp.qq.com
+    username: ss@qq.com
+    password: yxwrnwnxvtssdagd

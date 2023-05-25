@@ -53,6 +53,10 @@ public class LocalTorrentStorageService implements TorrentStorageService {
     @Override
     @SneakyThrows
     public void init() {
+        useAbsolutePath = sysConfigService.getUseAbsolutePath();
+        relativePath = sysConfigService.getTorrentStoragePath();
+        absolutePath = relativePath;
+
         FileUtil.mkdir(getPath());
     }
 

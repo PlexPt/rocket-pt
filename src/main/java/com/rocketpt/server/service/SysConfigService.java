@@ -24,7 +24,7 @@ public class SysConfigService {
      * @return 邮箱配置
      */
     public SmtpConfig getSmtpConfig() {
-        String key = "SmtpConfig";
+        String key = "smtp_config";
 
         String string = systemConfigService.getString(key);
 
@@ -53,6 +53,19 @@ public class SysConfigService {
         return false;
     }
 
+    public Boolean getUseAbsolutePath() {
+        String totpEnable = systemConfigService.getString("use_absolute_path");
+
+        if ("1".equals(totpEnable)) {
+            return true;
+        }
+
+        return false;
+    }
+
+    public String getTorrentStoragePath() {
+        return getStringOrDefault("torrent_storage_path", "/torrent/");
+    }
 
     public int getIntOrDefault(String key, int defaultValue) {
 
