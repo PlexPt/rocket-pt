@@ -15,7 +15,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import cn.dev33.satoken.annotation.SaCheckPermission;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -41,6 +42,7 @@ public class UserController {
 
 
     @Operation(summary = "用户详情")
+    @Parameter(name = "userId", description = "用户 ID", required = true, in = ParameterIn.PATH)
     @PostMapping("/{userId}")
     public Result info(@PathVariable Integer userId) {
 
@@ -65,6 +67,7 @@ public class UserController {
     }
 
     @Operation(summary = "锁定用户")
+    @Parameter(name = "userId", description = "用户 ID", required = true, in = ParameterIn.PATH)
     @SaCheckPermission("user:update")
     @PostMapping("/lock/{userId}")
     public Result lockUser(@PathVariable Integer userId) {
@@ -74,6 +77,7 @@ public class UserController {
     }
 
     @Operation(summary = "解锁用户")
+    @Parameter(name = "userId", description = "用户 ID", required = true, in = ParameterIn.PATH)
     @SaCheckPermission("user:update")
     @PostMapping("/unlock/{userId}")
     public Result unlockUser(@PathVariable Integer userId) {
@@ -83,6 +87,7 @@ public class UserController {
     }
 
     @Operation(summary = "删除用户")
+    @Parameter(name = "userId", description = "用户 ID", required = true, in = ParameterIn.PATH)
     @SaCheckPermission("user:delete")
     @PostMapping("/remove/{userId}")
     public Result deleteUser(@PathVariable Integer userId) {

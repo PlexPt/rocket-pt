@@ -14,6 +14,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 
@@ -33,6 +36,10 @@ public class UserTotpController {
 
 
     @Operation(summary = "生成2FA二维码", description = "生成2FA二维码")
+    @ApiResponse(responseCode = "0", description = "操作成功", content = {
+            @Content(mediaType = "application/json", schema = @Schema(implementation =
+                    TotpVo.class))
+    })
     @PostMapping("/code")
     public Result code() {
         String key = googleAuthenticatorService.createCredentials();

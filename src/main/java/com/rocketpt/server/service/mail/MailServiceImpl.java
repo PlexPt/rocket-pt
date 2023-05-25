@@ -1,5 +1,7 @@
 package com.rocketpt.server.service.mail;
 
+import com.rocketpt.server.service.SysConfigService;
+
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -25,6 +27,8 @@ public class MailServiceImpl implements MailService {
 
     private final JavaMailSenderImpl mailSender;//注入邮件工具类
 
+    private final SysConfigService configService;
+
     @Async
     @Override
     public MailVo sendMail(MailVo mailVo) {
@@ -39,6 +43,7 @@ public class MailServiceImpl implements MailService {
             return mailVo;
         }
     }
+
 
     @Override
     public MailVo sendMail(String email, String subject, String text, String url) {
