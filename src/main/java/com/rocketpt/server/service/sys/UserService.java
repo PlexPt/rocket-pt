@@ -314,7 +314,7 @@ public class UserService extends ServiceImpl<UserDao, UserEntity> {
      * @param totp             用户的TOTP码
      * @return 验证码有效返回true，无效返回false
      */
-    private boolean isTotpValid(Integer verificationCode, String totp) {
+    public boolean isTotpValid(Integer verificationCode, String totp) {
         // 如果用户的TOTP码为空，视为有效
         if (StringUtils.isEmpty(totp)) {
             return true;
@@ -365,6 +365,18 @@ public class UserService extends ServiceImpl<UserDao, UserEntity> {
         return StpUtil.getLoginIdAsInt();
     }
 
+
+    /**
+     * 获取用户信息
+     */
+    public String getUsername(int userId) {
+        UserEntity entity = getOne(new QueryWrapper<UserEntity>()
+                .lambda()
+                .select(UserEntity::getUsername)
+                .eq(UserEntity::getId, userId)
+        );
+        return entity.getUsername();
+    }
 
     /**
      * 获取用户信息

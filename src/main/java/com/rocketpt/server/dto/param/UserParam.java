@@ -8,6 +8,7 @@ import com.rocketpt.server.common.exception.RocketPTException;
 
 import java.time.LocalDateTime;
 
+import jakarta.validation.constraints.Email;
 import lombok.Data;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -54,6 +55,7 @@ public class UserParam extends PageParam {
     /**
      * 邮件地址
      */
+    @Email
     private String email;
     /**
      * 注册时间

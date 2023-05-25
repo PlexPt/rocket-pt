@@ -23,7 +23,6 @@ import lombok.RequiredArgsConstructor;
 /**
  * @author plexpt
  */
-@SecurityRequirement(name = "bearerAuth")
 @RestController
 @Tag(name = "用户相关", description = Constants.FinishStatus.FINISHED)
 @RequiredArgsConstructor
@@ -40,6 +39,14 @@ public class UserController {
         return userService.findUsers(param);
     }
 
+
+    @Operation(summary = "用户详情")
+    @PostMapping("/{userId}")
+    public Result info(@PathVariable Integer userId) {
+
+        UserEntity entity = userService.getById(userId);
+        return Result.ok(entity);
+    }
 
     @Operation(summary = "新增用户")
     @SaCheckPermission("user:create")

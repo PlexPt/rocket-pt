@@ -98,35 +98,45 @@ public class UserEntity {
     /**
      * 上传量
      */
+    @Schema(description = "上传量")
     private Long uploaded;
     /**
      * 下载量
      */
+    @Schema(description = "下载量")
     private Long downloaded;
     /**
      * 做种时间
      */
+    @Schema(description = "做种时间")
     private Long seedtime;
     /**
      * 下载时间
      */
+    @Schema(description = "下载时间")
     private Long leechtime;
+
+    /**
+     * 警告
+     */
+    @Schema(description = "警告状态")
+    private Boolean warning;
     /**
      * 警告者
      */
+    @Schema(description = "警告者")
     private Long warningBy;
     /**
      * 总警告次数
      */
+    @Schema(description = "总警告次数")
     private Integer warningTimes;
-    /**
-     * 警告
-     */
-    private Boolean warning;
     /**
      * 警告到期时间
      */
+    @Schema(description = "警告到期时间")
     private LocalDateTime warningUntil;
+
     /**
      *
      */
@@ -138,14 +148,17 @@ public class UserEntity {
     /**
      * 上家
      */
+    @Schema(description = "上家ID")
     private Integer inviter;
     /**
      * 魔力积分
      */
+    @Schema(description = "魔力积分")
     private Long bonus;
     /**
      * 经验值
      */
+    @Schema(description = "经验值")
     private Long exp;
 
     @RequiredArgsConstructor

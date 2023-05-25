@@ -42,6 +42,26 @@ public class UserCredentialService extends ServiceImpl<UserCredentialDao, UserCr
         updatePassword(userId, newPassword, salt);
     }
 
+    /**
+     * 更新totp
+     */
+    public void updateTotp(Integer userId, String newTotp) {
+        update(new LambdaUpdateWrapper<UserCredentialEntity>()
+                .eq(UserCredentialEntity::getId, userId)
+                .set(UserCredentialEntity::getTotp, newTotp)
+        );
+    }
+
+    /**
+     * 去掉remove
+     */
+    public void removeTotp(Integer userId) {
+        update(new LambdaUpdateWrapper<UserCredentialEntity>()
+                .eq(UserCredentialEntity::getId, userId)
+                .set(UserCredentialEntity::getTotp, null)
+        );
+    }
+
 
     /**
      * 更新密码
