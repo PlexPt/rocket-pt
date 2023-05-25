@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -54,5 +55,18 @@ public class UserCredentialEntity extends EntityBase {
      */
     private String totp;
 
+    /**
+     * 注册IP
+     */
+    @Schema(description = "注册IP")
+    private String regIp;
 
+    /**
+     * 注册类型
+     * 0.手动添加
+     * 1.开放注册
+     * 2.受邀注册
+     * 3.自助答题注册
+     */
+    private Integer regType;
 }

@@ -29,20 +29,20 @@ public class ValidateController {
 
     private final UserService userService;
 
-    @GetMapping("/{checkCode}")
-    public Result validate(@PathVariable String checkCode) {
-        Optional<UserEntity> optional = Optional.ofNullable(userService.getOne(
-                Wrappers.<UserEntity>lambdaQuery()
-                        .eq(UserEntity::getCheckCode, checkCode)
-                        .eq(UserEntity::getState, UserEntity.State.INACTIVATED)
-        ));
-        if (optional.isEmpty()) {
-            return Result.notFound();
-        }
-        UserEntity userEntity = optional.get();
-        userEntity.setState(UserEntity.State.NORMAL.getCode());
-        userService.updateById(userEntity);
-        return Result.ok();
-    }
+//    @GetMapping("/{checkCode}")
+//    public Result validate(@PathVariable String checkCode) {
+//        Optional<UserEntity> optional = Optional.ofNullable(userService.getOne(
+//                Wrappers.<UserEntity>lambdaQuery()
+//                        .eq(UserEntity::getCheckCode, checkCode)
+//                        .eq(UserEntity::getState, UserEntity.State.INACTIVATED)
+//        ));
+//        if (optional.isEmpty()) {
+//            return Result.notFound();
+//        }
+//        UserEntity userEntity = optional.get();
+//        userEntity.setState(UserEntity.State.NORMAL.getCode());
+//        userService.updateById(userEntity);
+//        return Result.ok();
+//    }
 
 }

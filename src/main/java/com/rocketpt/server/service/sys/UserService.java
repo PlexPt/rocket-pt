@@ -73,13 +73,12 @@ public class UserService extends ServiceImpl<UserDao, UserEntity> {
                                  Long organization) {
         UserEntity userEntity = new UserEntity();
         userEntity.setUsername(username);
-        userEntity.setFullName(fullName);
+        userEntity.setNickname(fullName);
         userEntity.setAvatar(avatar);
         userEntity.setGender(gender.getCode());
         userEntity.setEmail(email);
         userEntity.setState(state.getCode());
-        userEntity.setCreatedTime(LocalDateTime.now());
-        userEntity.setOrganizationId(organization);
+        userEntity.setCreateTime(LocalDateTime.now());
         save(userEntity);
         DomainEventPublisher.instance().publish(new UserCreated(userEntity));
         return userEntity;
@@ -88,7 +87,7 @@ public class UserService extends ServiceImpl<UserDao, UserEntity> {
     @Transactional(rollbackFor = Exception.class)
     public UserEntity createUser(UserEntity entity) {
         entity.setState(0);
-        entity.setCreatedTime(LocalDateTime.now());
+        entity.setCreateTime(LocalDateTime.now());
         save(entity);
         DomainEventPublisher.instance().publish(new UserCreated(entity));
         return entity;
@@ -118,11 +117,10 @@ public class UserService extends ServiceImpl<UserDao, UserEntity> {
                                  UserEntity.Gender gender,
                                  UserEntity.State state, Long organization) {
         UserEntity userEntity = findUserById(userId);
-        userEntity.setFullName(fullName);
+        userEntity.setNickname(fullName);
         userEntity.setAvatar(avatar);
         userEntity.setGender(gender.getCode());
         userEntity.setState(state.getCode());
-        userEntity.setOrganizationId(organization);
         updateById(userEntity);
         DomainEventPublisher.instance().publish(new UserUpdated(userEntity));
         return userEntity;
@@ -223,14 +221,15 @@ public class UserService extends ServiceImpl<UserDao, UserEntity> {
         );
 
         // 生成邮件验证码并设置用户属性
-        userEntity.setRegIp(IPUtils.getIpAddr());
-        userEntity.setRegType(param.getType());
+
         updateById(userEntity);
 
         // 创建用户凭证实体
         UserCredentialEntity userCredentialEntity = new UserCredentialEntity();
         userCredentialEntity.setId(userEntity.getId());
         userCredentialEntity.setUsername(param.getUsername());
+        userCredentialEntity.setRegIp(IPUtils.getIpAddr());
+        userCredentialEntity.setRegType(param.getType());
         String checkCode = passkeyManager.generate(userEntity.getId());
         userCredentialEntity.setCheckCode(checkCode);
 

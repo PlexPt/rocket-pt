@@ -9,6 +9,7 @@ import lombok.Data;
 
 @Data
 @TableName("t_invitation")
+@Schema(description = "邀请")
 public class InvitationEntity extends EntityBase {
 
     /**
