@@ -112,9 +112,18 @@ public class TorrentUtils {
      *
      * @return
      */
-    public static String getDefaultTorrentDir() {
+    public static String getDefaultDir() {
         ApplicationHome home = new ApplicationHome();
-        return home.getDir().getAbsolutePath() + "/torrent/";
+        return home.getDir().getAbsolutePath();
+    }
+
+    /**
+     * 获取默认种子目录: jar所在目录/torrent
+     *
+     * @return
+     */
+    public static String getDefaultTorrentDir() {
+        return getDefaultDir() + "/torrent/";
     }
 
 }
