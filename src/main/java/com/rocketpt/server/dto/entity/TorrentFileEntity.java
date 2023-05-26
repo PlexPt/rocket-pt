@@ -13,10 +13,12 @@ import lombok.RequiredArgsConstructor;
  * 种子文件 torrent_file
  *
  * @author yzr
+ * @deprecated 文件不存数据库
  */
 @Data
 @NoArgsConstructor
 @TableName("t_torrent_file")
+@Deprecated
 public class TorrentFileEntity extends EntityBase {
 
     /**
