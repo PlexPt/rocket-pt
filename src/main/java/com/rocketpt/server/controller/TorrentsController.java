@@ -6,10 +6,12 @@ import com.rocketpt.server.common.base.I18nMessage;
 import com.rocketpt.server.common.base.PageUtil;
 import com.rocketpt.server.common.base.Result;
 import com.rocketpt.server.common.exception.RocketPTException;
+import com.rocketpt.server.dao.SuggestDao;
 import com.rocketpt.server.dto.entity.TorrentEntity;
 import com.rocketpt.server.dto.param.TorrentAddParam;
 import com.rocketpt.server.dto.param.TorrentAuditParam;
 import com.rocketpt.server.dto.param.TorrentParam;
+import com.rocketpt.server.dto.vo.SuggestVo;
 import com.rocketpt.server.service.TorrentService;
 
 import org.springframework.util.StringUtils;
@@ -27,6 +29,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.List;
 
 import cn.dev33.satoken.annotation.SaCheckLogin;
@@ -55,6 +58,8 @@ public class TorrentsController {
 
     private final TorrentService torrentService;
 
+    private final SuggestDao suggestDao;
+
     /**
      * 种子列表查询
      */
@@ -63,7 +68,7 @@ public class TorrentsController {
     @PostMapping("/list")
     public Result list(@RequestBody TorrentParam param) {
         param.validOrder(param.getOrderKey(TorrentEntity.class));
-
+        param.buildLike();
         PageUtil.startPage(param);
 
         List<TorrentEntity> list = torrentService.getBaseMapper().search(param);
@@ -71,6 +76,32 @@ public class TorrentsController {
         return Result.ok(list, PageUtil.getPage(list));
     }
 
+    @Operation(summary = "种子搜索建议")
+    @GetMapping("/suggest")
+    @Parameter(name = "q", description = "关键字", required = true, in = ParameterIn.QUERY)
+    public Result getSuggestions(@RequestParam(required = false) String q) {
+
+        if (StringUtils.isEmpty(q)) {
+            return Result.ok(new ArrayList<>());
+        }
+
+        List<SuggestVo> suggests = suggestDao.getSuggestions(q.trim() + "%");
+        List<SuggestVo> result = new ArrayList<>();
+        int i = 0;
+        for (SuggestVo suggest : suggests) {
+            if (suggest.getSuggest().length() > 25) {
+                continue;
+            }
+            result.add(suggest);
+
+            i++;
+            if (i >= 5) {
+                break;
+            }
+        }
+
+        return Result.ok(result);
+    }
 
     @SaCheckLogin
     @Operation(summary = "种子详情查询")
