@@ -46,7 +46,7 @@ public interface Constants {
 
     interface Announce {
 
-        String PROTOCOL = "udp";
+        String PROTOCOL = "https";
 
         String HOSTNAME = "rocket.pt.local";
 

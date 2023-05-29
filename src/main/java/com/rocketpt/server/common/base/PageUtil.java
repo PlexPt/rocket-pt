@@ -16,6 +16,12 @@ public class PageUtil {
      * @param param
      */
     public static void startPage(OrderPageParam param) {
+        Integer page = param.getPage();
+        if (page == null) {
+            param.setPage(1);
+            param.setSize(DEFAULT_PAGE_SIZE);
+        }
+
         PageHelper.startPage(param.getPage(), param.getSize());
 
     }

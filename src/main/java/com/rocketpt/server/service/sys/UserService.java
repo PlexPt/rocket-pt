@@ -483,4 +483,13 @@ public class UserService extends ServiceImpl<UserDao, UserEntity> {
     }
 
 
+    public String getPasskey(Integer id) {
+        UserCredentialEntity entity =
+                userCredentialService.getOne(new QueryWrapper<UserCredentialEntity>()
+                        .lambda()
+                        .select(UserCredentialEntity::getPasskey)
+                        .eq(UserCredentialEntity::getId, id)
+                );
+        return entity.getPasskey();
+    }
 }

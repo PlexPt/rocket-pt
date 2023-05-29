@@ -1,17 +1,13 @@
 package com.rocketpt.server.service.infra;
 
-import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.dampcake.bencode.Bencode;
 import com.dampcake.bencode.Type;
 import com.rocketpt.server.common.CommonResultStatus;
 import com.rocketpt.server.common.Constants;
-import com.rocketpt.server.common.SessionItemHolder;
 import com.rocketpt.server.common.base.I18nMessage;
 import com.rocketpt.server.common.exception.RocketPTException;
-import com.rocketpt.server.dto.TorrentDto;
-import com.rocketpt.server.dto.entity.TorrentFileEntity;
-import com.rocketpt.server.dto.sys.UserinfoDTO;
 import com.rocketpt.server.dao.TorrentFileDao;
+import com.rocketpt.server.dto.TorrentDto;
 
 import org.springframework.stereotype.Component;
 
@@ -20,7 +16,6 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import lombok.RequiredArgsConstructor;
@@ -71,6 +66,7 @@ public class DefaultTorrentManager implements TorrentManager {
         map.remove("announce");
         Map<String, Object> infoMap = (Map<String, Object>) map.get("info");
         infoMap.put("private", 1);
+        //todo 配置前缀
         infoMap.put("source", Constants.Source.PREFIX + Constants.Source.NAME);
         map.put("info", infoMap);
         return infoBencode.encode(map);
@@ -81,34 +77,10 @@ public class DefaultTorrentManager implements TorrentManager {
         Map<String, Object> decodedMap = infoBencode.decode(bytes, Type.DICTIONARY);
         Map<String, Object> infoDecodedMap = (Map<String, Object>) decodedMap.get("info");
         byte[] encode = infoBencode.encode(infoDecodedMap);
+
         MessageDigest md = MessageDigest.getInstance("SHA-1");
         return md.digest(encode);
     }
 
-    @Override
-    public void preserve(Integer torrentId, byte[] bytes, TorrentFileEntity.IdentityType identityType) {
-        TorrentFileEntity torrentFileEntity = new TorrentFileEntity();
-        torrentFileEntity.setTorrentId(torrentId);
-        torrentFileEntity.setFile(bytes);
-        torrentFileEntity.setIdentityType(identityType);
-        torrentFileDao.insert(torrentFileEntity);
-    }
 
-    @Override
-    public byte[] fetch(Integer torrentId) {
-        Optional<TorrentFileEntity> fileOptional = Optional.ofNullable(torrentFileDao.selectOne(
-                Wrappers.<TorrentFileEntity>lambdaQuery()
-                        .eq(TorrentFileEntity::getTorrentId, torrentId)
-        ));
-        if (fileOptional.isEmpty()) {
-            throw new RocketPTException(CommonResultStatus.PARAM_ERROR, I18nMessage.getMessage(
-                    "torrent_not_exists"));
-        }
-        Map<String, Object> decodedMap = infoBencode.decode(fileOptional.get().getFile(),
-                Type.DICTIONARY);
-        UserinfoDTO dto = (UserinfoDTO) SessionItemHolder.getItem(Constants.SESSION_CURRENT_USER);
-        decodedMap.put("announce",
-                Constants.Announce.PROTOCOL + "://" + Constants.Announce.HOSTNAME + ":" + Constants.Announce.PORT + "/" + dto.credential().passkey());
-        return infoBencode.encode(decodedMap);
-    }
 }

@@ -33,7 +33,7 @@ public class TorrentEntity {
      */
     private String name;
     /**
-     * 文件名
+     * 上传文件名
      */
     private String filename;
     /**
@@ -59,9 +59,20 @@ public class TorrentEntity {
     private Integer category;
 
     /**
-     * 状态 0 候选中 1 已发布 2 已下架
+     * 状态
+     *
+     * @see Status
      */
     private Integer status;
+
+    /**
+     * 文件状态 0 未上传 1 已上传
+     */
+    private Integer fileStatus;
+    /**
+     * 审核人
+     */
+    private Integer reviewer;
 
 
     /**
@@ -71,7 +82,7 @@ public class TorrentEntity {
 
 
     /**
-     * 添加日期
+     * 修改日期
      */
     private LocalDateTime updateTime;
 
@@ -85,8 +96,10 @@ public class TorrentEntity {
     private Long size;
     /**
      * 类型
+     * single(1)
+     * multi(2)
      */
-    private Type type;
+    private Integer type;
     /**
      * 文件数量
      */
@@ -135,6 +148,23 @@ public class TorrentEntity {
      */
     private String remark;
 
+    /**
+     * 种子状态
+     * 0 候选中 1 已发布 2 审核不通过 3 已上架修改重审中 10 已下架
+     */
+    public interface Status {
+
+        int CANDIDATE = 0;
+
+        int PUBLISHED = 1;
+
+        int AUDIT_NOT_PASSED = 2;
+
+        int RETRIAL = 3;
+
+        int REMOVED = 10;
+
+    }
 
     @RequiredArgsConstructor
     public enum Type {

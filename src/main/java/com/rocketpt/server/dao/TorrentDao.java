@@ -1,7 +1,7 @@
 package com.rocketpt.server.dao;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.rocketpt.server.dto.entity.TorrentsEntity;
+import com.rocketpt.server.dto.entity.TorrentEntity;
 
 import org.apache.ibatis.annotations.Mapper;
 
@@ -11,6 +11,6 @@ import org.apache.ibatis.annotations.Mapper;
  * @date 2023-01-28 00:01:53
  */
 @Mapper
-public interface TorrentsDao extends BaseMapper<TorrentsEntity> {
+public interface TorrentDao extends BaseMapper<TorrentEntity> {
 
 }

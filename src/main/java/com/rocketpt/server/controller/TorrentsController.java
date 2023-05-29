@@ -1,16 +1,18 @@
 package com.rocketpt.server.controller;
 
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.rocketpt.server.common.CommonResultStatus;
 import com.rocketpt.server.common.Constants;
-import com.rocketpt.server.common.base.CustomPage;
 import com.rocketpt.server.common.base.I18nMessage;
+import com.rocketpt.server.common.base.PageUtil;
 import com.rocketpt.server.common.base.Result;
+import com.rocketpt.server.common.base.TorrentParam;
 import com.rocketpt.server.common.exception.RocketPTException;
-import com.rocketpt.server.dto.entity.TorrentsEntity;
-import com.rocketpt.server.service.infra.TorrentManager;
-import com.rocketpt.server.service.TorrentsService;
+import com.rocketpt.server.dto.entity.TorrentEntity;
+import com.rocketpt.server.dto.param.TorrentAddParam;
+import com.rocketpt.server.dto.param.TorrentAuditParam;
+import com.rocketpt.server.service.TorrentService;
 
+import org.springframework.util.StringUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -25,15 +27,18 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.List;
 
+import cn.dev33.satoken.annotation.SaCheckLogin;
+import cn.dev33.satoken.annotation.SaIgnore;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 
 
 /**
@@ -48,110 +53,134 @@ import lombok.RequiredArgsConstructor;
 @Validated
 public class TorrentsController {
 
-    private final TorrentsService torrentsService;
-    private final TorrentManager torrentManager;
+    private final TorrentService torrentService;
 
     /**
-     * 列表
+     * 种子列表查询
      */
+    @SaCheckLogin
+    @Operation(summary = "种子列表查询", description = "种子列表条件查询-分页-排序")
     @PostMapping("/list")
-    public Result list(@RequestBody CustomPage page) {
-        Page<TorrentsEntity> entityPage = new Page<>(page.getCurrent(), page.getSize());
-        entityPage.addOrder(page.getOrders());
-        return Result.ok(torrentsService.page(entityPage));
+    public Result list(@RequestBody TorrentParam param) {
+        PageUtil.startPage(param);
+        List<TorrentEntity> list = torrentService.list();
+
+        return Result.ok(list);
     }
 
-    /**
-     * 信息
-     */
+
+    @SaCheckLogin
+    @Operation(summary = "种子详情查询")
     @PostMapping("/info/{id}")
     public Result info(@PathVariable("id") Integer id) {
-        TorrentsEntity torrents = torrentsService.getById(id);
-        return Result.ok(torrents);
+
+        TorrentEntity entity = torrentService.getById(id);
+        return Result.ok(entity);
     }
 
-    /**
-     * 保存
-     */
-    @PostMapping("/save")
-    public Result save(@RequestBody TorrentsEntity entity) {
-        torrentsService.save(entity);
+
+    @SaCheckLogin
+    @Operation(summary = "新增种子")
+    @PostMapping("/add")
+    public Result add(@RequestBody @Validated TorrentAddParam param) {
+
+        torrentService.add(param);
 
         return Result.ok();
     }
 
-    /**
-     * 保存/修改
-     */
-    @PostMapping("/saveOrUpdate")
-    public Result saveOrUpdate(@RequestBody TorrentsEntity entity) {
-        if (Objects.isNull(entity.getId())) {
-            torrentsService.save(entity);
-        } else {
-            torrentsService.updateById(entity);
-        }
 
-        return Result.success();
-    }
+    @SaCheckLogin
+    @Operation(summary = "审核种子")
+    @PostMapping("/audit")
+    public Result audit(@RequestBody @Validated TorrentAuditParam param) {
 
-    /**
-     * 修改
-     */
-    @PostMapping("/update")
-    public Result update(@RequestBody TorrentsEntity torrents) {
-        torrentsService.updateById(torrents);
+        torrentService.audit(param);
 
         return Result.ok();
     }
 
-    /**
-     * 删除
-     */
-    @PostMapping("/delete")
-    public Result delete(@RequestBody Integer[] ids) {
-        torrentsService.removeByIds(Arrays.asList(ids));
 
-        return Result.ok();
-    }
-
-    /**
-     * 上传
-     */
-    @Operation(summary = "上传")
+    @SaCheckLogin
+    @Operation(summary = "上传种子文件")
+    @Parameter(name = "id", description = "种子ID", required = true, in = ParameterIn.QUERY)
     @PostMapping("/upload")
-    public Result upload(@RequestPart("file") MultipartFile multipartFile,
-                         @RequestPart("entity") TorrentsEntity torrentsEntity) {
+    public Result upload(@RequestPart("file") MultipartFile file,
+                         @RequestParam Integer id) {
         try {
-            if (multipartFile.isEmpty()) {
+            if (file.isEmpty()) {
                 throw new RocketPTException(CommonResultStatus.PARAM_ERROR,
                         I18nMessage.getMessage("torrent_empty"));
             }
-            byte[] bytes = multipartFile.getBytes();
-            return torrentsService.upload(bytes, torrentsEntity);
+            String filename = StringUtils.cleanPath(file.getOriginalFilename());
+            // validation here for .torrent file
+            if (!filename.endsWith(".torrent")) {
+                throw new RocketPTException("Invalid file type. Only .torrent files are allowed");
+            }
+            if (filename.contains("..")) {
+                // This is a security check
+                throw new RocketPTException("Cannot store file with relative path outside current" +
+                        " directory: " + filename);
+            }
+
+            byte[] bytes = file.getBytes();
+
+            torrentService.upload(id, bytes, filename);
         } catch (IOException e) {
             return Result.failure();
         }
+
+        return Result.ok();
     }
 
-    @Operation(summary = "下载")
+
+    @Operation(summary = "修改种子")
+    @PostMapping("/update")
+    @SaCheckLogin
+    public Result update(@RequestBody TorrentEntity entity) {
+        torrentService.update(entity);
+
+        return Result.ok();
+    }
+
+
+    @SaCheckLogin
+    @Operation(summary = "删除种子")
+    @PostMapping("/delete")
+    public Result delete(@RequestBody Integer[] ids) {
+        torrentService.remove(ids);
+
+        return Result.ok();
+    }
+
+
+    @SaIgnore
+    @SneakyThrows
+    @Operation(summary = "下载种子")
+    @Parameter(name = "id", description = "种子ID", required = true, in = ParameterIn.QUERY)
+    @Parameter(name = "passkey", description = "passkey", in = ParameterIn.QUERY)
     @GetMapping("/download")
-    public void download(@RequestParam("id") @Positive Integer id, HttpServletResponse response) throws IOException {
-        Optional<TorrentsEntity> entityOptional = Optional.ofNullable(torrentsService.getById(id));
-        if (entityOptional.isEmpty()) {
+    public void download(@RequestParam("id") @Positive Integer id,
+                         @RequestParam(value = "passkey", required = false) @Positive String passkey,
+                         HttpServletResponse response) {
+
+        TorrentEntity entity = torrentService.getById(id);
+        if (entity == null) {
             throw new RocketPTException(CommonResultStatus.PARAM_ERROR, I18nMessage.getMessage(
                     "torrent_not_exists"));
         }
-        byte[] fetch = torrentManager.fetch(id);
-        String filename = entityOptional.get().getFilename();
+        byte[] torrentBytes = torrentService.fetch(id, passkey);
+        //TODO 修改下载的文件名
+        String filename = entity.getFilename();
         filename = URLEncoder.encode(filename, StandardCharsets.UTF_8).replaceAll("\\+", "%20");
         response.setCharacterEncoding(StandardCharsets.UTF_8.name());
-        response.setContentLength(fetch.length);
+        response.setContentLength(torrentBytes.length);
         response.setContentType("application/x-bittorrent");
         response.setHeader("Content-Disposition", "attachment;filename=" + filename);
         if (response.isCommitted()) {
             return;
         }
-        response.getOutputStream().write(fetch);
+        response.getOutputStream().write(torrentBytes);
         response.getOutputStream().flush();
     }
 

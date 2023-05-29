@@ -16,7 +16,4 @@ public interface TorrentManager {
 
     byte[] infoHash(byte[] bytes) throws NoSuchAlgorithmException;
 
-    void preserve(Integer torrentId, byte[] bytes, TorrentFileEntity.IdentityType identityType);
-
-    byte[] fetch(Integer torrentId);
 }
