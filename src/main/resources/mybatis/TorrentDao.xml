@@ -5,4 +5,35 @@
 <mapper namespace="com.rocketpt.server.dao.TorrentDao">
 
 
+    <select id="search" resultType="com.rocketpt.server.dto.entity.TorrentEntity">
+        SELECT * FROM t_torrent
+        <where>
+            <if test="category != null">
+                AND category = #{category}
+            </if>
+            <if test="status != null">
+                AND status = #{status}
+            </if>
+            <if test="reviewStatus != null">
+                AND review_status = #{reviewStatus}
+            </if>
+            <if test="free != null and free!=''">
+                AND free = #{free}
+            </if>
+            <if test="likeExpressions != null and likeExpressions.size > 0">
+                AND (
+                <foreach collection="likeExpressions" item="item" open="(" separator=" AND " close=")">
+
+                    ( title LIKE CONCAT('%', #{item}, '%') ) or ( subheading LIKE CONCAT('%', #{item}, '%'))
+                </foreach>
+                )
+            </if>
+
+        </where>
+
+        <if test="prop != null and sort != null">
+            ORDER BY ${prop} ${sort}
+        </if>
+
+    </select>
 </mapper>

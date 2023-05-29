@@ -5,11 +5,11 @@ import com.rocketpt.server.common.Constants;
 import com.rocketpt.server.common.base.I18nMessage;
 import com.rocketpt.server.common.base.PageUtil;
 import com.rocketpt.server.common.base.Result;
-import com.rocketpt.server.common.base.TorrentParam;
 import com.rocketpt.server.common.exception.RocketPTException;
 import com.rocketpt.server.dto.entity.TorrentEntity;
 import com.rocketpt.server.dto.param.TorrentAddParam;
 import com.rocketpt.server.dto.param.TorrentAuditParam;
+import com.rocketpt.server.dto.param.TorrentParam;
 import com.rocketpt.server.service.TorrentService;
 
 import org.springframework.util.StringUtils;
@@ -62,10 +62,13 @@ public class TorrentsController {
     @Operation(summary = "种子列表查询", description = "种子列表条件查询-分页-排序")
     @PostMapping("/list")
     public Result list(@RequestBody TorrentParam param) {
-        PageUtil.startPage(param);
-        List<TorrentEntity> list = torrentService.list();
+        param.validOrder(param.getOrderKey(TorrentEntity.class));
 
-        return Result.ok(list);
+        PageUtil.startPage(param);
+
+        List<TorrentEntity> list = torrentService.getBaseMapper().search(param);
+
+        return Result.ok(list, PageUtil.getPage(list));
     }
 
 
@@ -170,6 +173,7 @@ public class TorrentsController {
                     "torrent_not_exists"));
         }
         byte[] torrentBytes = torrentService.fetch(id, passkey);
+        //TODO 下载日志
         //TODO 修改下载的文件名
         String filename = entity.getFilename();
         filename = URLEncoder.encode(filename, StandardCharsets.UTF_8).replaceAll("\\+", "%20");

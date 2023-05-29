@@ -33,16 +33,15 @@ public class OrderPageParam extends PageParam {
     @Schema(description = "排序规则")
     protected String sort;
 
-    public void validOrder(String[] orderKey) throws RocketPTException {
-        this.prop = StringUtils.isBlank(this.prop) ? null : this.prop;
-        this.sort = StringUtils.isBlank(this.sort) ? Constants.Order.DEFAULT_ORDER_TYPE
-                : this.sort;
+    public void validOrder(List<String> orderKey) throws RocketPTException {
+        prop = StringUtils.isBlank(prop) ? null : StrUtil.toUnderlineCase(prop);
+        sort = StringUtils.isBlank(sort) ? Constants.Order.DEFAULT_ORDER_TYPE : sort;
 
-        if (Arrays.asList(Constants.Order.ORDER_TYPE).indexOf(this.sort) < 0) {
+        if (Arrays.asList(Constants.Order.ORDER_TYPE).indexOf(sort) < 0) {
             throw new RocketPTException(CommonResultStatus.PARAM_ERROR, "排序方式錯誤");
         }
 
-        if (!StringUtils.isBlank(this.prop) && Arrays.asList(orderKey).indexOf(this.prop) < 0) {
+        if (StringUtils.isNotBlank(prop) && Arrays.asList(orderKey).indexOf(prop) < 0) {
             throw new RocketPTException(CommonResultStatus.PARAM_ERROR, "排序欄位錯誤");
         }
     }
@@ -64,10 +63,27 @@ public class OrderPageParam extends PageParam {
     /**
      * @return 反射获取字段列表
      */
-    private List<String> getOrderKey() {
+    public List<String> getOrderKey() {
         List<String> list = new ArrayList<>();
 
         Field[] fields = getClass().getDeclaredFields();
+        if (fields != null) {
+            for (Field field : fields) {
+                field.setAccessible(true);
+                String name = field.getName();
+
+                list.add(StrUtil.toUnderlineCase(name));
+            }
+        }
+        return list;
+    }
+    /**
+     * @return 反射获取字段列表
+     */
+    public List<String> getOrderKey(Class clazz) {
+        List<String> list = new ArrayList<>();
+
+        Field[] fields = clazz.getDeclaredFields();
         if (fields != null) {
             for (Field field : fields) {
                 field.setAccessible(true);

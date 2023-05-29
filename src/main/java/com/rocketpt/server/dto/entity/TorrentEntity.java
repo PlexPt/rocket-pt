@@ -16,7 +16,7 @@ import lombok.RequiredArgsConstructor;
  * @date 2023-02-09 14:43:20
  */
 @Data
-@TableName("t_torrents")
+@TableName("t_torrent")
 public class TorrentEntity {
 
     /**
