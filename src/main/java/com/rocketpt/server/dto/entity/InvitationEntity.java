@@ -1,5 +1,7 @@
 package com.rocketpt.server.dto.entity;
 
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 
 import java.time.LocalDateTime;
@@ -11,6 +13,9 @@ import lombok.Data;
 @TableName("t_invitation")
 @Schema(description = "邀请")
 public class InvitationEntity extends EntityBase {
+
+    @TableId(type = IdType.AUTO)
+    private Integer id;
 
     /**
      * 邀请人id
@@ -49,6 +54,5 @@ public class InvitationEntity extends EntityBase {
      */
     @Schema(description = "注册时间")
     private LocalDateTime regTime;
-    private String taskid;
-    private String orderid;
+
 }

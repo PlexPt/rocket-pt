@@ -54,7 +54,7 @@ import lombok.SneakyThrows;
 @RequiredArgsConstructor
 @RequestMapping("/torrent")
 @Validated
-public class TorrentsController {
+public class TorrentController {
 
     private final TorrentService torrentService;
 
@@ -90,6 +90,7 @@ public class TorrentsController {
         int i = 0;
         for (SuggestVo suggest : suggests) {
             if (suggest.getSuggest().length() > 25) {
+                //TODO 保存的时候过滤
                 continue;
             }
             result.add(suggest);
