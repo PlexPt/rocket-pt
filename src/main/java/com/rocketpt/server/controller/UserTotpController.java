@@ -7,6 +7,7 @@ import com.rocketpt.server.service.GoogleAuthenticatorService;
 import com.rocketpt.server.service.sys.UserCredentialService;
 import com.rocketpt.server.service.sys.UserService;
 
+import org.springframework.boot.info.BuildProperties;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -50,7 +51,6 @@ public class UserTotpController {
         TotpVo totpVo = new TotpVo();
         totpVo.setKey(key);
         totpVo.setUri(uri);
-
         return Result.ok(totpVo);
     }
 

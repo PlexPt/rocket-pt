@@ -196,5 +196,13 @@ public class UserEntity {
         return this.state == State.LOCKED.code;
     }
 
+    /**
+     * @return 用户状态正常
+     */
+    public boolean isUserOK() {
+
+        return this.state == State.NORMAL.code;
+    }
+
 
 }

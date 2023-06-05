@@ -10,6 +10,7 @@ import com.rocketpt.server.dto.param.ForgotPasswordParam;
 import com.rocketpt.server.dto.param.LoginParam;
 import com.rocketpt.server.dto.param.ResetPasswordParam;
 import com.rocketpt.server.dto.sys.UserinfoDTO;
+import com.rocketpt.server.dto.vo.TotpVo;
 import com.rocketpt.server.service.sys.CaptchaService;
 import com.rocketpt.server.service.sys.UserService;
 
@@ -31,6 +32,9 @@ import cn.dev33.satoken.stp.StpUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.ServletOutputStream;
 import jakarta.servlet.http.HttpServletResponse;
@@ -123,9 +127,13 @@ public class LoginController {
         return Result.ok();
     }
 
+    @ApiResponse(responseCode = "0", description = "操作成功", content = {
+            @Content(mediaType = "application/json", schema = @Schema(implementation =
+                    Boolean.class))
+    })
     @SaIgnore
     @Operation(summary = "是否登录")
-    @GetMapping("isLogin")
+    @GetMapping("/auth/check")
     public Result isLogin() {
         return Result.ok(StpUtil.isLogin());
     }
@@ -139,6 +147,10 @@ public class LoginController {
         return Result.ok("成功");
     }
 
+    @ApiResponse(responseCode = "0", description = "操作成功", content = {
+            @Content(mediaType = "application/json", schema = @Schema(implementation =
+                    UserinfoDTO.class))
+    })
     @Operation(summary = "用户信息")
     @SaCheckLogin
     @GetMapping("/userinfo")

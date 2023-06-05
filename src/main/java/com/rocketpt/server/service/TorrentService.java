@@ -1,5 +1,6 @@
 package com.rocketpt.server.service;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.dampcake.bencode.Bencode;
@@ -164,6 +165,15 @@ public class TorrentService extends ServiceImpl<TorrentDao, TorrentEntity> {
         }
 
         removeByIds(Arrays.asList(ids));
+    }
+
+    public TorrentEntity getByInfoHash(byte[] infoHash) {
+        TorrentEntity entity = getOne(new QueryWrapper<TorrentEntity>()
+                        .lambda()
+                        .eq(TorrentEntity::getInfoHash, infoHash)
+                , false
+        );
+        return entity;
     }
 }
 

@@ -176,4 +176,10 @@ public class TorrentEntity {
         private final int code;
     }
 
+    public boolean isStatusOK() {
+
+
+        return status == 1;
+    }
+
 }

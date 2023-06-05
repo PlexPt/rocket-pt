@@ -13,7 +13,7 @@ import java.util.Set;
  * @author plexpt
  */
 @Mapper
-public interface UserDao extends BaseMapper<com.rocketpt.server.dto.entity.UserEntity> {
+public interface UserDao extends BaseMapper< UserEntity> {
 
 
     /**
@@ -28,5 +28,8 @@ public interface UserDao extends BaseMapper<com.rocketpt.server.dto.entity.UserE
 
     Set<String> listUserPermissions(Integer userId);
 
+
+    @Select("SELECT * FROM t_user u LEFT JOIN t_user_credential uc on uc.id = u.id WHERE uc.passkey=#{passkey}")
+    UserEntity findUserByPasskey(String passkey);
 
 }

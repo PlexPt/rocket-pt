@@ -13,6 +13,7 @@ public class DefaultPasskeyManager implements PasskeyManager {
 
     @Override
     public String generate(Integer userId) {
+        //32位UUID
         String passkey = UUID.fastUUID().toString(true);
 
         return passkey;
