@@ -52,17 +52,17 @@ public class RegisterController {
         return Result.ok();
     }
 
-    /**
-     * @return secret
-     */
-    @Operation(summary = "注册确认")
-    @Parameter(name = "code", description = "邮件里面的code", required = true, in = ParameterIn.PATH)
-    @PostMapping("/confirm/{code}")
-    public Result confirm(@PathVariable @NotBlank @Validated String code) {
-        userService.confirm(code);
-
-        return Result.ok();
-    }
+//    /**
+//     * @return secret
+//     */
+//    @Operation(summary = "注册确认")
+//    @Parameter(name = "code", description = "邮件里面的code", required = true, in = ParameterIn.PATH)
+//    @PostMapping("/confirm/{code}")
+//    public Result confirm(@PathVariable @NotBlank @Validated String code) {
+//        userService.confirm(code);
+//
+//        return Result.ok();
+//    }
 
     /**
      * @return secret
