@@ -4,6 +4,7 @@ import com.rocketpt.server.common.CommonResultStatus;
 import com.rocketpt.server.common.Constants;
 import com.rocketpt.server.common.base.Result;
 import com.rocketpt.server.common.exception.RocketPTException;
+import com.rocketpt.server.dto.param.RegisterCodeParam;
 import com.rocketpt.server.dto.param.RegisterParam;
 import com.rocketpt.server.service.sys.CaptchaService;
 import com.rocketpt.server.service.sys.UserService;
@@ -59,6 +60,17 @@ public class RegisterController {
     @PostMapping("/confirm/{code}")
     public Result confirm(@PathVariable @NotBlank @Validated String code) {
         userService.confirm(code);
+
+        return Result.ok();
+    }
+
+    /**
+     * @return secret
+     */
+    @Operation(summary = "注册-发送邮箱验证码")
+    @PostMapping("/send")
+    public Result sendCode(@Validated @RequestBody RegisterCodeParam param) {
+        userService.sendRegCode(param);
 
         return Result.ok();
     }

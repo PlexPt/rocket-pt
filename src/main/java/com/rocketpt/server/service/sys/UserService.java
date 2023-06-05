@@ -21,6 +21,7 @@ import com.rocketpt.server.dto.event.UserUpdated;
 import com.rocketpt.server.dto.param.ChangePasswordParam;
 import com.rocketpt.server.dto.param.ForgotPasswordParam;
 import com.rocketpt.server.dto.param.LoginParam;
+import com.rocketpt.server.dto.param.RegisterCodeParam;
 import com.rocketpt.server.dto.param.RegisterParam;
 import com.rocketpt.server.dto.param.ResetPasswordParam;
 import com.rocketpt.server.dto.param.UserParam;
@@ -208,6 +209,7 @@ public class UserService extends ServiceImpl<UserDao, UserEntity> {
             throw new RocketPTException(CommonResultStatus.PARAM_ERROR, I18nMessage.getMessage(
                     "email_exists"));
         }
+        // TODO 检查邮箱验证码
 
         // 校验通过，创建用户实体
         UserEntity userEntity = createUser(
@@ -216,7 +218,7 @@ public class UserService extends ServiceImpl<UserDao, UserEntity> {
                 null,
                 UserEntity.Gender.valueof(param.getSex()),
                 param.getEmail(),
-                UserEntity.State.INACTIVATED,
+                UserEntity.State.NORMAL,
                 3L
         );
 
@@ -491,5 +493,9 @@ public class UserService extends ServiceImpl<UserDao, UserEntity> {
                         .eq(UserCredentialEntity::getId, id)
                 );
         return entity.getPasskey();
+    }
+
+    public void sendRegCode(RegisterCodeParam code) {
+        //TODO 验证图片验证码和邀请码正确后发送邮件
     }
 }
