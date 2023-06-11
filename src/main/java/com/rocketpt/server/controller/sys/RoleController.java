@@ -1,4 +1,4 @@
-package com.rocketpt.server.controller;
+package com.rocketpt.server.controller.sys;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.rocketpt.server.common.Constants;

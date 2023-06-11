@@ -1,7 +1,5 @@
 package com.rocketpt.server.controller;
 
-import com.rocketpt.server.config.GitVersionProperties;
-
 import org.springframework.boot.info.BuildProperties;
 import org.springframework.boot.info.GitProperties;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,7 +13,7 @@ public class IndexController {
 
     final BuildProperties buildProperties;
 
-//    final GitVersionProperties gitVersionProperties;
+    //    final GitVersionProperties gitVersionProperties;
     final GitProperties gitProperties;
 
 //    @Value("${git.commit.id.abbrev}")

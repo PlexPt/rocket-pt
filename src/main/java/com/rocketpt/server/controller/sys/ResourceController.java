@@ -1,4 +1,4 @@
-package com.rocketpt.server.controller;
+package com.rocketpt.server.controller.sys;
 
 import com.rocketpt.server.common.Constants;
 import com.rocketpt.server.common.base.Result;
