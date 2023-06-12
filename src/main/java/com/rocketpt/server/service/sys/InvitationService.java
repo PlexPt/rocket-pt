@@ -19,7 +19,7 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public class InvitationService extends ServiceImpl<InvitationDao, InvitationEntity> {
 
-    Boolean check(String inviteeEmail, String invitationCode) {
+    public boolean check(String inviteeEmail, String invitationCode) {
         Optional<InvitationEntity> invitationOptional = Optional.ofNullable(
                 getOne(
                         Wrappers.<InvitationEntity>lambdaQuery()
@@ -31,6 +31,13 @@ public class InvitationService extends ServiceImpl<InvitationDao, InvitationEnti
         return invitationOptional.isPresent();
     }
 
+    /**
+     * 消费邀请码
+     *
+     * @param inviteeEmail
+     * @param invitationCode
+     * @param userEntity
+     */
     public void consume(String inviteeEmail, String invitationCode, UserEntity userEntity) {
         InvitationEntity invitationEntity = getOne(
                 Wrappers.<InvitationEntity>lambdaQuery()

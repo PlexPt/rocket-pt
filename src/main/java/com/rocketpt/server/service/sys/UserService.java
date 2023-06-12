@@ -211,6 +211,7 @@ public class UserService extends ServiceImpl<UserDao, UserEntity> {
             throw new RocketPTException(CommonResultStatus.PARAM_ERROR, I18nMessage.getMessage(
                     "email_exists"));
         }
+        // TODO 检查邮箱验证码是否正确 正确才能注册
 
         // 校验通过，创建用户实体
         UserEntity userEntity = createUser(
