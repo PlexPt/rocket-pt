@@ -30,7 +30,7 @@ public class InviteController {
     @Operation(summary = "发送邀请")
     @PostMapping("/send")
     public Result register(@RequestBody @Validated InviteParam param) {
-
+        //TODO 发送邀请
         return Result.ok();
 
     }
