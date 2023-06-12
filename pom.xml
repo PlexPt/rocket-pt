@@ -217,7 +217,7 @@
     </dependencies>
 
     <build>
-        <finalName>rocketpt</finalName>
+        <finalName>rocketpt-new</finalName>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>

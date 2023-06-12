@@ -74,6 +74,10 @@ pagehelper:
 logging:
   file:
     path: logs
+  level:
+    root: info
+    org.springframework: info
+
 
 # springdoc-openapi项目配置
 springdoc:
