@@ -1,14 +1,15 @@
 package com.rocketpt.server.controller;
 
 import com.rocketpt.server.common.Constants;
-import com.rocketpt.server.dao.SuggestDao;
-import com.rocketpt.server.service.TorrentService;
+import com.rocketpt.server.common.base.Result;
 import com.rocketpt.server.service.sys.UserService;
 
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 
@@ -20,10 +21,15 @@ import lombok.RequiredArgsConstructor;
 @Validated
 public class TagController {
 
-    private final TorrentService torrentService;
 
-    private final SuggestDao suggestDao;
     private final UserService userService;
 
 
+    @Operation(summary = "所有标签", description = "返回所有标签")
+    @GetMapping("/all")
+    public Result all() {
+        //TODO
+
+        return Result.ok();
+    }
 }

@@ -22,7 +22,6 @@ public class RSSController {
 
     private final TorrentService torrentService;
 
-    private final SuggestDao suggestDao;
     private final UserService userService;
 
 
