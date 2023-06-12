@@ -48,7 +48,6 @@
 ## 参与开发
 [提需求建议，提Bug](https://github.com/PlexPt/rocket-pt/issues/new/choose)
 
-##### 开发进度见 [TODO](./TODO.md)
 #### 参与步骤
 
 1. 在TODO列表或Issue列表找到要开发的功能
