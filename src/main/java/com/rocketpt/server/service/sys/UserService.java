@@ -29,6 +29,7 @@ import com.rocketpt.server.dto.sys.UserinfoDTO;
 import com.rocketpt.server.service.GoogleAuthenticatorService;
 import com.rocketpt.server.service.infra.CheckCodeManager;
 import com.rocketpt.server.service.infra.PasskeyManager;
+import com.rocketpt.server.service.mail.MailService;
 import com.rocketpt.server.util.IPUtils;
 
 import org.apache.commons.lang3.StringUtils;
@@ -61,6 +62,7 @@ public class UserService extends ServiceImpl<UserDao, UserEntity> {
     private final CheckCodeManager checkCodeManager;
     private final PasskeyManager passkeyManager;
     private final CaptchaService captchaService;
+    private final MailService mailService;
 
     private final GoogleAuthenticatorService googleAuthenticatorService;
 
@@ -209,7 +211,6 @@ public class UserService extends ServiceImpl<UserDao, UserEntity> {
             throw new RocketPTException(CommonResultStatus.PARAM_ERROR, I18nMessage.getMessage(
                     "email_exists"));
         }
-        // TODO 检查邮箱验证码
 
         // 校验通过，创建用户实体
         UserEntity userEntity = createUser(
@@ -222,7 +223,7 @@ public class UserService extends ServiceImpl<UserDao, UserEntity> {
                 3L
         );
 
-        // 生成邮件验证码并设置用户属性
+        // 设置用户属性
 
         updateById(userEntity);
 
@@ -249,7 +250,6 @@ public class UserService extends ServiceImpl<UserDao, UserEntity> {
 
         // 消费邀请码
         invitationService.consume(param.getEmail(), param.getInvitationCode(), userEntity);
-        //TODO 发邮件
     }
 
 
@@ -496,6 +496,18 @@ public class UserService extends ServiceImpl<UserDao, UserEntity> {
     }
 
     public void sendRegCode(RegisterCodeParam code) {
-        //TODO 验证图片验证码和邀请码正确后发送邮件
+        //验证图片验证码和邀请码正确后发送邮件
+        if(captchaService.verifyCaptcha(code.getUuid(),code.getCode())){
+            if(invitationService.check(code.getEmail(),code.getInvitationCode())){
+                mailService.sendMail(code.getEmail(),
+                        I18nMessage.getMessage("confirm_title"),
+                        I18nMessage.getMessage("confirm_email"),
+                        null);
+            }else{
+                throw new RocketPTException("邀请码错误");
+            }
+        }else{
+            throw new RocketPTException("图片验证码错误");
+        }
     }
 }
