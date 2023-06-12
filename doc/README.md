@@ -84,7 +84,7 @@
 - 不分页数据
 
   ```javascript
-  javascript复制代码{
+  {
     code: 20000,
     status: 200,
     message: "请求成功",
@@ -98,7 +98,7 @@
 - 分页数据
 
   ```javascript
-  javascript复制代码{
+  {
     code: 20000,
     status: 200,
     message: "请求成功",
@@ -122,7 +122,7 @@
 #### 1.9 请求和响应字段采用 `aa_bb_cc` 方式命名
 
 ```javascript
-javascript复制代码// 正确
+// 正确
 {
   role_ids: [11,12,35],
 }
@@ -149,7 +149,7 @@ javascript复制代码// 正确
 #### 1.12 空数组使用 []，而不是 null
 
 ```javascript
-javascript复制代码// 正确
+// 正确
 {
   code: 20000,
   status: 200,
@@ -174,7 +174,7 @@ javascript复制代码// 正确
 #### 1.13 前后端传输过程以标准 JSON 格式，避免反复正反序列化
 
 ```javascript
-javascript复制代码// 正确
+// 正确
 {
   code: 20000,
   status: 200,
@@ -205,7 +205,7 @@ javascript复制代码// 正确
 #### 2.1 创建完成后直接返回 id
 
 ```javascript
-javascript复制代码{
+{
   code: 20000,
   status: 200,
   message: "创建成功",
@@ -220,7 +220,7 @@ javascript复制代码{
 以创建用户为例：POST `/api/users`
 
 ```javascript
-javascript复制代码// 正确
+// 正确
 {
   username: 'ming'
   password: 'xxxx',
@@ -247,7 +247,7 @@ javascript复制代码// 正确
 #### 2.3 参数错误以数组形式返回，并附带用户友好的提示
 
 ```javascript
-javascript复制代码{
+{
   code: 40000
   status: 400;
   message: "参数错误",
@@ -289,7 +289,7 @@ javascript复制代码{
 #### 3.4 尽可能返回所有关联数据展开详情，便于客户端显示
 
 ```javascript
-javascript复制代码{
+{
   code: 20000,
   status: 200,
   message: "请求成功",
@@ -313,7 +313,7 @@ javascript复制代码{
 #### 3.5 可枚举字段使用有语义英文而非无语义数字
 
 ```javascript
-javascript复制代码// 正确
+// 正确
 {
   code: 20000,
   status: 200,
@@ -340,7 +340,7 @@ javascript复制代码// 正确
 #### 3.6 合理自然嵌套结构而不是平铺
 
 ```javascript
-javascript复制代码// 正确
+// 正确
 {
   code: 20000,
   status: 200,
@@ -381,7 +381,7 @@ javascript复制代码// 正确
 #### 4.1 统一提供单文件上传接口（`/api/files`），支持上传所有类型文件
 
 ```javascript
-javascript复制代码// 请求，注意这里是 FormData
+// 请求，注意这里是 FormData
 {
   file: File
 }
@@ -402,7 +402,7 @@ javascript复制代码// 请求，注意这里是 FormData
 #### 4.2 统一提供多文件上传接口（`/api/multiple-files`），支持上传所有类型文件
 
 ```javascript
-javascript复制代码// 请求，注意这里是 FormData
+// 请求，注意这里是 FormData
 {
   files: [File, File]
 }
@@ -427,7 +427,7 @@ javascript复制代码// 请求，注意这里是 FormData
 #### 4.3 文件路径至少补全至根路径
 
 ```javascript
-javascript复制代码// 正确
+// 正确
 {
   code: 20000,
   status: 200,
@@ -456,7 +456,7 @@ javascript复制代码// 正确
 #### 4.4 对于使用到文件的接口使用文件 id 或地址而非 FormData
 
 ```javascript
-javascript复制代码// 正确
+// 正确
 {
   name: '新任务 1',
   file_id: 'bb313c99',
@@ -477,7 +477,7 @@ javascript复制代码// 正确
 #### 5.1 涉及到用户隐私的应对相关字段做加密处理
 
 ```javascript
-javascript复制代码// 正确
+// 正确
 {
   name: '小明',
   id_number: 'U2FsdGVkX1+1fW7OpO/tlPXe4IGA/bXExlhKwIR/spk=',
@@ -499,7 +499,7 @@ javascript复制代码// 正确
 #### 6.1 曲线图、柱状图
 
 ```javascript
-javascript复制代码{
+{
   code: 20000,
   status: 200,
   message: "请求成功",
@@ -521,7 +521,7 @@ javascript复制代码{
 #### 6.2 饼图
 
 ```javascript
-javascript复制代码{
+{
   code: 20000,
   status: 200,
   message: "请求成功",
