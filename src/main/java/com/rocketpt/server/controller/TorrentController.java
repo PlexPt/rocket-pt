@@ -13,6 +13,7 @@ import com.rocketpt.server.dto.param.TorrentAuditParam;
 import com.rocketpt.server.dto.param.TorrentParam;
 import com.rocketpt.server.dto.vo.SuggestVo;
 import com.rocketpt.server.service.TorrentService;
+import com.rocketpt.server.service.sys.UserService;
 
 import org.springframework.util.StringUtils;
 import org.springframework.validation.annotation.Validated;
@@ -59,6 +60,7 @@ public class TorrentController {
     private final TorrentService torrentService;
 
     private final SuggestDao suggestDao;
+    private final UserService userService;
 
     /**
      * 种子列表查询
@@ -131,6 +133,17 @@ public class TorrentController {
     public Result audit(@RequestBody @Validated TorrentAuditParam param) {
 
         torrentService.audit(param);
+
+        return Result.ok();
+    }
+
+    /**
+     * 收藏或者取消收藏
+     */
+    @Operation(summary = "收藏或者取消收藏种子")
+    @RequestMapping("/favorite")
+    public Result favorite(Integer id) {
+        torrentService.favorite(id, userService.getUserId());
 
         return Result.ok();
     }

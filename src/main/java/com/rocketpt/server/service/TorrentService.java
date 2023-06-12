@@ -175,5 +175,12 @@ public class TorrentService extends ServiceImpl<TorrentDao, TorrentEntity> {
         );
         return entity;
     }
+
+    /**
+     * 收藏或者取消收藏
+     */
+    public void favorite(Integer torrentId, Integer userId) {
+        //todo 收藏或者取消收藏
+    }
 }
 

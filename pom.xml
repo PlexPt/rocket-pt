@@ -233,6 +233,7 @@
                             <artifactId>lombok</artifactId>
                         </exclude>
                     </excludes>
+                    <executable>true</executable>
                 </configuration>
                 <executions>
                     <execution>
@@ -270,7 +271,8 @@
                     <!-- 生成git属性文件，默认false：不生成 -->
                     <generateGitPropertiesFile>true</generateGitPropertiesFile>
                     <!-- 生成git属性文件路径及文件名，默认${project.build.outputDirectory}/git.properties -->
-                    <generateGitPropertiesFilename>${project.build.outputDirectory}/git.properties</generateGitPropertiesFilename>
+                    <generateGitPropertiesFilename>${project.build.outputDirectory}/git.properties
+                    </generateGitPropertiesFilename>
                     <!-- 生成git属性文件格式，默认值properties -->
                     <format>properties</format>
                     <!-- 配置git-describe命令 -->
