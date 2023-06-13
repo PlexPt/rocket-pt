@@ -12,6 +12,7 @@ import com.rocketpt.server.dto.param.TorrentAddParam;
 import com.rocketpt.server.dto.param.TorrentAuditParam;
 import com.rocketpt.server.dto.param.TorrentParam;
 import com.rocketpt.server.dto.vo.SuggestVo;
+import com.rocketpt.server.dto.vo.TorrentVO;
 import com.rocketpt.server.service.TorrentService;
 import com.rocketpt.server.service.sys.UserService;
 
@@ -38,6 +39,9 @@ import cn.dev33.satoken.annotation.SaIgnore;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.constraints.Positive;
@@ -67,6 +71,10 @@ public class TorrentController {
      */
     @SaCheckLogin
     @Operation(summary = "种子列表查询", description = "种子列表条件查询-分页-排序")
+    @ApiResponse(responseCode = "0", description = "操作成功",
+            content = {@Content(mediaType = "application/json",
+                    schema = @Schema(implementation = TorrentVO.class))
+            })
     @PostMapping("/list")
     public Result list(@RequestBody TorrentParam param) {
         param.validOrder(param.getOrderKey(TorrentEntity.class));
@@ -81,6 +89,10 @@ public class TorrentController {
     @Operation(summary = "种子搜索建议")
     @GetMapping("/suggest")
     @Parameter(name = "q", description = "关键字", required = true, in = ParameterIn.QUERY)
+    @ApiResponse(responseCode = "0", description = "操作成功", content = {
+            @Content(mediaType = "application/json", schema = @Schema(implementation =
+                    SuggestVo.class))
+    })
     public Result getSuggestions(@RequestParam(required = false) String q) {
 
         if (StringUtils.isEmpty(q)) {
@@ -108,6 +120,10 @@ public class TorrentController {
 
     @SaCheckLogin
     @Operation(summary = "种子详情查询")
+    @ApiResponse(responseCode = "0", description = "操作成功", content = {
+            @Content(mediaType = "application/json", schema = @Schema(implementation =
+                    TorrentEntity.class))
+    })
     @PostMapping("/info/{id}")
     public Result info(@PathVariable("id") Integer id) {
 
@@ -141,7 +157,8 @@ public class TorrentController {
      * 收藏或者取消收藏
      */
     @Operation(summary = "收藏或者取消收藏种子")
-    @RequestMapping("/favorite")
+    @Parameter(name = "id", description = "种子ID", required = true, in = ParameterIn.QUERY)
+    @PostMapping("/favorite")
     public Result favorite(Integer id) {
         torrentService.favorite(id, userService.getUserId());
 
