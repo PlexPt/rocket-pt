@@ -23,7 +23,7 @@ class UserServiceTest {
     @Transactional
     void sendRegCode() {
         RegisterCodeParam registerCodeParam=new RegisterCodeParam();
-        registerCodeParam.setEmail("me@mikesolar.cn");
+        registerCodeParam.setEmail("someone@example.com");
         BDDMockito.given(this.captchaService.verifyCaptcha(
                 registerCodeParam.getUuid(),
                 registerCodeParam.getCode()))
