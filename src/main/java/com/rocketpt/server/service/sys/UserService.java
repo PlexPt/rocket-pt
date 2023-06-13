@@ -32,6 +32,7 @@ import com.rocketpt.server.service.infra.PasskeyManager;
 import com.rocketpt.server.service.mail.MailService;
 import com.rocketpt.server.util.IPUtils;
 
+import com.rocketpt.server.util.RedisUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -40,6 +41,7 @@ import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Random;
 import java.util.Set;
 
 import cn.dev33.satoken.secure.SaSecureUtil;
@@ -63,6 +65,7 @@ public class UserService extends ServiceImpl<UserDao, UserEntity> {
     private final PasskeyManager passkeyManager;
     private final CaptchaService captchaService;
     private final MailService mailService;
+    private RedisUtil redisUtil;
 
     private final GoogleAuthenticatorService googleAuthenticatorService;
 
@@ -500,9 +503,16 @@ public class UserService extends ServiceImpl<UserDao, UserEntity> {
         //验证图片验证码和邀请码正确后发送邮件
         if(captchaService.verifyCaptcha(code.getUuid(),code.getCode())){
             if(invitationService.check(code.getEmail(),code.getInvitationCode())){
+                Random random=new Random();
+                String confirmCode="";
+                for(int i=0;i<6;i++){
+                    confirmCode=confirmCode+random.nextInt(10);
+                }
+                redisUtil.append("emailConfirmCode",confirmCode);
+                String text = I18nMessage.getMessage("confirm_email")+confirmCode;
                 mailService.sendMail(code.getEmail(),
                         I18nMessage.getMessage("confirm_title"),
-                        I18nMessage.getMessage("confirm_email"),
+                        text,
                         null);
             }else{
                 throw new RocketPTException("邀请码错误");
