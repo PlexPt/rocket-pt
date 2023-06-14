@@ -34,7 +34,9 @@ import com.rocketpt.server.service.mail.MailVo;
 import com.rocketpt.server.util.IPUtils;
 
 import com.rocketpt.server.util.RedisUtil;
+import org.apache.catalina.User;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -389,8 +391,11 @@ public class UserService extends ServiceImpl<UserDao, UserEntity> {
      * 获取用户信息
      */
     public UserinfoDTO getUserInfo() {
-        //TODO    获取用户信息
-        return null;
+        //获取用户信息
+        UserEntity userEntity=findUserById(getUserId());
+        UserinfoDTO userinfoDTO=new UserinfoDTO();
+        BeanUtils.copyProperties(userEntity,userinfoDTO);
+        return userinfoDTO;
     }
 
 
@@ -509,7 +514,7 @@ public class UserService extends ServiceImpl<UserDao, UserEntity> {
                 Random random=new Random();
                 String confirmCode="";
                 for(int i=0;i<6;i++){
-                    confirmCode=confirmCode+random.nextInt(10);
+                    confirmCode = confirmCode + random.nextInt(10);
                 }
                 redisUtil.append("emailConfirmCode",confirmCode);
                 String text = I18nMessage.getMessage("confirm_email")+confirmCode;

@@ -1,5 +1,6 @@
 package com.rocketpt.server.service.validator;
 
+import com.rocketpt.server.common.exception.RocketPTException;
 import com.rocketpt.server.common.exception.TrackerException;
 import com.rocketpt.server.dao.UserDao;
 import com.rocketpt.server.dto.entity.UserEntity;
@@ -20,8 +21,6 @@ public class UserValidator implements TrackerValidator {
     @Override
     public void validate(AnnounceRequest request) {
 
-        //TODO 获取Passkey对应的用户
-        //TODO 校验用户状态
         UserEntity user = userDao.findUserByPasskey(request.getPasskey());
 
         if (user == null) {

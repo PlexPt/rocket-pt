@@ -1,5 +1,7 @@
 package com.rocketpt.server.service.validator;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.rocketpt.server.common.exception.RocketPTException;
 import com.rocketpt.server.common.exception.TrackerException;
 import com.rocketpt.server.dao.UserDao;
 import com.rocketpt.server.dto.entity.TorrentEntity;
@@ -7,6 +9,7 @@ import com.rocketpt.server.dto.entity.UserEntity;
 import com.rocketpt.server.dto.param.AnnounceRequest;
 import com.rocketpt.server.service.TorrentService;
 
+import com.rocketpt.server.service.sys.UserService;
 import org.springframework.stereotype.Component;
 
 import lombok.RequiredArgsConstructor;
@@ -18,12 +21,8 @@ public class TorrentValidator implements TrackerValidator {
 
 
     final TorrentService torrentService;
-
     @Override
     public void validate(AnnounceRequest request) {
-
-        //TODO 获取Passkey对应的用户
-        //TODO 校验用户状态
         TorrentEntity torrentEntity = torrentService.getByInfoHash(request.getInfoHash());
 
         if (torrentEntity == null) {
