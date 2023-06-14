@@ -30,6 +30,7 @@ import com.rocketpt.server.service.GoogleAuthenticatorService;
 import com.rocketpt.server.service.infra.CheckCodeManager;
 import com.rocketpt.server.service.infra.PasskeyManager;
 import com.rocketpt.server.service.mail.MailService;
+import com.rocketpt.server.service.mail.MailVo;
 import com.rocketpt.server.util.IPUtils;
 
 import com.rocketpt.server.util.RedisUtil;
@@ -429,9 +430,11 @@ public class UserService extends ServiceImpl<UserDao, UserEntity> {
             throw new RocketPTException("用户状态不正确");
         }
         String checkCode = userCredentialService.resetCheckCode(entity.getId());
-        //TODO 发邮件
-
-
+        //发邮件
+        mailService.sendMail(param.getEmail(),
+                I18nMessage.getMessage("confirm_title"),
+                I18nMessage.getMessage("confirm_email")+checkCode,
+                null);
     }
 
 
