@@ -9,6 +9,7 @@ import com.rocketpt.server.dto.entity.UserEntity;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 import lombok.RequiredArgsConstructor;
@@ -52,4 +53,12 @@ public class InvitationService extends ServiceImpl<InvitationDao, InvitationEnti
         updateById(invitationEntity);
     }
 
+    public List<InvitationEntity> mylist(Integer userId) {
+        List<InvitationEntity> list = list(
+                Wrappers.<InvitationEntity>lambdaQuery()
+                        .eq(InvitationEntity::getInviter, userId)
+        );
+
+        return list;
+    }
 }
