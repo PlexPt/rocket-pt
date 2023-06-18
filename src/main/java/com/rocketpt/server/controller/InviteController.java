@@ -15,11 +15,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-
-import java.util.List;
 
 /**
  * @author plexpt
@@ -39,12 +39,12 @@ public class InviteController {
     @PostMapping("/send")
     public Result send(@RequestBody @Validated InviteParam param) {
         //发送邀请
-        try{
+        try {
             mailService.sendMail(param.getEmail(),
                     I18nMessage.getMessage("invitation_title"),
                     param.getContent(),
                     null);
-        }catch (Exception e){
+        } catch (Exception e) {
             return Result.failure();
         }
         return Result.ok();
@@ -53,7 +53,7 @@ public class InviteController {
     @Operation(summary = "邀请码列表")
     @PostMapping("/list")
     public Result list() {
-        List<InvitationEntity> invitations=invitationService.list();
+        List<InvitationEntity> invitations = invitationService.mylist(userService.getUserId());
         return Result.ok(invitations);
     }
 
