@@ -1,6 +1,5 @@
 package com.rocketpt.server.service.validator;
 
-import com.rocketpt.server.common.exception.RocketPTException;
 import com.rocketpt.server.common.exception.TrackerException;
 import com.rocketpt.server.dao.UserDao;
 import com.rocketpt.server.dto.entity.UserEntity;

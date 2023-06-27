@@ -53,7 +53,7 @@ public class InvitationService extends ServiceImpl<InvitationDao, InvitationEnti
         updateById(invitationEntity);
     }
 
-    public List<InvitationEntity> mylist(Integer userId) {
+    public List<InvitationEntity> listInvitationListByUserId(Integer userId) {
         List<InvitationEntity> list = list(
                 Wrappers.<InvitationEntity>lambdaQuery()
                         .eq(InvitationEntity::getInviter, userId)

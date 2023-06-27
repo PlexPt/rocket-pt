@@ -53,7 +53,9 @@ public class InviteController {
     @Operation(summary = "邀请码列表")
     @PostMapping("/list")
     public Result list() {
-        List<InvitationEntity> invitations = invitationService.mylist(userService.getUserId());
+        //todo 隐藏一些敏感信息
+        List<InvitationEntity> invitations =
+                invitationService.listInvitationListByUserId(userService.getUserId());
         return Result.ok(invitations);
     }
 

@@ -30,11 +30,9 @@ import com.rocketpt.server.service.GoogleAuthenticatorService;
 import com.rocketpt.server.service.infra.CheckCodeManager;
 import com.rocketpt.server.service.infra.PasskeyManager;
 import com.rocketpt.server.service.mail.MailService;
-import com.rocketpt.server.service.mail.MailVo;
 import com.rocketpt.server.util.IPUtils;
-
 import com.rocketpt.server.util.RedisUtil;
-import org.apache.catalina.User;
+
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
@@ -392,9 +390,9 @@ public class UserService extends ServiceImpl<UserDao, UserEntity> {
      */
     public UserinfoDTO getUserInfo() {
         //获取用户信息
-        UserEntity userEntity=findUserById(getUserId());
-        UserinfoDTO userinfoDTO=new UserinfoDTO();
-        BeanUtils.copyProperties(userEntity,userinfoDTO);
+        UserEntity userEntity = findUserById(getUserId());
+        UserinfoDTO userinfoDTO = new UserinfoDTO();
+        BeanUtils.copyProperties(userEntity, userinfoDTO);
         return userinfoDTO;
     }
 
@@ -438,7 +436,7 @@ public class UserService extends ServiceImpl<UserDao, UserEntity> {
         //发邮件
         mailService.sendMail(param.getEmail(),
                 I18nMessage.getMessage("confirm_title"),
-                I18nMessage.getMessage("confirm_email")+checkCode,
+                I18nMessage.getMessage("confirm_email") + checkCode,
                 null);
     }
 
@@ -507,26 +505,35 @@ public class UserService extends ServiceImpl<UserDao, UserEntity> {
         return entity.getPasskey();
     }
 
+    /**
+     * 验证图片验证码和邀请码正确后发送注册验证码邮件
+     *
+     * @param code
+     */
     public void sendRegCode(RegisterCodeParam code) {
+        //TODO  判断处理注册类型
+        //      1.开放注册
+        //      2.受邀注册
+        //      3.自助答题注册
         //验证图片验证码和邀请码正确后发送邮件
-        if(captchaService.verifyCaptcha(code.getUuid(),code.getCode())){
-            if(invitationService.check(code.getEmail(),code.getInvitationCode())){
-                Random random=new Random();
-                String confirmCode="";
-                for(int i=0;i<6;i++){
-                    confirmCode = confirmCode + random.nextInt(10);
-                }
-                redisUtil.append("emailConfirmCode",confirmCode);
-                String text = I18nMessage.getMessage("confirm_email")+confirmCode;
-                mailService.sendMail(code.getEmail(),
-                        I18nMessage.getMessage("confirm_title"),
-                        text,
-                        null);
-            }else{
-                throw new RocketPTException("邀请码错误");
-            }
-        }else{
+        if (!captchaService.verifyCaptcha(code.getUuid(), code.getCode())) {
             throw new RocketPTException("图片验证码错误");
         }
+
+        if (!invitationService.check(code.getEmail(), code.getInvitationCode())) {
+            throw new RocketPTException("邀请码错误");
+        }
+        Random random = new Random();
+        String confirmCode = "";
+        for (int i = 0; i < 6; i++) {
+            confirmCode = confirmCode + random.nextInt(10);
+        }
+        redisUtil.append("emailConfirmCode", confirmCode);
+        String text = I18nMessage.getMessage("confirm_email") + confirmCode;
+        mailService.sendMail(code.getEmail(),
+                I18nMessage.getMessage("confirm_title"),
+                text,
+                null);
+
     }
 }
