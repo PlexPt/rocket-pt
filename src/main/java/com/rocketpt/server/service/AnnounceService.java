@@ -2,14 +2,17 @@ package com.rocketpt.server.service;
 
 import com.rocketpt.server.dao.UserDao;
 import com.rocketpt.server.dto.entity.TorrentEntity;
+import com.rocketpt.server.dto.entity.TorrentPeerEntity;
 import com.rocketpt.server.dto.param.AnnounceRequest;
 import com.rocketpt.server.service.validator.ValidationManager;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -30,21 +33,81 @@ public class AnnounceService {
 
         validationManager.validate(request);
 
-        // 获取peer列表
-        torrentPeerService.list();
+        //TODO 处理短时间内重复的请求
 
         TorrentEntity torrent = request.getTorrent();
 
         Integer interval = getAnnounceInterval(request);
-        List peerList = getPeerList();
+        boolean noPeerId = Integer.valueOf(1).equals(request.getNoPeerId());
+
+        List<Map<String, Object>> peerList = getPeerList(torrent.getId(), request.getSeeder(),
+                200, noPeerId);
 
         // 返回peer列表给客户端
+        //TODO 默认值是60，改为动态调整
         return getMap(interval, 60, torrent.getSeeders(), torrent.getLeechers(), peerList);
     }
 
-    private List getPeerList() {
+    public void updatePeerTable(TorrentPeerEntity peerSelf,
+                                AnnounceRequest request,
+                                Integer userId,
+                                Integer torrentId) {
+        var event = StringUtils.trimToEmpty(request.getEvent());
+
+        var completed = false;
+
+        //TODO 加入分布式锁锁
+
+
+        // 任务停止
+        if ("stopped".equalsIgnoreCase(event)) {
+            // 只有当有peer存在的时候才执行删除操作
+            if (torrentPeerService.peerExists(userId, torrentId, request.getPeerId())) {
+                torrentPeerService.delete(userId, torrentId, request.getPeerId());
+            }
+
+            return;
+        }
+    }
+
+    /**
+     * 获取 peer 列表
+     *
+     * @param torrentId   种子ID
+     * @param seeder      如果当前用户是 seeder，那么这段代码将寻找 leecher；如果当前用户不是 seeder（或者不确定是否是 seeder），那么就不对
+     *                    peer 的类型进行过滤。
+     * @param peerNumWant 这个参数表明你希望从方法返回多少个 peers。如果当前的系统中现有的 peer 数量小于你想要的 peerNumWant，那么就返回所有的
+     *                    peers；否则，只返回你想要的 peerNumWant 数量的 peers。
+     * @param noPeerId
+     * @return
+     */
+    private List<Map<String, Object>> getPeerList(Integer torrentId,
+                                                  Boolean seeder,
+                                                  Integer peerNumWant,
+                                                  boolean noPeerId) {
         //TODO 从数据库获取peer列表
-        return new ArrayList();
+        //TODO 根据 seeder peerNumWant 参数限制peer
+        //如果当前用户是 seeder，那么这段代码将寻找 leecher；如果当前用户不是 seeder（或者不确定是否是 seeder），那么就不对 peer 的类型进行过滤。
+        List<TorrentPeerEntity> list = torrentPeerService.listByTorrent(torrentId, seeder,
+                peerNumWant);
+
+        List<Map<String, Object>> result = list.stream()
+                .map(peer -> {
+                    Map<String, Object> dataMap = new HashMap<>();
+                    // 处理ipv4
+                    if (!peer.getIp().isBlank()) {
+                        dataMap.put("ip", peer.getIp());
+                        dataMap.put("port", peer.getPort());
+                        if (!noPeerId) {
+                            dataMap.put("peer id", peer.getPeerId());
+                        }
+                    }
+                    //TODO 支持ipv6
+                    //TODO 支持压缩
+                    return dataMap.isEmpty() ? null : dataMap;
+                })
+                .collect(Collectors.toList());
+        return result;
     }
 
     /**
@@ -55,7 +118,7 @@ public class AnnounceService {
 
         return Map.of(
                 "interval", interval,
-                "min interval", 60,
+                "min interval", minInterval,
                 "complete", complete,
                 "incomplete", incomplete,
                 "peers", peers

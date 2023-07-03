@@ -25,6 +25,13 @@ public class AnnounceRequest {
 
     /**
      * 事件
+     * started, completed, stopped (or empty).
+     * 这是一个可选的键，它对应于 started（已开始）、completed（已完成）或 stopped（已停止） （或为空，这等同于不出现）。
+     * 如果没有出现，这就是定期间隔进行的公告之一。
+     * 当下载首次开始时，会发送使用 started 的公告，当下载完成时，会发送使用 completed 的公告。
+     * 如果文件在开始时就已经完成，那么不会发送 completed。
+     * 当下载器停止下载时，会发送使用 stopped 的公告。
+     *
      */
     private String event;
 
