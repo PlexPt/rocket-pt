@@ -45,16 +45,14 @@ public class AnnounceService {
 
         // 返回peer列表给客户端
         //TODO 默认值是60，改为动态调整
-        return getMap(interval, 60, torrent.getSeeders(), torrent.getLeechers(), peerList);
+        return buildResultMap(interval, 60, torrent.getSeeders(), torrent.getLeechers(), peerList);
     }
 
     public void updatePeerTable(TorrentPeerEntity peerSelf,
                                 AnnounceRequest request,
                                 Integer userId,
                                 Integer torrentId) {
-        var event = StringUtils.trimToEmpty(request.getEvent());
-
-        var completed = false;
+        String event = StringUtils.trimToEmpty(request.getEvent());
 
         //TODO 加入分布式锁锁
 
@@ -113,8 +111,9 @@ public class AnnounceService {
     /**
      * @return
      */
-    public Map<String, Object> getMap(Integer interval, Integer minInterval, Integer complete,
-                                      Integer incomplete, List peers) {
+    public Map<String, Object> buildResultMap(Integer interval, Integer minInterval,
+                                              Integer complete,
+                                              Integer incomplete, List peers) {
 
         return Map.of(
                 "interval", interval,
