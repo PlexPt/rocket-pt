@@ -7,6 +7,8 @@ import com.rocketpt.server.service.validator.ValidationManager;
 
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import lombok.RequiredArgsConstructor;
@@ -33,13 +35,30 @@ public class AnnounceService {
 
         TorrentEntity torrent = request.getTorrent();
 
+        Integer interval = getAnnounceInterval(request);
+        List peerList = getPeerList();
+
         // 返回peer列表给客户端
+        return getMap(interval, 60, torrent.getSeeders(), torrent.getLeechers(), peerList);
+    }
+
+    private List getPeerList() {
+        //TODO 从数据库获取peer列表
+        return new ArrayList();
+    }
+
+    /**
+     * @return
+     */
+    public Map<String, Object> getMap(Integer interval, Integer minInterval, Integer complete,
+                                      Integer incomplete, List peers) {
+
         return Map.of(
-                "interval", getAnnounceInterval(request),
+                "interval", interval,
                 "min interval", 60,
-                "complete", torrent.getSeeders(),
-                "incomplete", torrent.getLeechers(),
-                "peers", null
+                "complete", complete,
+                "incomplete", incomplete,
+                "peers", peers
         );
     }
 
