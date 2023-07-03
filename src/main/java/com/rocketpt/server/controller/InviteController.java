@@ -40,6 +40,7 @@ public class InviteController {
     public Result send(@RequestBody @Validated InviteParam param) {
         //发送邀请
         try {
+            //TODO 优化邮件格式，模板可动态调整
             mailService.sendMail(param.getEmail(),
                     I18nMessage.getMessage("invitation_title"),
                     param.getContent(),

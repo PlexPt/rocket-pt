@@ -389,6 +389,7 @@ public class UserService extends ServiceImpl<UserDao, UserEntity> {
      * 获取用户信息
      */
     public UserinfoDTO getUserInfo() {
+        //TODO 校验用户信息，并只需要返回必要信息，隐藏敏感信息
         //获取用户信息
         UserEntity userEntity = findUserById(getUserId());
         UserinfoDTO userinfoDTO = new UserinfoDTO();
