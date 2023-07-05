@@ -42,7 +42,8 @@ public class RocketServerApplication implements CommandLineRunner {
         String publicIP = getPublicIP();
         String serverAddress = "http://" + localIP + ":" + serverPort;
         String apiDocAddress = "http://localhost:" + serverPort + contextPath + "/doc.html";
-        String apiDocAddressPublic = "http://" + publicIP + ":" + serverPort + contextPath+ "/doc.html";
+        String apiDocAddressPublic = "http://" + publicIP + ":" + serverPort + contextPath +
+                "/doc.html";
 
         System.out.println("\n===============================================");
         System.out.printf("服务器已启动，地址为： %s\n", serverAddress);

@@ -10,7 +10,6 @@ import com.rocketpt.server.dto.param.ForgotPasswordParam;
 import com.rocketpt.server.dto.param.LoginParam;
 import com.rocketpt.server.dto.param.ResetPasswordParam;
 import com.rocketpt.server.dto.sys.UserinfoDTO;
-import com.rocketpt.server.dto.vo.TotpVo;
 import com.rocketpt.server.service.sys.CaptchaService;
 import com.rocketpt.server.service.sys.UserService;
 
@@ -49,9 +48,9 @@ import lombok.SneakyThrows;
 @RequiredArgsConstructor
 public class LoginController {
 
-    private final CaptchaService captchaService;
+    final CaptchaService captchaService;
 
-    private final UserService userService;
+    final UserService userService;
 
 
     /**
@@ -76,7 +75,7 @@ public class LoginController {
 
     @Operation(summary = "登录", description = "根据 用户名密码登录")
     @PostMapping("/login")
-    private Result login(@Validated @RequestBody LoginParam param) {
+    public Result login(@Validated @RequestBody LoginParam param) {
         if (!captchaService.verifyCaptcha(param.getUuid(), param.getCode())) {
             throw new RocketPTException("验证码不正确");
         }
@@ -94,7 +93,7 @@ public class LoginController {
 
     @Operation(summary = "忘记密码", description = "忘记密码 1 发送验证码 2 发送邮件 3 根据邮件重置密码")
     @PostMapping("/forgot-password")
-    private Result forgotPassword(@Validated @RequestBody ForgotPasswordParam param) {
+    public Result forgotPassword(@Validated @RequestBody ForgotPasswordParam param) {
         if (!captchaService.verifyCaptcha(param.getUuid(), param.getCode())) {
             throw new RocketPTException("验证码不正确");
         }
@@ -108,7 +107,7 @@ public class LoginController {
 
     @Operation(summary = "重置密码", description = "根据邮件重置密码")
     @PostMapping("/reset-password")
-    private Result resetPassword(@Validated @RequestBody ResetPasswordParam param) {
+    public Result resetPassword(@Validated @RequestBody ResetPasswordParam param) {
         if (!captchaService.verifyCaptcha(param.getUuid(), param.getCode())) {
             throw new RocketPTException("验证码不正确");
         }
@@ -120,7 +119,7 @@ public class LoginController {
 
     @Operation(summary = "修改密码", description = "根据旧密码改密码")
     @PostMapping("/change-password")
-    private Result changePassword(@Validated @RequestBody ChangePasswordParam param) {
+    public Result changePassword(@Validated @RequestBody ChangePasswordParam param) {
 
         userService.changePassword(param);
 

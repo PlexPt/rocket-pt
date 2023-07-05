@@ -6,6 +6,7 @@ import com.google.code.kaptcha.Producer;
 import com.rocketpt.server.common.exception.RocketPTException;
 
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 
 import java.awt.image.BufferedImage;
@@ -21,18 +22,20 @@ import static com.rocketpt.server.common.CommonResultStatus.FAIL;
  */
 
 @Service
+@Primary
 @RequiredArgsConstructor
 public class NumberCaptchaService implements CaptchaService {
-    private final Producer captchaProducer;
+    final Producer captchaProducer;
 
     /**
      * 默认过期时间 分钟
      */
     private static final int EXPIRE_CAPTCHA = 10;
 
+    //TODO 换成redis缓存
     private final Cache<String, String> cache = Caffeine.newBuilder()
             .initialCapacity(16)
-            .expireAfterAccess(EXPIRE_CAPTCHA, TimeUnit.MINUTES)
+            .expireAfterWrite(EXPIRE_CAPTCHA, TimeUnit.MINUTES)
             .build();
 
     @Override

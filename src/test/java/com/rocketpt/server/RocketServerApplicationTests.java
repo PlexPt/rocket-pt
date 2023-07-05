@@ -10,9 +10,10 @@ class RocketServerApplicationTests {
 
     @Test
     void contextLoads() {
-        // sha256加密
-        // feb7b5e649bdea855a6d8ff1c4eefd82e6c4bb5d90712ef387774adc532f3dcc
-        // rocketpt 6a2757026e702f1ca87ccca0522080cf6e722760de88c841686d2261c243cc96
+        // sha256加盐生成密码
+        //前面是密码 后面是盐值
+        //如密码 rocketpt + 盐 123456
+        // 结果是：6a2757026e702f1ca87ccca0522080cf6e722760de88c841686d2261c243cc96
         System.out.println(SaSecureUtil.sha256("rocketpt" + "123456"));
     }
 
