@@ -310,6 +310,9 @@ public class UserService extends ServiceImpl<UserDao, UserEntity> {
                 .select(UserEntity::getState)
                 .eq(UserEntity::getId, userId)
         );
+        if (userEntity == null) {
+            throw new UserException(CommonResultStatus.UNAUTHORIZED, "用户不存在");
+        }
 
         return userEntity.getState() == 1;
     }

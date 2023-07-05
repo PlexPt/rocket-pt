@@ -1,7 +1,7 @@
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://txcd.plexpt.com:33061/rocketdev?characterEncoding=utf8&zeroDateTimeBehavior=convertToNull
+    url: jdbc:mysql://rocketpt.plexpt.com:33061/rocketdev?characterEncoding=utf8&zeroDateTimeBehavior=convertToNull
     username: root
     password: rocketpt
 
@@ -10,4 +10,10 @@ spring:
     host: smtp.qq.com
     username: ss@qq.com
     password: yxwrnwnxvtssdagd
-
+  data:
+    redis:
+#      host: rocketpt.plexpt.com
+#      port: 6377
+#      password: pt
+#      database: 0
+      url: redis://pt@rocketpt.plexpt.com:6379/0
