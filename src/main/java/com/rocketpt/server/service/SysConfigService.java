@@ -1,6 +1,7 @@
 package com.rocketpt.server.service;
 
 import com.alibaba.fastjson.JSON;
+import com.rocketpt.server.config.SystemConfigKeys;
 import com.rocketpt.server.service.mail.SmtpConfig;
 import com.rocketpt.server.service.sys.SystemConfigService;
 
@@ -44,7 +45,7 @@ public class SysConfigService {
      */
     public Boolean getTotp() {
 
-        String totpEnable = systemConfigService.getString("totp_enable");
+        String totpEnable = systemConfigService.getString(SystemConfigKeys.TOTP_ENABLE);
 
         if ("1".equals(totpEnable)) {
             return true;
@@ -54,7 +55,7 @@ public class SysConfigService {
     }
 
     public Boolean getUseAbsolutePath() {
-        String totpEnable = systemConfigService.getString("use_absolute_path");
+        String totpEnable = systemConfigService.getString(SystemConfigKeys.USE_ABSOLUTE_PATH);
 
         if ("1".equals(totpEnable)) {
             return true;

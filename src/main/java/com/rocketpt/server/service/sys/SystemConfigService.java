@@ -17,12 +17,24 @@ import org.springframework.stereotype.Service;
  * @author plexpt
  * @email plexpt@gmail.com
  * @date 2023-02-21 16:45:22
+ * @see com.rocketpt.server.config.SystemConfigKeys
  */
 @Service
 public class SystemConfigService extends ServiceImpl<SysConfigDao, SysConfigEntity> {
 
+    /**
+     * @param key
+     * @return
+     * @see com.rocketpt.server.config.SystemConfigKeys
+     */
     @Cacheable(value = "sys_config", key = "#key")
     public String getString(String key) {
+
+        return getStringOrDefault(key, "");
+    }
+
+    @Cacheable(value = "sys_config", key = "#key")
+    public String getStringOrDefault(String key, String defaultValue) {
 
         SysConfigEntity entity = getOne(new QueryWrapper<SysConfigEntity>()
                 .lambda()
@@ -30,8 +42,7 @@ public class SystemConfigService extends ServiceImpl<SysConfigDao, SysConfigEnti
                 .eq(SysConfigEntity::getK, key), false
         );
         if (entity == null) {
-            return "";
-
+            return defaultValue;
         }
 
         return entity.getV();
@@ -40,13 +51,25 @@ public class SystemConfigService extends ServiceImpl<SysConfigDao, SysConfigEnti
     @Cacheable(value = "sys_config", key = "#key")
     public <T> T get(String key, Class<T> tClass) {
 
-        String string = getString(key);
-        if (string.isEmpty()) {
-            return null;
+        return getOrDefault(key, tClass, null);
+    }
+
+    @Cacheable(value = "sys_config", key = "#key")
+    public <T> T getOrDefault(String key, Class<T> tClass, T defaultValue) {
+
+        String value = getString(key);
+        if (value.isEmpty()) {
+            return defaultValue;
         }
 
-        return JSON.parseObject(string, tClass);
+        try {
+            return JSON.parseObject(value, tClass);
+        } catch (Exception e) {
+            log.error(e.toString());
+            return defaultValue;
+        }
     }
+
 
     @Cacheable(value = "sys_config", key = "#key")
     public int getIntOrDefault(String key, int defaultValue) {
