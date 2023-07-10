@@ -164,7 +164,7 @@
         <dependency>
             <groupId>com.dampcake</groupId>
             <artifactId>bencode</artifactId>
-            <version>1.4</version>
+            <version>1.4.1</version>
         </dependency>
 
         <!-- https://mvnrepository.com/artifact/com.github.axet/kaptcha -->
