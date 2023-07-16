@@ -23,7 +23,7 @@
     <option name="ecsInstances" />
     <option name="hostIds">
       <list>
-        <option value="15" />
+        <option value="5" />
       </list>
     </option>
     <option name="hostTagId" value="0" />

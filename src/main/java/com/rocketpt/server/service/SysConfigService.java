@@ -43,7 +43,7 @@ public class SysConfigService {
     /**
      * @return 两步验证开启？
      */
-    public Boolean getTotp() {
+    public Boolean isTotpEnable() {
 
         String totpEnable = systemConfigService.getString(SystemConfigKeys.TOTP_ENABLE);
 

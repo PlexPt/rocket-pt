@@ -1,5 +1,8 @@
 package com.rocketpt.server.service.sys;
 
+import cn.dev33.satoken.secure.SaSecureUtil;
+import cn.dev33.satoken.stp.StpUtil;
+import cn.hutool.core.util.RandomUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -18,13 +21,7 @@ import com.rocketpt.server.dto.entity.UserEntity;
 import com.rocketpt.server.dto.event.UserCreated;
 import com.rocketpt.server.dto.event.UserDeleted;
 import com.rocketpt.server.dto.event.UserUpdated;
-import com.rocketpt.server.dto.param.ChangePasswordParam;
-import com.rocketpt.server.dto.param.ForgotPasswordParam;
-import com.rocketpt.server.dto.param.LoginParam;
-import com.rocketpt.server.dto.param.RegisterCodeParam;
-import com.rocketpt.server.dto.param.RegisterParam;
-import com.rocketpt.server.dto.param.ResetPasswordParam;
-import com.rocketpt.server.dto.param.UserParam;
+import com.rocketpt.server.dto.param.*;
 import com.rocketpt.server.dto.sys.UserinfoDTO;
 import com.rocketpt.server.service.GoogleAuthenticatorService;
 import com.rocketpt.server.service.infra.CheckCodeManager;
@@ -32,23 +29,17 @@ import com.rocketpt.server.service.infra.PasskeyManager;
 import com.rocketpt.server.service.mail.MailService;
 import com.rocketpt.server.util.IPUtils;
 import com.rocketpt.server.util.RedisUtil;
-
+import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
-
-import cn.dev33.satoken.secure.SaSecureUtil;
-import cn.dev33.satoken.stp.StpUtil;
-import cn.hutool.core.util.RandomUtil;
-import lombok.RequiredArgsConstructor;
 
 import static com.rocketpt.server.common.CommonResultStatus.RECORD_NOT_EXIST;
 
@@ -66,6 +57,7 @@ public class UserService extends ServiceImpl<UserDao, UserEntity> {
     private final PasskeyManager passkeyManager;
     private final CaptchaService captchaService;
     private final MailService mailService;
+    private final UserRoleService userRoleService;
     private RedisUtil redisUtil;
 
     private final GoogleAuthenticatorService googleAuthenticatorService;
@@ -201,13 +193,14 @@ public class UserService extends ServiceImpl<UserDao, UserEntity> {
      * @param param 注册参数
      * @throws RocketPTException 注册过程中的异常
      */
-    @Transactional(rollbackFor = SQLException.class)
+    @Transactional(rollbackFor = Exception.class)
     public void register(RegisterParam param) {
-
-        // 检查邀请码是否有效
-        if (!invitationService.check(param.getEmail(), param.getInvitationCode())) {
-            throw new RocketPTException(CommonResultStatus.PARAM_ERROR, I18nMessage.getMessage(
-                    "invitation_not_exists"));
+        if (param.getType() != 1) {
+            // 检查邀请码是否有效
+            if (!invitationService.check(param.getEmail(), param.getInvitationCode())) {
+                throw new RocketPTException(CommonResultStatus.PARAM_ERROR, I18nMessage.getMessage(
+                        "invitation_not_exists"));
+            }
         }
 
         // 检查邮箱和用户名是否已存在
@@ -252,9 +245,13 @@ public class UserService extends ServiceImpl<UserDao, UserEntity> {
 
         // 保存用户凭证实体
         userCredentialService.save(userCredentialEntity);
+        // TODO 关联默认用户角色
+        userRoleService.register(userEntity.getId());
 
         // 消费邀请码
-        invitationService.consume(param.getEmail(), param.getInvitationCode(), userEntity);
+        if (param.getType() != 1) {
+            invitationService.consume(param.getEmail(), param.getInvitationCode(), userEntity);
+        }
     }
 
 

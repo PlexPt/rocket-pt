@@ -17,8 +17,8 @@
     <select id="queryAllPerms" resultType="string">
         select m.permission
         from t_user_role ur
-                 LEFT JOIN t_role_menu rm on ur.role_id = rm.role_id
-                 LEFT JOIN t_menu m on rm.menu_id = m.id
+                 LEFT JOIN t_role_resource rm on ur.role_id = rm.role_id
+                 LEFT JOIN t_resource m on rm.resource_id = m.id
         where ur.user_id = #{userId}
     </select>
 
