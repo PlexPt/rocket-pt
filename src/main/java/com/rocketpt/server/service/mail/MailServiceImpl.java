@@ -1,7 +1,8 @@
 package com.rocketpt.server.service.mail;
 
 import com.rocketpt.server.service.SysConfigService;
-
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -11,23 +12,17 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Date;
 
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-
 /**
- * @author intent
- * @version 1.0
- * @date 2020/1/20 2:17 下午
- * @email zzy.main@gmail.com
+ * 邮件
  */
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class MailServiceImpl implements MailService {
 
-    private final JavaMailSenderImpl mailSender;//注入邮件工具类
+    final JavaMailSenderImpl mailSender;//注入邮件工具类
 
-    private final SysConfigService configService;
+    final SysConfigService configService;
 
     @Async
     @Override
@@ -48,6 +43,7 @@ public class MailServiceImpl implements MailService {
     @Override
     public MailVo sendMail(String email, String subject, String text, String url) {
         MailVo mailVo = new MailVo();
+        mailVo.setFrom(mailSender.getUsername());
         mailVo.setTo(email);
         mailVo.setSubject(subject);
         mailVo.setText(text.replaceAll("\\?url", url));
@@ -64,6 +60,9 @@ public class MailServiceImpl implements MailService {
         }
         if (StringUtils.isEmpty(mailVo.getText())) {
             throw new RuntimeException("邮件内容不能为空");
+        }
+        if (StringUtils.isEmpty(mailVo.getFrom())) {
+            throw new RuntimeException("发件人不能为空");
         }
     }
 

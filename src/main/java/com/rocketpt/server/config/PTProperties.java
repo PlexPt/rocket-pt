@@ -8,8 +8,8 @@ import lombok.Data;
 
 @Data
 @Configuration
-@ConfigurationProperties(prefix = "app")
-public class AppProperties {
+@ConfigurationProperties(prefix = "pt")
+public class PTProperties {
 
 
     /**

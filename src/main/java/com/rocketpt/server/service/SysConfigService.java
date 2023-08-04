@@ -4,11 +4,9 @@ import com.alibaba.fastjson.JSON;
 import com.rocketpt.server.config.SystemConfigKeys;
 import com.rocketpt.server.service.mail.SmtpConfig;
 import com.rocketpt.server.service.sys.SystemConfigService;
-
+import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
-
-import lombok.RequiredArgsConstructor;
 
 /**
  * 系统配置
@@ -37,6 +35,20 @@ public class SysConfigService {
         }
 
         return null;
+    }
+
+
+    /**
+     * @return 邮箱配置
+     */
+    public boolean isCaptchaEnable() {
+
+        //调试时关闭，加快调试流程
+        Integer defaultCaptchaEnable = 0;
+
+        String key = "captcha_enable";
+
+        return systemConfigService.getIntOrDefault(key, defaultCaptchaEnable) == 1;
     }
 
 

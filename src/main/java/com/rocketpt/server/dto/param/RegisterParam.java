@@ -50,17 +50,11 @@ public class RegisterParam {
     private String password;
 
     /**
-     * 验证码uuid
-     */
-    @Schema(description = "验证码uuid")
-    @NotBlank(message = "验证码uuid 不能为空")
-    private String uuid;
-    /**
      * 验证码
      */
     @NotNull
-    @Schema(description = "验证码")
-    @NotBlank(message = "验证码 不能为空")
+    @Schema(description = "邮箱验证码")
+    @NotBlank(message = "邮箱验证码 不能为空")
     private String code;
 
     /**

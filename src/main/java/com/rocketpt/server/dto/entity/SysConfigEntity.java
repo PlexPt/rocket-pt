@@ -3,11 +3,10 @@ package com.rocketpt.server.dto.entity;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-
-import java.time.LocalDateTime;
-
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
+
+import java.time.LocalDateTime;
 
 /**
  * 系统配置信息表
@@ -34,6 +33,8 @@ public class SysConfigEntity {
      */
     @Schema(description = "状态 0：隐藏 1：显示")
     private Integer status;
+
+
     /**
      * 备注
      */

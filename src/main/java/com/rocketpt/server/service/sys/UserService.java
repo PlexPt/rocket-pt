@@ -40,6 +40,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 import static com.rocketpt.server.common.CommonResultStatus.RECORD_NOT_EXIST;
 
@@ -58,9 +59,12 @@ public class UserService extends ServiceImpl<UserDao, UserEntity> {
     private final CaptchaService captchaService;
     private final MailService mailService;
     private final UserRoleService userRoleService;
-    private RedisUtil redisUtil;
+    private final RedisUtil redisUtil;
 
     private final GoogleAuthenticatorService googleAuthenticatorService;
+
+    Random random = new Random();
+
 
     @Transactional(rollbackFor = Exception.class)
     public UserEntity createUser(String username,
@@ -208,13 +212,13 @@ public class UserService extends ServiceImpl<UserDao, UserEntity> {
             throw new RocketPTException(CommonResultStatus.PARAM_ERROR, I18nMessage.getMessage(
                     "email_exists"));
         }
-        // TODO 检查邮箱验证码是否正确 正确才能注册
+        checkEmailCode(param.getEmail(), param.getCode());
 
         // 校验通过，创建用户实体
         UserEntity userEntity = createUser(
                 param.getUsername(),
                 param.getNickname(),
-                null,
+                "/img.png",
                 UserEntity.Gender.valueof(param.getSex()),
                 param.getEmail(),
                 UserEntity.State.NORMAL,
@@ -222,7 +226,6 @@ public class UserService extends ServiceImpl<UserDao, UserEntity> {
         );
 
         // 设置用户属性
-
         updateById(userEntity);
 
         // 创建用户凭证实体
@@ -252,6 +255,18 @@ public class UserService extends ServiceImpl<UserDao, UserEntity> {
         if (param.getType() != 1) {
             invitationService.consume(param.getEmail(), param.getInvitationCode(), userEntity);
         }
+    }
+
+    private void checkEmailCode(String email, String code) {
+        // TODO 检查邮箱验证码是否正确 正确才能注册 否则抛出
+        String key = "emailConfirmCode:" + email;
+        String codeSaved = redisUtil.get(key);
+        if (!StringUtils.equals(codeSaved, code)) {
+            throw new RocketPTException("邮箱验证码不正确");
+        }
+
+        redisUtil.delete(key);
+
     }
 
 
@@ -509,29 +524,31 @@ public class UserService extends ServiceImpl<UserDao, UserEntity> {
     /**
      * 验证图片验证码和邀请码正确后发送注册验证码邮件
      *
-     * @param code
+     * @param param
      */
-    public void sendRegCode(RegisterCodeParam code) {
+    public void sendRegCode(RegisterCodeParam param) {
         //TODO  判断处理注册类型
         //      1.开放注册
         //      2.受邀注册
         //      3.自助答题注册
         //验证图片验证码和邀请码正确后发送邮件
-        if (!captchaService.verifyCaptcha(code.getUuid(), code.getCode())) {
+        if (!captchaService.verifyCaptcha(param.getUuid(), param.getCode())) {
             throw new RocketPTException("图片验证码错误");
         }
-
-        if (!invitationService.check(code.getEmail(), code.getInvitationCode())) {
-            throw new RocketPTException("邀请码错误");
+        if (param.getType() != 1) {
+            // 检查邀请码是否有效
+            if (!invitationService.check(param.getEmail(), param.getInvitationCode())) {
+                throw new RocketPTException("邀请码错误");
+            }
         }
-        Random random = new Random();
+
         String confirmCode = "";
         for (int i = 0; i < 6; i++) {
             confirmCode = confirmCode + random.nextInt(10);
         }
-        redisUtil.append("emailConfirmCode", confirmCode);
+        redisUtil.setEx("emailConfirmCode:" + param.getEmail(), confirmCode, 30, TimeUnit.MINUTES);
         String text = I18nMessage.getMessage("confirm_email") + confirmCode;
-        mailService.sendMail(code.getEmail(),
+        mailService.sendMail(param.getEmail(),
                 I18nMessage.getMessage("confirm_title"),
                 text,
                 null);

@@ -37,12 +37,7 @@ public class RegisterController {
     @Operation(summary = "注册")
     @PostMapping
     public Result register(@RequestBody @Validated RegisterParam param) {
-        if (!captchaService.verifyCaptcha(param.getUuid(), param.getCode())) {
-            throw new RocketPTException("验证码不正确");
-        }
-        if (param.getType() != 1 && param.getCode().isEmpty()) {
-            throw new RocketPTException(CommonResultStatus.PARAM_ERROR);
-        }
+
         userService.register(param);
 
         return Result.ok();

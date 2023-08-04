@@ -4,13 +4,12 @@ import com.baomidou.mybatisplus.annotation.EnumValue;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.rocketpt.server.common.exception.RocketPTException;
-
-import java.time.LocalDateTime;
-
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+
+import java.time.LocalDateTime;
 
 /**
  * @author plexpt
@@ -171,7 +170,11 @@ public class UserEntity {
         @Getter
         private final int code;
 
-        public static Gender valueof(int value) {
+        public static Gender valueof(Integer value) {
+            if (value == null) {
+                return OTHER;
+            }
+
             for (Gender gender : Gender.values()) {
                 if (gender.code == value) {
                     return gender;

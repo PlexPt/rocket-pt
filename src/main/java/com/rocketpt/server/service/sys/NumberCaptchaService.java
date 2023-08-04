@@ -5,6 +5,7 @@ import com.github.benmanes.caffeine.cache.Caffeine;
 import com.google.code.kaptcha.Producer;
 import com.rocketpt.server.common.exception.RocketPTException;
 
+import com.rocketpt.server.service.SysConfigService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
@@ -26,6 +27,7 @@ import static com.rocketpt.server.common.CommonResultStatus.FAIL;
 @RequiredArgsConstructor
 public class NumberCaptchaService implements CaptchaService {
     final Producer captchaProducer;
+    final SysConfigService sysConfigService;
 
     /**
      * 默认过期时间 分钟
@@ -67,6 +69,12 @@ public class NumberCaptchaService implements CaptchaService {
 
     @Override
     public synchronized boolean verifyCaptcha(String id, String captcha) {
+
+        //验证码开关
+        if (!sysConfigService.isCaptchaEnable()) {
+            return true;
+        }
+
         String cap = cache.getIfPresent(id);
         if (cap != null) {
             if (StringUtils.equalsIgnoreCase(captcha, cap)) {

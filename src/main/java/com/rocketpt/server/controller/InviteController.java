@@ -44,7 +44,7 @@ public class InviteController {
             mailService.sendMail(param.getEmail(),
                     I18nMessage.getMessage("invitation_title"),
                     param.getContent(),
-                    null);
+                    "url");
         } catch (Exception e) {
             return Result.failure();
         }
