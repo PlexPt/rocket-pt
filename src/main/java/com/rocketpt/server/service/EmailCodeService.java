@@ -36,27 +36,40 @@ public class EmailCodeService {
     public void checkEmailCode(String email, String code) {
         //  检查邮箱验证码是否正确 正确才能继续注册 否则抛出
         String key = "emailConfirmCode:" + email + ":code";
-        String time = "emailConfirmCode:" + email + ":time";
+        String timeKey = "emailConfirmCode:" + email + ":time";
         String codeSaved = redisUtil.get(key);
         if (StringUtils.isEmpty(codeSaved)) {
             throw new RocketPTException("邮箱验证码已失效，请重新发送");
         }
-
+        int timesUsed = 10;
         try {
-            String times = redisUtil.get(time);
-            int timesUsed = Integer.parseInt(times);
-            if (timesUsed > 5) {
-                throw new RocketPTException("邮箱验证码达到最大次数，请重新发送");
-            }
+            String times = redisUtil.get(timeKey);
+            timesUsed = Integer.parseInt(times);
         } catch (Exception e) {
+        }
+
+        if (timesUsed > 5) {
+            resetEmailCodeAttempts(key, timeKey);
+
             throw new RocketPTException("邮箱验证码达到最大次数，请重新发送");
         }
 
         if (!StringUtils.equals(codeSaved, code)) {
+
+            timesUsed++;
+
+            redisUtil.setEx(timeKey, "" + timesUsed, 30, TimeUnit.MINUTES);
+
             throw new RocketPTException("邮箱验证码不正确");
         }
 
-        redisUtil.delete(key);
+        resetEmailCodeAttempts(key, timeKey);
     }
+
+    private void resetEmailCodeAttempts(String key, String timeKey) {
+        redisUtil.delete(key);
+        redisUtil.delete(timeKey);
+    }
+
 }
 
