@@ -23,6 +23,7 @@ import com.rocketpt.server.dto.event.UserDeleted;
 import com.rocketpt.server.dto.event.UserUpdated;
 import com.rocketpt.server.dto.param.*;
 import com.rocketpt.server.dto.sys.UserinfoDTO;
+import com.rocketpt.server.service.EmailCodeService;
 import com.rocketpt.server.service.GoogleAuthenticatorService;
 import com.rocketpt.server.service.infra.CheckCodeManager;
 import com.rocketpt.server.service.infra.PasskeyManager;
@@ -38,9 +39,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Random;
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
 
 import static com.rocketpt.server.common.CommonResultStatus.RECORD_NOT_EXIST;
 
@@ -58,12 +57,11 @@ public class UserService extends ServiceImpl<UserDao, UserEntity> {
     private final PasskeyManager passkeyManager;
     private final CaptchaService captchaService;
     private final MailService mailService;
+    private final EmailCodeService emailCodeService;
     private final UserRoleService userRoleService;
     private final RedisUtil redisUtil;
 
     private final GoogleAuthenticatorService googleAuthenticatorService;
-
-    Random random = new Random();
 
 
     @Transactional(rollbackFor = Exception.class)
@@ -72,8 +70,7 @@ public class UserService extends ServiceImpl<UserDao, UserEntity> {
                                  String avatar,
                                  UserEntity.Gender gender,
                                  String email,
-                                 UserEntity.State state,
-                                 Long organization) {
+                                 UserEntity.State state) {
         UserEntity userEntity = new UserEntity();
         userEntity.setUsername(username);
         userEntity.setNickname(fullName);
@@ -212,7 +209,7 @@ public class UserService extends ServiceImpl<UserDao, UserEntity> {
             throw new RocketPTException(CommonResultStatus.PARAM_ERROR, I18nMessage.getMessage(
                     "email_exists"));
         }
-        checkEmailCode(param.getEmail(), param.getCode());
+        emailCodeService.checkEmailCode(param.getEmail(), param.getCode());
 
         // 校验通过，创建用户实体
         UserEntity userEntity = createUser(
@@ -221,8 +218,7 @@ public class UserService extends ServiceImpl<UserDao, UserEntity> {
                 "/img.png",
                 UserEntity.Gender.valueof(param.getSex()),
                 param.getEmail(),
-                UserEntity.State.NORMAL,
-                3L
+                UserEntity.State.NORMAL
         );
 
         // 设置用户属性
@@ -255,18 +251,6 @@ public class UserService extends ServiceImpl<UserDao, UserEntity> {
         if (param.getType() != 1) {
             invitationService.consume(param.getEmail(), param.getInvitationCode(), userEntity);
         }
-    }
-
-    private void checkEmailCode(String email, String code) {
-        // TODO 检查邮箱验证码是否正确 正确才能注册 否则抛出
-        String key = "emailConfirmCode:" + email;
-        String codeSaved = redisUtil.get(key);
-        if (!StringUtils.equals(codeSaved, code)) {
-            throw new RocketPTException("邮箱验证码不正确");
-        }
-
-        redisUtil.delete(key);
-
     }
 
 
@@ -541,17 +525,7 @@ public class UserService extends ServiceImpl<UserDao, UserEntity> {
                 throw new RocketPTException("邀请码错误");
             }
         }
-
-        String confirmCode = "";
-        for (int i = 0; i < 6; i++) {
-            confirmCode = confirmCode + random.nextInt(10);
-        }
-        redisUtil.setEx("emailConfirmCode:" + param.getEmail(), confirmCode, 30, TimeUnit.MINUTES);
-        String text = I18nMessage.getMessage("confirm_email") + confirmCode;
-        mailService.sendMail(param.getEmail(),
-                I18nMessage.getMessage("confirm_title"),
-                text,
-                null);
+        emailCodeService.setMailCode(param.getEmail());
 
     }
 }
