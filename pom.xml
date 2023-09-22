@@ -194,7 +194,7 @@
         <dependency>
             <groupId>cn.dev33</groupId>
             <artifactId>sa-token-spring-aop</artifactId>
-            <version>1.34.0</version>
+            <version>1.36.0</version>
         </dependency>
 
         <!-- Sa-Token 整合 jwt -->
