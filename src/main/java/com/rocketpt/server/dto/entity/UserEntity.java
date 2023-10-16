@@ -105,6 +105,16 @@ public class UserEntity {
     @Schema(description = "下载量")
     private Long downloaded;
     /**
+     * 真实上传量
+     */
+    @Schema(description = "真实上传量")
+    private Long realUploaded;
+    /**
+     * 真实下载量
+     */
+    @Schema(description = "真实下载量")
+    private Long realDownloaded;
+    /**
      * 做种时间
      */
     @Schema(description = "做种时间")

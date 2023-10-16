@@ -46,11 +46,11 @@ public interface Constants {
 
     interface Announce {
 
-        String PROTOCOL = "https";
+        String PROTOCOL = "http";
 
-        String HOSTNAME = "rocket.pt.local";
+        String HOSTNAME = "192.168.6.112";
 
-        Integer PORT = 9113;
+        Integer PORT = 9966;
 
     }
 }

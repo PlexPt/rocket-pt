@@ -2,7 +2,11 @@ package com.rocketpt.server.common.exception;
 
 import com.rocketpt.server.common.CommonResultStatus;
 import com.rocketpt.server.common.ResultStatus;
-
+import com.rocketpt.server.util.BencodeUtil;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.ConstraintViolationException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -13,11 +17,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.validation.ConstraintViolationException;
-import lombok.extern.slf4j.Slf4j;
 
 /**
  * @author plexpt
@@ -34,6 +33,17 @@ public class ExceptionControllerAdvice {
         put(CommonResultStatus.UNAUTHORIZED, HttpStatus.UNAUTHORIZED);
         put(CommonResultStatus.FORBIDDEN, HttpStatus.FORBIDDEN);
     }};
+
+
+    @ExceptionHandler(TrackerException.class)
+    public String invalidLengthExceptionHandler(TrackerException exception) {
+        log.error("tracker exception, message={}", exception.getMessage());
+        if (exception instanceof TrackerNoRetryException) {
+            return BencodeUtil.errorNoRetry(exception.getMessage());
+        }
+        return BencodeUtil.error(exception.getMessage());
+    }
+
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Map<String, Object>> handleDefaultErrorView(Exception ex,

@@ -1,21 +1,26 @@
 package com.rocketpt.server.service;
 
+import com.alibaba.fastjson.JSON;
 import com.rocketpt.server.dao.UserDao;
 import com.rocketpt.server.dto.entity.TorrentEntity;
 import com.rocketpt.server.dto.entity.TorrentPeerEntity;
+import com.rocketpt.server.dto.entity.UserEntity;
 import com.rocketpt.server.dto.param.AnnounceRequest;
+import com.rocketpt.server.dto.vo.TrackerResponse;
+import com.rocketpt.server.service.sys.UserService;
 import com.rocketpt.server.service.validator.ValidationManager;
-
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
 @Service
 @Slf4j
@@ -23,6 +28,7 @@ import lombok.extern.slf4j.Slf4j;
 public class AnnounceService {
 
     final UserDao userDao;
+    final UserService userService;
 
     final TorrentPeerService torrentPeerService;
 
@@ -37,63 +43,121 @@ public class AnnounceService {
 
         TorrentEntity torrent = request.getTorrent();
 
-        Integer interval = getAnnounceInterval(request);
-        boolean noPeerId = Integer.valueOf(1).equals(request.getNoPeerId());
+        //省略peer id
+        boolean noPeerId = request.isNoPeerId();
 
-        List<Map<String, Object>> peerList = getPeerList(torrent.getId(), request.getSeeder(),
-                200, noPeerId);
+        List<Map<String, Object>> peerList = getPeerList(request, 200);
 
+        updatePeer(request, null);
+
+        updateUserInfo(request);
         // 返回peer列表给客户端
         //TODO 默认值是60，改为动态调整
-        return buildResultMap(interval, 60, torrent.getSeeders(), torrent.getLeechers(), peerList);
+        Integer interval = getAnnounceInterval(request);
+        TrackerResponse trackerResponse = TrackerResponse.build(interval, 60, torrent.getSeeders(), torrent.getLeechers(), peerList);
+        return trackerResponse.toResultMap();
     }
 
-    public void updatePeerTable(TorrentPeerEntity peerSelf,
-                                AnnounceRequest request,
-                                Integer userId,
-                                Integer torrentId) {
+    private void updateUserInfo(AnnounceRequest request) {
+        UserEntity user = request.getUser();
+        TorrentEntity torrent = request.getTorrent();
+        Integer userId = request.getUser().getId();
+        Integer torrentId = request.getTorrent().getId();
+
+        TorrentPeerEntity peer = torrentPeerService.getPeer(userId, torrentId, request.getPeerId());
+        if (peer == null) {
+            //TODO
+            peer = tryInsertOrUpdatePeer(request);
+        }
+
+        long lastUploaded = peer.getUploaded();
+        long lastDownload = peer.getDownloaded();
+        long uploadedOffset = request.getUploaded() - lastUploaded;
+        long downloadedOffset = request.getDownloaded() - lastDownload;
+
+        LocalDateTime updateTime = torrent.getUpdateTime();
+        if (uploadedOffset < 0) {
+            uploadedOffset = request.getUploaded();
+        }
+        if (downloadedOffset < 0) {
+            downloadedOffset = request.getDownloaded();
+        }
+
+        user.setRealDownloaded(user.getRealDownloaded() + lastDownload);
+        user.setRealUploaded(user.getRealUploaded() + lastUploaded);
+
+        //TODO 优惠
+        user.setUploaded(user.getUploaded() + uploadedOffset);
+        user.setDownloaded(user.getDownloaded() + downloadedOffset);
+        user.setSeedtime(user.getSeedtime() + (Instant.now().toEpochMilli() - updateTime.toInstant(ZoneOffset.UTC).toEpochMilli()));
+        userService.updateById(user);
+
+        //TODO 最后处理删除
+        //TODO 校正BEP标准的计算方式
+
+
+    }
+
+    public void updatePeer(AnnounceRequest request, TorrentPeerEntity peerSelf) {
         String event = StringUtils.trimToEmpty(request.getEvent());
+        log.info("Peer event {}: {}", event, JSON.toJSONString(request, true));
+        Integer userId = request.getUser().getId();
+        Integer torrentId = request.getTorrent().getId();
+        //TODO 加入分布式锁
 
-        //TODO 加入分布式锁锁
+        // 任务停止 删除peer
+        if (AnnounceRequest.EventType.stopped.equalsIgnoreCase(event)) {
 
-
-        // 任务停止
-        if ("stopped".equalsIgnoreCase(event)) {
             // 只有当有peer存在的时候才执行删除操作
             if (torrentPeerService.peerExists(userId, torrentId, request.getPeerId())) {
-                torrentPeerService.delete(userId, torrentId, request.getPeerId());
+                torrentPeerService.delete(userId, torrentId, request.getPeerIdHex());
             }
 
             return;
+        } else if (AnnounceRequest.EventType.started.equalsIgnoreCase(event)) {
+            tryInsertOrUpdatePeer(request);
+
+        } else if (AnnounceRequest.EventType.completed.equalsIgnoreCase(event)) {
+            torrentPeerService.delete(userId, torrentId, request.getPeerIdHex());
+            tryInsertOrUpdatePeer(request);
+
+        } else {
+            torrentPeerService.delete(userId, torrentId, request.getPeerIdHex());
+            tryInsertOrUpdatePeer(request);
         }
     }
 
     /**
      * 获取 peer 列表
      *
-     * @param torrentId   种子ID
-     * @param seeder      如果当前用户是 seeder，那么这段代码将寻找 leecher；如果当前用户不是 seeder（或者不确定是否是 seeder），那么就不对
-     *                    peer 的类型进行过滤。
      * @param peerNumWant 这个参数表明你希望从方法返回多少个 peers。如果当前的系统中现有的 peer 数量小于你想要的 peerNumWant，那么就返回所有的
      *                    peers；否则，只返回你想要的 peerNumWant 数量的 peers。
-     * @param noPeerId
      * @return
      */
-    private List<Map<String, Object>> getPeerList(Integer torrentId,
-                                                  Boolean seeder,
-                                                  Integer peerNumWant,
-                                                  boolean noPeerId) {
+    private List<Map<String, Object>> getPeerList(AnnounceRequest request, Integer peerNumWant) {
+
+        Integer torrentId = request.getTorrent().getId();
+        Boolean seeder = request.getSeeder();
+        boolean noPeerId = request.isNoPeerId();
+        Integer userId = request.getUser().getId();
+        String peerIdHex = request.getPeerIdHex();
+
         //TODO 从数据库获取peer列表
         //TODO 根据 seeder peerNumWant 参数限制peer
         //如果当前用户是 seeder，那么这段代码将寻找 leecher；如果当前用户不是 seeder（或者不确定是否是 seeder），那么就不对 peer 的类型进行过滤。
-        List<TorrentPeerEntity> list = torrentPeerService.listByTorrent(torrentId, seeder,
-                peerNumWant);
+        List<TorrentPeerEntity> list = torrentPeerService.listByTorrent(torrentId, seeder, peerNumWant);
 
         List<Map<String, Object>> result = list.stream()
                 .map(peer -> {
+
+                    // 当前 Peer 自己不返回
+                    if (peer.getUserId().equals(userId) && peer.getPeerId().equalsIgnoreCase(peerIdHex)) {
+                        return null;
+                    }
+
                     Map<String, Object> dataMap = new HashMap<>();
                     // 处理ipv4
-                    if (!peer.getIp().isBlank()) {
+                    if (StringUtils.isNotBlank(peer.getIp())) {
                         dataMap.put("ip", peer.getIp());
                         dataMap.put("port", peer.getPort());
                         if (!noPeerId) {
@@ -104,24 +168,44 @@ public class AnnounceService {
                     //TODO 支持压缩
                     return dataMap.isEmpty() ? null : dataMap;
                 })
+                .filter(peer -> peer != null)
                 .collect(Collectors.toList());
         return result;
     }
 
-    /**
-     * @return
-     */
-    public Map<String, Object> buildResultMap(Integer interval, Integer minInterval,
-                                              Integer complete,
-                                              Integer incomplete, List peers) {
 
-        return Map.of(
-                "interval", interval,
-                "min interval", minInterval,
-                "complete", complete,
-                "incomplete", incomplete,
-                "peers", peers
-        );
+    private TorrentPeerEntity tryInsertOrUpdatePeer(AnnounceRequest request) {
+        try {
+
+            TorrentPeerEntity peerEntity = new TorrentPeerEntity();
+            peerEntity.setUserId(request.getUser().getId());
+            peerEntity.setTorrentId(request.getTorrent().getId());
+            peerEntity.setPeerId(request.getPeer_id());
+            peerEntity.setPeerIdHex(request.getPeerIdHex());
+            peerEntity.setPort(request.getPort());
+            peerEntity.setDownloaded(request.getDownloaded());
+            peerEntity.setUploaded(request.getUploaded());
+            peerEntity.setRemaining(request.getLeft());
+            peerEntity.setSeeder(request.getSeeder());
+            peerEntity.setUserAgent(request.getUserAgent());
+            peerEntity.setPasskey(request.getPasskey());
+            peerEntity.setCreateTime(LocalDateTime.now());
+            peerEntity.setLastAnnounce(LocalDateTime.now());
+
+            peerEntity.setIp(request.getIp());
+            peerEntity.setIpv6(request.getIpv6());
+
+            if (StringUtils.isBlank(peerEntity.getIp())) {
+                peerEntity.setIp(request.getRemoteAddr());
+            }
+
+            torrentPeerService.save(peerEntity);
+            return peerEntity;
+
+        } catch (Exception exception) {
+            log.error("Peer update error update: ", exception);
+        }
+        return null;
     }
 
     /**
@@ -157,6 +241,6 @@ public class AnnounceService {
     private Integer getAnnounceInterval(AnnounceRequest request) {
         //TODO 广播间隔
 
-        return 600;
+        return 60;
     }
 }

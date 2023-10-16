@@ -18,6 +18,7 @@ public class ExceptionControllerAdviceTracker {
 
     @ExceptionHandler(TrackerException.class)
     public String invalidLengthExceptionHandler(TrackerException exception) {
+
         return BencodeUtil.error(exception.getMessage());
     }
 

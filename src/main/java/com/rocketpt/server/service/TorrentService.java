@@ -6,7 +6,6 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.dampcake.bencode.Bencode;
 import com.dampcake.bencode.Type;
 import com.rocketpt.server.common.CommonResultStatus;
-import com.rocketpt.server.common.Constants;
 import com.rocketpt.server.common.base.I18nMessage;
 import com.rocketpt.server.common.exception.RocketPTException;
 import com.rocketpt.server.dao.TorrentDao;
@@ -42,11 +41,13 @@ public class TorrentService extends ServiceImpl<TorrentDao, TorrentEntity> {
 
     final TorrentManager torrentManager;
 
+    final TrackerURLService trackerURLService;
+
     final UserService userService;
     final TorrentStorageService torrentStorageService;
     final Bencode infoBencode = new Bencode(StandardCharsets.ISO_8859_1);
 
-    public void add(TorrentAddParam param) {
+    public Integer add(TorrentAddParam param) {
         TorrentEntity entity = BeanUtil.copyProperties(param, TorrentEntity.class);
         entity.setStatus(TorrentEntity.Status.CANDIDATE);
         entity.setFileStatus(0);
@@ -54,6 +55,8 @@ public class TorrentService extends ServiceImpl<TorrentDao, TorrentEntity> {
 
         //TODO 保证幂等
         save(entity);
+
+        return entity.getId();
     }
 
     @SneakyThrows
@@ -107,8 +110,7 @@ public class TorrentService extends ServiceImpl<TorrentDao, TorrentEntity> {
             passkey = userService.getPasskey(userService.getUserId());
         }
         //TODO 校验用户下载权限
-        decodedMap.put("announce",
-                Constants.Announce.PROTOCOL + "://" + Constants.Announce.HOSTNAME + ":" + Constants.Announce.PORT + "/" + passkey);
+        decodedMap.put("announce", trackerURLService.getAnnounce(passkey));
 
         return infoBencode.encode(decodedMap);
     }

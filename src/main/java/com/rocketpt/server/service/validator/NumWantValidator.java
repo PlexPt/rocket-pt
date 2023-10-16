@@ -15,16 +15,16 @@ public class NumWantValidator implements TrackerValidator {
     @Override
     public void validate(AnnounceRequest request) {
         // 设置默认值
-        if (request.getNumWant().equals(-1)) {
-            request.setNumWant(defaultNumWant);
+        if (request.getNumwant() == null || request.getNumwant().equals(-1)) {
+            request.setNumwant(defaultNumWant);
             return;
         }
 
         // 小于0
-        request.setNumWant(Math.max(0, request.getNumWant()));
+        request.setNumwant(Math.max(0, request.getNumwant()));
 
         // 大于最大值
-        request.setNumWant(Math.min(request.getNumWant(), maxNunWant));
+        request.setNumwant(Math.min(request.getNumwant(), maxNunWant));
 
     }
 

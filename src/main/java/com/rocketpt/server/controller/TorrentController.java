@@ -1,5 +1,7 @@
 package com.rocketpt.server.controller;
 
+import cn.dev33.satoken.annotation.SaCheckLogin;
+import cn.dev33.satoken.annotation.SaIgnore;
 import com.rocketpt.server.common.CommonResultStatus;
 import com.rocketpt.server.common.Constants;
 import com.rocketpt.server.common.base.I18nMessage;
@@ -15,27 +17,6 @@ import com.rocketpt.server.dto.vo.SuggestVo;
 import com.rocketpt.server.dto.vo.TorrentVO;
 import com.rocketpt.server.service.TorrentService;
 import com.rocketpt.server.service.sys.UserService;
-
-import org.springframework.util.StringUtils;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RequestPart;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.multipart.MultipartFile;
-
-import java.io.IOException;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.List;
-
-import cn.dev33.satoken.annotation.SaCheckLogin;
-import cn.dev33.satoken.annotation.SaIgnore;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
@@ -47,6 +28,16 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -137,9 +128,9 @@ public class TorrentController {
     @PostMapping("/add")
     public Result add(@RequestBody @Validated TorrentAddParam param) {
 
-        torrentService.add(param);
+        Integer id = torrentService.add(param);
 
-        return Result.ok();
+        return Result.ok(id);
     }
 
 
@@ -177,7 +168,7 @@ public class TorrentController {
                 throw new RocketPTException(CommonResultStatus.PARAM_ERROR,
                         I18nMessage.getMessage("torrent_empty"));
             }
-            String filename = StringUtils.cleanPath(file.getOriginalFilename());
+            String filename = org.springframework.util.StringUtils.cleanPath(file.getOriginalFilename());
             // validation here for .torrent file
             if (!filename.endsWith(".torrent")) {
                 throw new RocketPTException("Invalid file type. Only .torrent files are allowed");
@@ -238,6 +229,13 @@ public class TorrentController {
         //TODO 下载日志
         //TODO 修改下载的文件名
         String filename = entity.getFilename();
+        if (StringUtils.isBlank(filename)) {
+            filename = entity.getId() + ".torrent";
+        }
+        if (!org.apache.commons.lang3.StringUtils.endsWithIgnoreCase(filename, ".torrent")) {
+            filename = filename + ".torrent";
+        }
+
         filename = URLEncoder.encode(filename, StandardCharsets.UTF_8).replaceAll("\\+", "%20");
         response.setCharacterEncoding(StandardCharsets.UTF_8.name());
         response.setContentLength(torrentBytes.length);

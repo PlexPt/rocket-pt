@@ -6,7 +6,7 @@ spring:
   application:
     name: rocket-pt
   profiles:
-    active: dev
+    active: n
   main:
     allow-circular-references: true
   data:
@@ -75,10 +75,11 @@ mybatis-plus:
     local-cache-scope: statement
     call-setters-on-nulls: true
     jdbc-type-for-null: 'null'
-    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
-
+    #log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+    log-impl: org.apache.ibatis.logging.nologging.NoLoggingImpl
 
 pagehelper:
+  banner: false
   helper-dialect: mysql
   reasonable: true
   params: count=countSql
@@ -90,8 +91,18 @@ logging:
   file:
     path: logs
   level:
+    # 设置所有日志的默认级别为INFO
     root: info
     org.springframework: info
+    org.springframework.web: info
+    com.zaxxer.hikari: warn
+    com.rocketpt: info
+
+  pattern:
+    # 定义控制台输出的日志格式
+    console: "%clr(%d{yyyy-MM-dd HH:mm:ss}){faint} %clr(%-5p) %clr(---){faint} %clr([%15.15t]){faint} %clr(%-40.40logger{39}){cyan} %clr(:){faint} %m%n%wEx"
+    # 定义文件输出的日志格式，如果您使用文件输出
+    file: "%d{yyyy-MM-dd HH:mm:ss} %-5p --- [%15.15t] %-40.40logger{39} : %m%n"
 
 
 # springdoc-openapi项目配置
@@ -113,8 +124,8 @@ knife4j:
   enable: true
   setting:
     language: zh_cn
-#    enable-swagger-models: true
-#    enable-document-manage: true
+    #    enable-swagger-models: true
+    #    enable-document-manage: true
     swagger-model-name: 实体类列表
 
   documents:
@@ -131,7 +142,7 @@ sa-token:
   # token有效期，单位s 默认30天 2592000, -1代表永不过期
   timeout: 2592000
   # token临时有效期 (指定时间内无操作就视为token过期) 单位: 秒
-  activity-timeout: -1
+  active-timeout: -1
   # 是否允许同一账号并发登录 (为true时允许一起登录, 为false时新登录挤掉旧登录)
   is-concurrent: true
   # 在多人登录同一账号时，是否共用一个token (为true时所有登录共用一个token, 为false时每次登录新建一个token)
@@ -140,5 +151,6 @@ sa-token:
   token-style: simple-uuid
   # 是否输出操作日志
   is-log: false
+  banner: false
   # jwt秘钥
 #  jwt-secret-key: xxxxxxxxxxxxxxxx

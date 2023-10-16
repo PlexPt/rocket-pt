@@ -13,8 +13,9 @@ import java.util.Map;
  */
 public class BencodeUtil {
 
-    static final String exceptionMsg = "Oops! Your request is like an alien language to us, we " +
+    public static final String exceptionMsg = "Oops! Your request is like an alien language to us, we " +
             "can't encode it!";
+
     public interface Errors {
         String CLIENT_ERROR = BencodeUtil.error("Oops! Your request is like an alien language to " +
                 "us, we can't decode it!");
@@ -29,16 +30,26 @@ public class BencodeUtil {
         return encode(Map.of("failure reason", reason));
     }
 
+    public static String errorNoRetry(String reason) {
+        return encode(Map.of("failure reason", reason,
+                "retry in", "never"
+        ));
+    }
+
+    public static String warning(String reason) {
+        return encode(Map.of("warning message", reason));
+    }
+
     public static String error() {
         return Errors.CLIENT_ERROR;
     }
 
 
-    static public String error(String reason, Integer retry) {
+    public static String error(String reason, Integer retry) {
         return encode(Map.of("failure reason", reason, "retry in", retry));
     }
 
-    static public <K, V> String encode(Map<K, V> data) {
+    public static <K, V> String encode(Map<K, V> data) {
         try (ByteArrayOutputStream out = new ByteArrayOutputStream()) {
             try (BencodeOutputStream bencoder = new BencodeOutputStream(out)) {
                 bencoder.writeDictionary(data);
@@ -49,7 +60,7 @@ public class BencodeUtil {
         }
     }
 
-    static public String encode(Integer data) {
+    public static String encode(Integer data) {
         try (ByteArrayOutputStream out = new ByteArrayOutputStream()) {
             try (BencodeOutputStream bencoder = new BencodeOutputStream(out)) {
                 bencoder.write(data);
@@ -60,7 +71,7 @@ public class BencodeUtil {
         }
     }
 
-    static public String encode(Number data) {
+    public static String encode(Number data) {
         try (ByteArrayOutputStream out = new ByteArrayOutputStream()) {
             try (BencodeOutputStream bencoder = new BencodeOutputStream(out)) {
                 bencoder.writeNumber(data);
@@ -71,7 +82,7 @@ public class BencodeUtil {
         }
     }
 
-    static public String encode(byte[] data) {
+    public static String encode(byte[] data) {
         try (ByteArrayOutputStream out = new ByteArrayOutputStream()) {
             try (BencodeOutputStream bencoder = new BencodeOutputStream(out)) {
                 bencoder.write(data);
@@ -82,7 +93,7 @@ public class BencodeUtil {
         }
     }
 
-    static public String encode(byte[] data, int offset, int length) {
+    public static String encode(byte[] data, int offset, int length) {
         try (ByteArrayOutputStream out = new ByteArrayOutputStream()) {
             try (BencodeOutputStream bencoder = new BencodeOutputStream(out)) {
                 bencoder.write(data, offset, length);
@@ -93,7 +104,7 @@ public class BencodeUtil {
         }
     }
 
-    static public String encode(String data) {
+    public static String encode(String data) {
         try (ByteArrayOutputStream out = new ByteArrayOutputStream()) {
             try (BencodeOutputStream bencoder = new BencodeOutputStream(out)) {
                 bencoder.writeString(data);
@@ -104,7 +115,7 @@ public class BencodeUtil {
         }
     }
 
-    static public <E> String encode(List<E> data) {
+    public static <E> String encode(List<E> data) {
         try (ByteArrayOutputStream out = new ByteArrayOutputStream()) {
             try (BencodeOutputStream bencoder = new BencodeOutputStream(out)) {
                 bencoder.writeList(data);

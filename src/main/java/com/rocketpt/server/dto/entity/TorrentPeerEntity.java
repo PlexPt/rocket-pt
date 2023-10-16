@@ -1,5 +1,6 @@
 package com.rocketpt.server.dto.entity;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 
 import java.time.LocalDateTime;
@@ -14,7 +15,7 @@ import lombok.NoArgsConstructor;
  */
 @Data
 @NoArgsConstructor
-@TableName("t_torrent_comment")
+@TableName("t_torrent_peer")
 public class TorrentPeerEntity extends EntityBase {
 
     /**
@@ -36,6 +37,7 @@ public class TorrentPeerEntity extends EntityBase {
      * Peer的客户端ID，表示在P2P网络中的唯一标识，如 "-qB4520-Lw~GW1WMV5ZO"
      */
     String peerId;
+    String peerIdHex;
 
     /**
      * 用户IP地址
@@ -65,7 +67,7 @@ public class TorrentPeerEntity extends EntityBase {
     /**
      * 用户剩余需要下载的数据量（单位：字节）
      */
-    Long left;
+    Long remaining;
 
     /**
      * 本次会话的下载量偏移（单位：字节）

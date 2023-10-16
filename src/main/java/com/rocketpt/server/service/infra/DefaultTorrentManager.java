@@ -59,16 +59,38 @@ public class DefaultTorrentManager implements TorrentManager {
         return dto;
     }
 
+    /**
+     * 修改torrent文件：
+     *
+     * 修改tracker
+     * 修改为私有种子 private=1
+     * http://bittorrent.org/beps/bep_0027.html
+     *
+     * @param bytes
+     * @return
+     */
     @Override
     public byte[] transform(byte[] bytes) {
         Map<String, Object> map = infoBencode.decode(bytes, Type.DICTIONARY);
         map.remove("announce-list");
         map.remove("announce");
+        map.put("comment", "rocket pt");
         Map<String, Object> infoMap = (Map<String, Object>) map.get("info");
         infoMap.put("private", 1);
+        //todo 配置
         //todo 配置前缀
         infoMap.put("source", Constants.Source.PREFIX + Constants.Source.NAME);
         map.put("info", infoMap);
+
+        // 屏蔽Bittorrent v2种子上传
+        if (map.containsKey("piece layers") || infoMap.containsKey("files tree")
+                || (infoMap.containsKey("meta version") && infoMap.get("meta version").equals(2))) {
+
+            throw new RocketPTException("不支持使用 Bittorrent 协议 v2 创建的 Torrent 文件或混合 torrent");
+        }
+
+
+
         return infoBencode.encode(map);
     }
 

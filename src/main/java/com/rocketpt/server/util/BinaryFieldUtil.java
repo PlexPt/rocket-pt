@@ -37,7 +37,8 @@ public class BinaryFieldUtil {
                 .results()
                 .map(x -> x.group(1))
                 .map(BinaryFieldUtil::decodeUrl)
-                .findFirst().orElseThrow(() -> new TrackerException("missing field peer_id"));
+                .findFirst()
+                .orElseThrow(() -> new TrackerException("missing field peer_id"));
     }
 
     static private byte[] decodeUrl(String url) {
