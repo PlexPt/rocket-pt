@@ -188,7 +188,7 @@
         <dependency>
             <groupId>cn.dev33</groupId>
             <artifactId>sa-token-spring-boot3-starter</artifactId>
-            <version>1.36.0</version>
+            <version>1.37.0</version>
         </dependency>
         <!-- Sa-Token 整合 SpringAOP 实现注解鉴权 -->
         <dependency>
