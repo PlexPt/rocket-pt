@@ -48,7 +48,7 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
         <!--commons-->
-        <commons.lang3.version>3.13.0</commons.lang3.version>
+        <commons.lang3.version>3.14.0</commons.lang3.version>
         <commons.fileupload.version>1.4</commons.fileupload.version>
         <commons.io.version>2.11.0</commons.io.version>
         <commons.math.version>3.6.1</commons.math.version>
