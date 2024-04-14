@@ -52,7 +52,6 @@ public class ResourceService extends ServiceImpl<ResourceDao, ResourceEntity> {
 
         List<ResourceEntity> allMenus = list(new QueryWrapper<ResourceEntity>()
                 .lambda()
-                .eq(ResourceEntity::getType, ResourceEntity.Type.MENU)
                 .orderByAsc(ResourceEntity::getSort)
         );
         List<MenuResourceDTO> list = new ArrayList<>();
