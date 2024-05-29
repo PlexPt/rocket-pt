@@ -207,7 +207,7 @@
         <dependency>
             <groupId>cn.dev33</groupId>
             <artifactId>sa-token-redis-jackson</artifactId>
-            <version>1.37.0</version>
+            <version>1.38.0</version>
         </dependency>
         <!-- 提供Redis连接池 -->
         <dependency>
