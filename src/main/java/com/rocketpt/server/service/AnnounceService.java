@@ -20,6 +20,7 @@ import java.time.ZoneOffset;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -83,8 +84,8 @@ public class AnnounceService {
             downloadedOffset = request.getDownloaded();
         }
 
-        user.setRealDownloaded(user.getRealDownloaded() + lastDownload);
-        user.setRealUploaded(user.getRealUploaded() + lastUploaded);
+        user.setRealDownloaded(Objects.nonNull(user.getRealDownloaded())? user.getRealDownloaded()+lastDownload:lastDownload);
+        user.setRealUploaded(Objects.nonNull(user.getRealUploaded())?user.getRealUploaded()+lastUploaded: lastUploaded);
 
         //TODO 优惠
         user.setUploaded(user.getUploaded() + uploadedOffset);
